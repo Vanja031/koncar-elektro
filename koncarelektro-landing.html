@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Končar Elektro – Prodaja Alata i Mašina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1014;
+    --bg2: #17191f;
+    --bg3: #1e2028;
+    --surface: #23252e;
+    --surface2: #2b2e3a;
+    --accent: #e8230a;
+    --accent2: #ff4d1a;
+    --gold: #f5a623;
+    --text: #e8eaf0;
+    --text2: #9ea5b8;
+    --text3: #5c6280;
+    --border: #2e3040;
+    --font-head: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --radius: 4px;
+    --transition: 0.22s ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  ul { list-style: none; }
+
+  /* ══════ TOP BAR ══════ */
+  .topbar {
+    background: var(--accent);
+    padding: 7px 0;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .topbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topbar-left { display: flex; gap: 24px; align-items: center; }
+  .topbar-left span { display: flex; align-items: center; gap: 6px; }
+  .topbar-right { display: flex; gap: 20px; }
+  .topbar a:hover { opacity: 0.8; }
+
+  /* ══════ HEADER ══════ */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .header-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    height: 72px;
+  }
+  .logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .logo-text {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .logo-text span { color: var(--accent); }
+  .logo-text small {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  /* Search */
+  .header-search {
+    flex: 1;
+    display: flex;
+    position: relative;
+  }
+  .search-cat {
+    background: var(--surface2);
+    border: none;
+    color: var(--text2);
+    padding: 0 14px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    border-radius: var(--radius) 0 0 var(--radius);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .search-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: none;
+    color: var(--text);
+    padding: 0 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+  .search-input::placeholder { color: var(--text3); }
+  .search-input:focus { border-color: var(--accent); }
+  .search-btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transition: background var(--transition);
+  }
+  .search-btn:hover { background: var(--accent2); }
+
+  /* Header right icons */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .haction {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition);
+    position: relative;
+  }
+  .haction:hover { background: var(--surface); }
+  .haction svg { width: 22px; height: 22px; stroke: var(--text2); fill: none; stroke-width: 1.8; }
+  .haction-label { font-size: 12px; color: var(--text2); line-height: 1.2; }
+  .haction-label strong { display: block; color: var(--text); font-size: 14px; }
+  .haction-badge {
+    position: absolute;
+    top: 4px; right: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ══════ NAV ══════ */
+  nav {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Category menu trigger */
+  .cat-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    padding: 13px 22px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .cat-trigger svg { width: 18px; height: 18px; fill: #fff; }
+
+  /* Main nav links */
+  .main-nav {
+    display: flex;
+    gap: 0;
+    flex: 1;
+  }
+  .main-nav > li {
+    position: relative;
+  }
+  .main-nav > li > a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+    letter-spacing: 0.03em;
+    transition: color var(--transition), background var(--transition);
+    white-space: nowrap;
+  }
+  .main-nav > li > a:hover,
+  .main-nav > li.active > a {
+    color: #fff;
+    background: var(--surface);
+  }
+  .main-nav > li > a.red { color: var(--accent); }
+  .main-nav > li > a.red:hover { color: var(--accent2); }
+
+  /* Dropdown */
+  .main-nav .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    min-width: 220px;
+    display: none;
+    z-index: 999;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
+  .main-nav > li:hover .dropdown { display: block; }
+  .dropdown li a {
+    display: block;
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    transition: color var(--transition), padding-left var(--transition);
+  }
+  .dropdown li:last-child a { border-bottom: none; }
+  .dropdown li a:hover { color: var(--accent); padding-left: 24px; }
+
+  /* Nav right */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 0 0 20px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .nav-right span { display: flex; align-items: center; gap: 6px; }
+  .nav-right svg { width: 14px; height: 14px; fill: var(--accent); }
+
+  /* ══════ CATEGORY SIDEBAR OVERLAY ══════ */
+  .cat-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 260px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    z-index: 900;
+    display: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  }
+  .cat-menu.open { display: block; }
+  .cat-menu li {
+    border-bottom: 1px solid var(--border);
+  }
+  .cat-menu li:last-child { border-bottom: none; }
+  .cat-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    font-size: 13.5px;
+    color: var(--text2);
+    transition: color var(--transition), background var(--transition);
+  }
+  .cat-menu a:hover { color: #fff; background: var(--surface2); }
+  .cat-menu a .cat-icon { margin-right: 10px; }
+  .cat-menu .cat-arrow { font-size: 11px; color: var(--text3); }
+  .nav-cat-wrap { position: relative; }
+
+  /* ══════ HERO SLIDER ══════ */
+  .hero {
+    background: var(--bg2);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 260px 1fr 260px;
+    gap: 16px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  /* Sidebar cats */
+  .side-cats {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .side-cats-header {
+    background: var(--accent);
+    padding: 14px 18px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .side-cats ul li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    transition: all var(--transition);
+  }
+  .side-cats ul li:last-child a { border-bottom: none; }
+  .side-cats ul li a:hover { color: var(--accent); background: var(--surface2); }
+  .side-cats ul li a .sicon { width: 20px; height: 20px; text-align: center; }
+
+  /* Main slider */
+  .slider-wrap {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-height: 420px;
+    background: var(--surface);
+  }
+  .slide {
+    display: none;
+    position: relative;
+    height: 420px;
+    align-items: center;
+    padding: 50px 60px;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .slide-1-bg {
+    background-image: url('https://koncarelektro.rs/wp-content/uploads/2024/05/ingco-naslovna.jpg');
+    background-position: center right;
+  }
+  .slide-2-bg {
+    background-image: url('https://koncarelektro.rs/wp-content/uploads/2022/09/SLAJDER-HUGONG-1.png');
+    background-position: center center;
+  }
+  .slide-3-bg {
+    background-image: url('https://koncarelektro.rs/wp-content/uploads/2023/05/POZADINA-ZA-NASLOVNU.jpg');
+    background-position: center center;
+  }
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(8,10,16,0.86) 0%, rgba(8,10,16,0.62) 42%, rgba(8,10,16,0.3) 72%, rgba(8,10,16,0.12) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.36) 100%);
+  }
+  .slide-content {
+    position: relative;
+    z-index: 2;
+    max-width: min(560px, 60%);
+  }
+  .slide-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+  }
+  .slide-content h2 {
+    font-family: var(--font-head);
+    font-size: clamp(34px, 4.1vw, 52px);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+  .slide-content h2 span { color: var(--accent); }
+  .slide-content p {
+    font-size: 16px;
+    color: #d5d9e6;
+    margin-bottom: 28px;
+    max-width: 400px;
+  }
+  .slide-price {
+    font-family: var(--font-head);
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .slide-price small { font-size: 16px; color: var(--text2); font-family: var(--font-body); font-weight: 400; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    border-radius: var(--radius);
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+  .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+
+  /* Slide image mockup */
+  .slide-img {
+    display: none;
+  }
+  .slide-img img {
+    height: 88%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(0.1);
+  }
+
+  /* Slider controls */
+  .slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background var(--transition);
+    font-size: 18px;
+  }
+  .slider-btn:hover { background: var(--accent); }
+  .slider-prev { left: 12px; }
+  .slider-next { right: 12px; }
+  .slider-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+  }
+  .dot.active { background: var(--accent); transform: scale(1.3); }
+
+  /* Right promo */
+  .side-promos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .promo-card {
+    flex: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    min-height: 100px;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    cursor: pointer;
+  }
+  .promo-card-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.4s ease;
+  }
+  .promo-card:hover .promo-card-bg { transform: scale(1.05); }
+  .promo-1-bg { background: linear-gradient(135deg, #1a0505 0%, #3a0a0a 100%); }
+  .promo-2-bg { background: linear-gradient(135deg, #05100f 0%, #0a2520 100%); }
+  .promo-3-bg { background: linear-gradient(135deg, #10080a 0%, #251025 100%); }
+  .promo-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 70%);
+  }
+  .promo-content {
+    position: relative;
+    z-index: 2;
+  }
+  .promo-tag {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .promo-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .promo-icon {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    color: rgba(255,255,255,0.8);
+    opacity: 0.8;
+  }
+
+  /* ══════ TRUST STRIP ══════ */
+  .trust-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .trust-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .trust-item:last-child { border-right: none; }
+  .trust-icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--accent); }
+  .trust-text strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+  .trust-text span { font-size: 12px; color: var(--text2); }
+
+  /* ══════ SECTION COMMON ══════ */
+  section { padding: 50px 0; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    position: relative;
+    padding-left: 18px;
+  }
+  .section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 5px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .see-all {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+  }
+  .see-all:hover { background: var(--accent); color: #fff; }
+
+  /* ══════ CATEGORIES GRID ══════ */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+  .cat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform var(--transition);
+  }
+  .cat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(232,35,10,0.15); }
+  .cat-card:hover::before { transform: scaleX(1); }
+  .cat-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin: 0 auto 12px;
+    border: 1px solid var(--border);
+  }
+  .cat-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    line-height: 1.3;
+  }
+  .cat-card:hover .cat-name { color: var(--text); }
+  .cat-count { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* ══════ PRODUCT GRID ══════ */
+  .prod-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .prod-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .prod-card:hover {
+    border-color: var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+  }
+  .prod-img {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--bg3);
+    display: block;
+    overflow: hidden;
+  }
+  .prod-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .prod-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-sale { background: var(--accent); color: #fff; }
+  .badge-new { background: var(--gold); color: #000; }
+  .badge-hot { background: #e85723; color: #fff; }
+  .prod-actions {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all var(--transition);
+  }
+  .prod-card:hover .prod-actions { opacity: 1; transform: translateX(0); }
+  .prod-action-btn {
+    width: 34px; height: 34px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .prod-action-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .prod-info { padding: 14px; }
+  .prod-brand {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .prod-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .prod-rating { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+  .stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+  .rating-count { font-size: 11px; color: var(--text3); }
+  .prod-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .price-new {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .price-old {
+    font-size: 13px;
+    color: var(--text3);
+    text-decoration: line-through;
+  }
+  .prod-cart {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px;
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-top: 12px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .prod-cart:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ══════ BANNER SECTION ══════ */
+  .banners { padding: 10px 0 40px; }
+  .banners-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .banner-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    padding: 30px;
+    cursor: pointer;
+  }
+  .banner-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.5s ease;
+  }
+  .banner-card:hover .banner-bg { transform: scale(1.06); }
+  .b1-bg { background: linear-gradient(135deg, #1a0505 0%, #2a0f0f 40%, #400d0d 100%); }
+  .b2-bg { background: linear-gradient(135deg, #050d1a 0%, #0a1530 40%, #0f2040 100%); }
+  .b3-bg { background: linear-gradient(135deg, #050f0f 0%, #0a2020 40%, #0f2a20 100%); }
+  .banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+  }
+  .banner-content { position: relative; z-index: 2; }
+  .banner-tag { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .banner-title {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .banner-title span { color: var(--accent); }
+  .banner-sub { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+  .banner-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    opacity: 0.8;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ══════ TWO-COL: Featured + Brands ══════ */
+  .feat-brand {
+    padding: 0 0 50px;
+  }
+  .feat-brand-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* Brands panel */
+  .brands-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .brands-panel-header {
+    background: var(--bg3);
+    padding: 14px 18px;
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-list li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text2);
+    transition: all var(--transition);
+  }
+  .brand-list li:last-child a { border-bottom: none; }
+  .brand-list li a:hover { color: var(--accent); background: var(--surface2); }
+  .brand-badge {
+    font-size: 10px;
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 20px;
+    color: var(--text3);
+  }
+
+  /* ══════ DEALS COUNTDOWN ══════ */
+  .deals-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0;
+    margin: 0 0 50px;
+  }
+  .deals-inner {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .deal-info { }
+  .deal-label {
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .deal-title {
+    font-family: var(--font-head);
+    font-size: 38px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .countdown {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .countdown-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    text-align: center;
+    min-width: 60px;
+    border-radius: var(--radius);
+  }
+  .countdown-num {
+    font-family: var(--font-head);
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .countdown-label { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-top: 3px; }
+  .countdown-sep { font-size: 24px; font-weight: 900; color: var(--accent); align-self: center; }
+  .deals-products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .deal-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .deal-card:hover { border-color: var(--accent); box-shadow: 0 6px 20px rgba(232,35,10,0.2); }
+  .deal-img {
+    aspect-ratio: 1;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .deal-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .deal-discount {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  .deal-info-box { padding: 12px; }
+  .deal-name { font-size: 12px; color: var(--text2); margin-bottom: 8px; line-height: 1.3; }
+  .deal-price-row { display: flex; gap: 6px; align-items: baseline; }
+  .deal-price-new { font-family: var(--font-head); font-size: 18px; font-weight: 800; color: var(--accent); }
+  .deal-price-old { font-size: 11px; color: var(--text3); text-decoration: line-through; }
+  .deal-progress { margin-top: 8px; }
+  .deal-progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .deal-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+  .deal-progress-text { font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+  /* ══════ TABS (Novo / Akcija / Preporučeno) ══════ */
+  .tab-section { }
+  .tab-buttons {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    padding: 12px 24px;
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all var(--transition);
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ══════ NEWSLETTER ══════ */
+  .newsletter {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 50px 0;
+  }
+  .newsletter-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .newsletter-text h3 {
+    font-family: var(--font-head);
+    font-size: 34px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .newsletter-text h3 span { color: var(--accent); }
+  .newsletter-text p { font-size: 14px; color: var(--text2); }
+  .newsletter-form { display: flex; gap: 0; }
+  .newsletter-input {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    border-radius: var(--radius) 0 0 var(--radius);
+    transition: border-color var(--transition);
+  }
+  .newsletter-input::placeholder { color: var(--text3); }
+  .newsletter-input:focus { border-color: var(--accent); }
+  .newsletter-btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    padding: 14px 28px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transition: background var(--transition);
+  }
+  .newsletter-btn:hover { background: var(--accent2); }
+
+  /* ══════ FOOTER ══════ */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 50px 0 0;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-about .logo { margin-bottom: 16px; }
+  .icon-svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: middle;
+  }
+  .search-btn .icon-svg { width: 16px; height: 16px; color: #fff; }
+  .cat-icon .icon-svg, .sicon.icon-svg { width: 16px; height: 16px; color: var(--text2); }
+  .cat-menu a:hover .cat-icon .icon-svg,
+  .side-cats ul li a:hover .sicon.icon-svg { color: #fff; }
+  .footer-about p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+  .social-links { display: flex; gap: 10px; }
+  .social-btn {
+    width: 36px; height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .social-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .footer-col h4 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  .footer-col ul li a {
+    display: block;
+    font-size: 13px;
+    color: var(--text2);
+    padding: 5px 0;
+    transition: color var(--transition), padding-left var(--transition);
+  }
+  .footer-col ul li a:hover { color: var(--accent); padding-left: 6px; }
+  .footer-bottom {
+    padding: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .payment-icons { display: flex; gap: 8px; }
+  .pay-icon {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+  }
+
+  /* ══════ MOBILE MENU ══════ */
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  /* ══════ ANIMATIONS ══════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.5s ease forwards; }
+
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+
+  /* ══════ SCROLLBAR ══════ */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ══════ RESPONSIVE ══════ */
+  @media (max-width: 1100px) {
+    .hero-inner { grid-template-columns: 220px 1fr; }
+    .side-promos { display: none; }
+    .cat-grid { grid-template-columns: repeat(4, 1fr); }
+    .prod-grid { grid-template-columns: repeat(4, 1fr); }
+    .feat-brand-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .topbar-right { display: none; }
+    .search-cat { display: none; }
+    .header-main { gap: 12px; }
+    .main-nav { display: none; }
+    .hero-inner { grid-template-columns: 1fr; }
+    .side-cats { display: none; }
+    .cat-grid { grid-template-columns: repeat(3, 1fr); }
+    .prod-grid { grid-template-columns: repeat(2, 1fr); }
+    .trust-inner { grid-template-columns: repeat(2, 1fr); }
+    .banners-grid { grid-template-columns: 1fr; }
+    .deals-inner { grid-template-columns: 1fr; }
+    .deals-products { grid-template-columns: repeat(2, 1fr); }
+    .newsletter-inner { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .mobile-menu-btn { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <span>+381 (0)61 65 444 90</span>
+      <span>kontakt@koncarelektro.com</span>
+      <span>Pon-Pet: 08:00-17:00</span>
+    </div>
+    <div class="topbar-right">
+      <a href="#">Praćenje porudžbine</a>
+      <a href="#">Pomoć</a>
+      <a href="#">Blog</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-main">
+    <div class="logo">
+      <div class="logo-text">KONCAR<span>ELEKTRO</span><small>Profesionalni alat i masine</small></div>
+    </div>
+
+    <div class="header-search">
+      <select class="search-cat">
+        <option>Sve kategorije</option>
+        <option>Električni alat</option>
+        <option>Ručni alat</option>
+        <option>Aparati za varenje</option>
+        <option>Merni instrumenti</option>
+        <option>Zaštitna oprema</option>
+      </select>
+      <input type="text" class="search-input" placeholder="Pretražite alat, brendove, kategorije…">
+      <button class="search-btn"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="16.65" y1="16.65" x2="21" y2="21"></line></svg></button>
+    </div>
+
+    <div class="header-actions">
+      <div class="haction" onclick="alert('Prijavi se')">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="haction-label">
+          <span>Nalog</span>
+          <strong>Prijavi se</strong>
+        </div>
+      </div>
+      <div class="haction" style="position:relative" onclick="alert('Lista želja')">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <div class="haction-badge">0</div>
+      </div>
+      <div class="haction" style="position:relative" onclick="alert('Korpa je prazna')">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <div class="haction-label">
+          <span>Korpa</span>
+          <strong>0 din</strong>
+        </div>
+        <div class="haction-badge">0</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner" style="position:relative">
+    <div class="nav-cat-wrap">
+      <div class="cat-trigger" onclick="toggleCatMenu()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="2"/><rect x="3" y="11" width="18" height="2"/><rect x="3" y="17" width="18" height="2"/></svg>
+        SVE KATEGORIJE
+      </div>
+      <ul class="cat-menu" id="catMenu">
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 6l-8 10h5l-1 8 8-10h-5z"></path></svg></span> Elektricni alat <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 1 0 1.4l-7 7a1 1 0 0 1-1.4 0L3 11.4a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.4 0z"></path><path d="M16 8l4 4"></path></svg></span> Rucni alat i pribor <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2s2 3 2 5a2 2 0 1 1-4 0c0-2 2-5 2-5z"></path><path d="M7 14c0-3 2-5 5-5s5 2 5 5a5 5 0 0 1-10 0z"></path></svg></span> Aparati za varenje <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span> Merni instrumenti <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg></span> Zastitna oprema <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="2"></rect><line x1="22" y1="10" x2="22" y2="14"></line></svg></span> Akumulatorski alat <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 16h8"></path><path d="M4 12h10"></path><path d="M4 8h14"></path></svg></span> Pneumatski alat <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 21l6-6"></path><path d="M9 15l8-8 4 4-8 8z"></path></svg></span> Drvoobradjivanje <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"></path></svg></span> Masine za obradu <span class="cat-arrow">›</span></a></li>
+        <li><a href="#"><span class="cat-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"></circle><circle cx="17" cy="20" r="1"></circle><path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h9.5a1 1 0 0 0 1-.8L21 7H7"></path></svg></span> Potrosni materijal <span class="cat-arrow">›</span></a></li>
+      </ul>
+    </div>
+
+    <ul class="main-nav">
+      <li class="active"><a href="#">Početna</a></li>
+      <li>
+        <a href="#">Električni alat</a>
+        <ul class="dropdown">
+          <li><a href="#">Bušilice</a></li>
+          <li><a href="#">Brusilice</a></li>
+          <li><a href="#">Testere i Cirkulari</a></li>
+          <li><a href="#">Šlajferice</a></li>
+          <li><a href="#">Usisivači</a></li>
+          <li><a href="#">Polirke</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#">Ručni alat</a>
+        <ul class="dropdown">
+          <li><a href="#">Setovi alata i ključeva</a></li>
+          <li><a href="#">Klešta</a></li>
+          <li><a href="#">Čekići</a></li>
+          <li><a href="#">Stege</a></li>
+          <li><a href="#">Testere</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#">Varenje</a>
+        <ul class="dropdown">
+          <li><a href="#">Inverterski aparati</a></li>
+          <li><a href="#">TIG aparati</a></li>
+          <li><a href="#">MIG/MAG aparati</a></li>
+          <li><a href="#">Plazma sečenje</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Brendovi</a></li>
+      <li><a href="#" class="red">Akcija</a></li>
+    </ul>
+
+    <div class="nav-right" style="margin-left:auto">
+      <span><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:#e8230a;stroke-width:2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Besplatna dostava od 10.000 din</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+
+    <!-- Left category sidebar -->
+    <div class="side-cats">
+      <div class="side-cats-header">Kategorije</div>
+      <ul>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M14 6l-8 10h5l-1 8 8-10h-5z"></path></svg> Elektricni alat</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 1 0 1.4l-7 7a1 1 0 0 1-1.4 0L3 11.4a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.4 0z"></path><path d="M16 8l4 4"></path></svg> Rucni alat i pribor</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M12 2s2 3 2 5a2 2 0 1 1-4 0c0-2 2-5 2-5z"></path><path d="M7 14c0-3 2-5 5-5s5 2 5 5a5 5 0 0 1-10 0z"></path></svg> Aparati za varenje</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="2"></rect><line x1="22" y1="10" x2="22" y2="14"></line></svg> Akumulatorski alat</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M4 16h8"></path><path d="M4 12h10"></path><path d="M4 8h14"></path></svg> Pneumatski alat</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg> Merni instrumenti</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg> Zastitna oprema</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M3 21l6-6"></path><path d="M9 15l8-8 4 4-8 8z"></path></svg> Alat za drvo</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8"></path></svg> Masine za obradu</a></li>
+        <li><a href="#"><svg class="sicon icon-svg" viewBox="0 0 24 24"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2z"></path></svg> Rasveta i el. oprema</a></li>
+      </ul>
+    </div>
+
+    <!-- Main slider -->
+    <div class="slider-wrap">
+      <!-- Slide 1 -->
+      <div class="slide active">
+        <div class="slide-bg slide-1-bg"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-tag">Novo u ponudi</div>
+          <h2>Profesionalne<br><span>Bušilice</span><br>Bosch & Makita</h2>
+          <p>Snažne, pouzdane i precizne — za profesionalce i zahtevne DIY projekte.</p>
+          <div class="slide-price">od 8.500 din <small>sa PDV-om</small></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary">Kupi odmah →</button>
+            <button class="btn btn-outline">Pogledaj sve</button>
+          </div>
+        </div>
+        <div class="slide-img"><img src="https://koncarelektro.rs/wp-content/uploads/2021/06/gbh-240-f-300x300.png" alt=""></div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="slide">
+        <div class="slide-bg slide-2-bg"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-tag">Superakcija</div>
+          <h2>Inverterski<br><span>Aparati</span><br>za varenje</h2>
+          <p>Lincoln Electric, ESAB i Telwin — top brendovi po akcijskim cenama.</p>
+          <div class="slide-price">od 22.000 din <small>sa PDV-om</small></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary">Akcija →</button>
+            <button class="btn btn-outline">Saznaj više</button>
+          </div>
+        </div>
+        <div class="slide-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/VWM-205-COMBO-1-300x300.jpg" alt=""></div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="slide">
+        <div class="slide-bg slide-3-bg"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-tag">Kompletni setovi</div>
+          <h2>Setovi<br><span>Ručnog</span><br>Alata</h2>
+          <p>Stanley, Knipex, Gedore — sve što vam treba u jednom setu.</p>
+          <div class="slide-price">od 4.200 din <small>sa PDV-om</small></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary">Pregledaj setove →</button>
+            <button class="btn btn-outline">Više info</button>
+          </div>
+        </div>
+        <div class="slide-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/HKSPAR1122-1-300x300.jpg" alt=""></div>
+      </div>
+
+      <button class="slider-btn slider-prev" onclick="changeSlide(-1)">‹</button>
+      <button class="slider-btn slider-next" onclick="changeSlide(1)">›</button>
+      <div class="slider-dots">
+        <div class="dot active" onclick="goSlide(0)"></div>
+        <div class="dot" onclick="goSlide(1)"></div>
+        <div class="dot" onclick="goSlide(2)"></div>
+      </div>
+    </div>
+
+    <!-- Right promos -->
+    <div class="side-promos">
+      <div class="promo-card">
+        <div class="promo-card-bg promo-1-bg"></div>
+        <div class="promo-card-overlay"></div>
+        <div class="promo-content">
+          <div class="promo-tag">Do -30%</div>
+          <div class="promo-title">Brusilice<br>Metabo</div>
+        </div>
+        <div class="promo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="2.5"></circle></svg></div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-card-bg promo-2-bg"></div>
+        <div class="promo-card-overlay"></div>
+        <div class="promo-content">
+          <div class="promo-tag">Novo</div>
+          <div class="promo-title">Akumulatorski<br>Alat 2025</div>
+        </div>
+        <div class="promo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="2"></rect><line x1="22" y1="10" x2="22" y2="14"></line></svg></div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-card-bg promo-3-bg"></div>
+        <div class="promo-card-overlay"></div>
+        <div class="promo-content">
+          <div class="promo-tag">Povoljno</div>
+          <div class="promo-title">Zaštitna<br>Oprema</div>
+        </div>
+        <div class="promo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner container">
+    <div class="trust-item">
+      <div class="trust-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><path d="M16 8h4l3 3v5h-7z"></path><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+      <div class="trust-text">
+        <strong>Besplatna dostava</strong>
+        <span>Za porudžbine iznad 10.000 din</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.5 9A9 9 0 0 1 18 5l5 5"></path><path d="M20.5 15A9 9 0 0 1 6 19l-5-5"></path></svg></div>
+      <div class="trust-text">
+        <strong>30 dana povrat</strong>
+        <span>Bez pitanja, bez problema</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg></div>
+      <div class="trust-text">
+        <strong>Garancija 2 godine</strong>
+        <span>Na sve proizvode iz naše ponude</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path></svg></div>
+      <div class="trust-text">
+        <strong>Stručna podrška</strong>
+        <span>Pon–Pet 08:00–17:00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title">Kategorije</h2>
+      <a href="#" class="see-all">Sve kategorije →</a>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2021/06/gbh-240-f-300x300.png" alt="Elektricni alat">
+        <div class="cat-name">Električni alat</div>
+        <div class="cat-count">420+ proizvoda</div>
+      </div>
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2026/04/HKSPAR1122-1-300x300.jpg" alt="Rucni alat">
+        <div class="cat-name">Ručni alat</div>
+        <div class="cat-count">380+ proizvoda</div>
+      </div>
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2026/04/VWM-205-COMBO-1-300x300.jpg" alt="Aparati za varenje">
+        <div class="cat-name">Aparati za varenje</div>
+        <div class="cat-count">95+ proizvoda</div>
+      </div>
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2026/04/COSLI251001E-1-300x300.jpg" alt="Akumulatorski alat">
+        <div class="cat-name">Akumulatorski alat</div>
+        <div class="cat-count">180+ proizvoda</div>
+      </div>
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2026/04/AGM-Vazdusni-uljni-kompresor-1-300x300.jpg" alt="Pneumatski alat">
+        <div class="cat-name">Pneumatski alat</div>
+        <div class="cat-count">65+ proizvoda</div>
+      </div>
+      <div class="cat-card">
+        <img class="cat-image" src="https://koncarelektro.rs/wp-content/uploads/2026/04/HLDD07085-1-300x300.jpg" alt="Merni instrumenti">
+        <div class="cat-name">Merini instrumenti</div>
+        <div class="cat-count">110+ proizvoda</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEALS COUNTDOWN -->
+<div class="deals-section">
+  <div class="container">
+    <div class="deals-inner">
+      <div class="deal-info">
+        <div class="deal-label">Ogranicena ponuda</div>
+        <div class="deal-title">Akcija<br>Dana!</div>
+        <div class="countdown">
+          <div class="countdown-block">
+            <div class="countdown-num" id="cd-h">08</div>
+            <div class="countdown-label">Sati</div>
+          </div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-block">
+            <div class="countdown-num" id="cd-m">45</div>
+            <div class="countdown-label">Min</div>
+          </div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-block">
+            <div class="countdown-num" id="cd-s">30</div>
+            <div class="countdown-label">Sek</div>
+          </div>
+        </div>
+        <button class="btn btn-primary">Pogledaj sve akcije →</button>
+      </div>
+      <div class="deals-products">
+        <div class="deal-card">
+          <div class="deal-img"><img src="https://koncarelektro.rs/wp-content/uploads/2021/06/gbh-240-f-300x300.png" alt="Bosch busilica">
+            <div class="deal-discount">-25%</div>
+          </div>
+          <div class="deal-info-box">
+            <div class="deal-name">Bosch GSB 13 RE Bušilica 600W</div>
+            <div class="deal-price-row">
+              <div class="deal-price-new">9.990 din</div>
+              <div class="deal-price-old">13.200 din</div>
+            </div>
+            <div class="deal-progress">
+              <div class="deal-progress-bar"><div class="deal-progress-fill" style="width:72%"></div></div>
+              <div class="deal-progress-text">Prodato: 72%</div>
+            </div>
+          </div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/VWM-205-COMBO-1-300x300.jpg" alt="Inverterski aparat">
+            <div class="deal-discount">-30%</div>
+          </div>
+          <div class="deal-info-box">
+            <div class="deal-name">Telwin Nordika 150 Inverter za var.</div>
+            <div class="deal-price-row">
+              <div class="deal-price-new">24.500 din</div>
+              <div class="deal-price-old">35.000 din</div>
+            </div>
+            <div class="deal-progress">
+              <div class="deal-progress-bar"><div class="deal-progress-fill" style="width:55%"></div></div>
+              <div class="deal-progress-text">Prodato: 55%</div>
+            </div>
+          </div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-img"><img src="https://koncarelektro.rs/wp-content/uploads/2020/12/GA9020-00-300x300.png" alt="Kutna brusilica">
+            <div class="deal-discount">-20%</div>
+          </div>
+          <div class="deal-info-box">
+            <div class="deal-name">Metabo WBA 850 Kutna brusilica</div>
+            <div class="deal-price-row">
+              <div class="deal-price-new">7.200 din</div>
+              <div class="deal-price-old">9.000 din</div>
+            </div>
+            <div class="deal-progress">
+              <div class="deal-progress-bar"><div class="deal-progress-fill" style="width:88%"></div></div>
+              <div class="deal-progress-text">Prodato: 88%</div>
+            </div>
+          </div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/COS23091-1-300x300.jpg" alt="Set klesta">
+            <div class="deal-discount">-15%</div>
+          </div>
+          <div class="deal-info-box">
+            <div class="deal-name">Knipex Set klešta 4 kom profesionalni</div>
+            <div class="deal-price-row">
+              <div class="deal-price-new">8.500 din</div>
+              <div class="deal-price-old">10.000 din</div>
+            </div>
+            <div class="deal-progress">
+              <div class="deal-progress-bar"><div class="deal-progress-fill" style="width:40%"></div></div>
+              <div class="deal-progress-text">Prodato: 40%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BANNERS -->
+<div class="banners">
+  <div class="container">
+    <div class="banners-grid">
+      <div class="banner-card">
+        <div class="banner-bg b1-bg"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-tag">Specijalna ponuda</div>
+          <div class="banner-title">Brusilice<br><span>do -30%</span></div>
+          <div class="banner-sub">Bosch, Metabo, Makita</div>
+          <button class="btn btn-primary" style="font-size:12px;padding:9px 18px">Pogledaj →</button>
+        </div>
+        <div class="banner-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="2.5"></circle></svg></div>
+      </div>
+      <div class="banner-card">
+        <div class="banner-bg b2-bg"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-tag">Profesionalna oprema</div>
+          <div class="banner-title">TIG i MIG<br><span>Aparati</span></div>
+          <div class="banner-sub">Lincoln Electric, ESAB, EWM</div>
+          <button class="btn btn-primary" style="font-size:12px;padding:9px 18px">Pogledaj →</button>
+        </div>
+        <div class="banner-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2s2 3 2 5a2 2 0 1 1-4 0c0-2 2-5 2-5z"></path><path d="M7 14c0-3 2-5 5-5s5 2 5 5a5 5 0 0 1-10 0z"></path></svg></div>
+      </div>
+      <div class="banner-card">
+        <div class="banner-bg b3-bg"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-tag">Bezbednost na radu</div>
+          <div class="banner-title">Zaštitna<br><span>Oprema</span></div>
+          <div class="banner-sub">Uvek na zalihama</div>
+          <button class="btn btn-primary" style="font-size:12px;padding:9px 18px">Pogledaj →</button>
+        </div>
+        <div class="banner-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path></svg></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS TABS -->
+<section class="tab-section" style="padding-top:0">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title">Naša ponuda</h2>
+      <a href="#" class="see-all">Sve →</a>
+    </div>
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab(event,'novo')">Novo u ponudi</button>
+      <button class="tab-btn" onclick="switchTab(event,'akcija')">Akcija</button>
+      <button class="tab-btn" onclick="switchTab(event,'popularno')">Najpopularnije</button>
+    </div>
+
+    <div class="tab-content active" id="tab-novo">
+      <div class="prod-grid">
+        <!-- Product 1 -->
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2021/06/gbh-240-f-300x300.png" alt="Busilica">
+            <div class="prod-badges"><span class="badge badge-new">Novo</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn" title="Dodaj u listu želja">♡</div>
+              <div class="prod-action-btn" title="Brzi pregled">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Bosch</div>
+            <div class="prod-name">GSB 21-2 RCT Čekić bušilica 1100W</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(24)</span></div>
+            <div class="prod-price"><span class="price-new">18.990 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2020/12/GA9020-00-300x300.png" alt="Brusilica">
+            <div class="prod-badges"><span class="badge badge-new">Novo</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Metabo</div>
+            <div class="prod-name">WB 18 LTX BL 115 Akum. brusilica 18V</div>
+            <div class="prod-rating"><span class="stars">★★★★☆</span><span class="rating-count">(18)</span></div>
+            <div class="prod-price"><span class="price-new">21.500 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/VWM-205-COMBO-1-300x300.jpg" alt="Aparat za varenje">
+            <div class="prod-badges"><span class="badge badge-hot">Popularno</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Telwin</div>
+            <div class="prod-name">Nordika 180 Inverterski aparat za varenje</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(41)</span></div>
+            <div class="prod-price"><span class="price-new">28.900 din</span><span class="price-old">34.000 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <!-- Product 4 -->
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/HKSPAR1122-1-300x300.jpg" alt="Rucni alat set">
+            <div class="prod-badges"><span class="badge badge-sale">-15%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Stanley</div>
+            <div class="prod-name">FMHT0-62282 Set ručnog alata 85 kom</div>
+            <div class="prod-rating"><span class="stars">★★★★☆</span><span class="rating-count">(33)</span></div>
+            <div class="prod-price"><span class="price-new">12.700 din</span><span class="price-old">14.900 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <!-- Product 5 -->
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/COSLI251001E-1-300x300.jpg" alt="Akumulatorski set">
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Makita</div>
+            <div class="prod-name">DHP484Z Akumulatorska bušilica 18V</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(57)</span></div>
+            <div class="prod-price"><span class="price-new">16.200 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-akcija">
+      <div class="prod-grid">
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/03/CSLI16523E-1-300x300.jpg" alt="Cirkularna testera">
+            <div class="prod-badges"><span class="badge badge-sale">-22%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Makita</div>
+            <div class="prod-name">5704RK Kružna testera 1200W 190mm</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(29)</span></div>
+            <div class="prod-price"><span class="price-new">14.900 din</span><span class="price-old">19.100 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/HLDD07085-1-300x300.jpg" alt="Laserski daljinomer">
+            <div class="prod-badges"><span class="badge badge-sale">-18%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Bosch</div>
+            <div class="prod-name">GLM 50 C Laserski daljinomer 50m</div>
+            <div class="prod-rating"><span class="stars">★★★★☆</span><span class="rating-count">(15)</span></div>
+            <div class="prod-price"><span class="price-new">9.800 din</span><span class="price-old">11.900 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2021/06/HPWR25008-1-300x300.jpg" alt="Perac pod pritiskom">
+            <div class="prod-badges"><span class="badge badge-sale">-25%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Karcher</div>
+            <div class="prod-name">WD 3 P Premium Mokro-suvi usisivač 17L</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(44)</span></div>
+            <div class="prod-price"><span class="price-new">11.200 din</span><span class="price-old">14.900 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/CDBLI20358-1-300x300.jpg" alt="Cekic busilica">
+            <div class="prod-badges"><span class="badge badge-sale">-20%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Dewalt</div>
+            <div class="prod-name">D25143K Kombiovani čekić SDS+ 3J 800W</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(37)</span></div>
+            <div class="prod-price"><span class="price-new">23.900 din</span><span class="price-old">29.800 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/SPG4506E-1-1-300x300.jpg" alt="Elektricni alat">
+            <div class="prod-badges"><span class="badge badge-sale">-30%</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Hitachi</div>
+            <div class="prod-name">C 7ST Kružna testera 1800W 190mm</div>
+            <div class="prod-rating"><span class="stars">★★★★☆</span><span class="rating-count">(22)</span></div>
+            <div class="prod-price"><span class="price-new">15.400 din</span><span class="price-old">22.000 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-popularno">
+      <div class="prod-grid">
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/COS23091-1-300x300.jpg" alt="Klesta">
+            <div class="prod-badges"><span class="badge badge-hot">Top seller</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Knipex</div>
+            <div class="prod-name">87 01 250 Cobra klešta za vodoinstalacije</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(112)</span></div>
+            <div class="prod-price"><span class="price-new">3.900 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/WCB1101-1-300x300.jpg" alt="Set cetki">
+            <div class="prod-badges"><span class="badge badge-hot">Top seller</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Bosch</div>
+            <div class="prod-name">GSB 13 RE Udarna bušilica 600W</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(203)</span></div>
+            <div class="prod-price"><span class="price-new">8.500 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2020/12/GA9020-00-300x300.png" alt="Kutna brusilica">
+            <div class="prod-badges"><span class="badge badge-hot">Top seller</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Bosch</div>
+            <div class="prod-name">GWS 7-115 Kutna brusilica 720W 115mm</div>
+            <div class="prod-rating"><span class="stars">★★★★☆</span><span class="rating-count">(88)</span></div>
+            <div class="prod-price"><span class="price-new">5.990 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/HKSPAR1122-1-300x300.jpg" alt="Set kljuceva">
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">Gedore</div>
+            <div class="prod-name">1100 CT40 Kombinovani set ključeva 40 kom</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(67)</span></div>
+            <div class="prod-price"><span class="price-new">19.800 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/VWM-205-COMBO-1-300x300.jpg" alt="Inverter za varenje">
+            <div class="prod-badges"><span class="badge badge-hot">Top seller</span></div>
+            <div class="prod-actions">
+              <div class="prod-action-btn">♡</div>
+              <div class="prod-action-btn">👁</div>
+            </div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">ESAB</div>
+            <div class="prod-name">Buddy Arc 180 Profesionalni inverter 180A</div>
+            <div class="prod-rating"><span class="stars">★★★★★</span><span class="rating-count">(54)</span></div>
+            <div class="prod-price"><span class="price-new">31.500 din</span></div>
+            <button class="prod-cart">🛒 Dodaj u korpu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED + BRANDS -->
+<div class="feat-brand">
+  <div class="container">
+    <div class="feat-brand-grid">
+      <!-- Featured products list -->
+      <div>
+        <div class="section-head">
+          <h2 class="section-title">Izdvojeni proizvodi</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="prod-card" style="display:flex;flex-direction:row;padding:0">
+            <div class="prod-img" style="width:100px;flex-shrink:0"><img src="https://koncarelektro.rs/wp-content/uploads/2021/03/604040500-1-300x300.jpg" alt="Elektricne makaze"></div>
+            <div class="prod-info" style="flex:1">
+              <div class="prod-brand">Trumpf</div>
+              <div class="prod-name">TruTool C160 Električne makaze za lim</div>
+              <div class="prod-price"><span class="price-new">45.000 din</span></div>
+            </div>
+          </div>
+          <div class="prod-card" style="display:flex;flex-direction:row;padding:0">
+            <div class="prod-img" style="width:100px;flex-shrink:0"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/AGM-Vazdusni-uljni-kompresor-1-300x300.jpg" alt="Kompresor"></div>
+            <div class="prod-info" style="flex:1">
+              <div class="prod-brand">Fini</div>
+              <div class="prod-name">Quark-Up 270-2.2M Kompresor 270L</div>
+              <div class="prod-price"><span class="price-new">89.000 din</span></div>
+            </div>
+          </div>
+          <div class="prod-card" style="display:flex;flex-direction:row;padding:0">
+            <div class="prod-img" style="width:100px;flex-shrink:0"><img src="https://koncarelektro.rs/wp-content/uploads/2026/03/CSLI16523E-1-300x300.jpg" alt="Testera"></div>
+            <div class="prod-info" style="flex:1">
+              <div class="prod-brand">Festool</div>
+              <div class="prod-name">TS 55 REQ-Plus F Potapajuća testera</div>
+              <div class="prod-price"><span class="price-new">62.900 din</span></div>
+            </div>
+          </div>
+          <div class="prod-card" style="display:flex;flex-direction:row;padding:0">
+            <div class="prod-img" style="width:100px;flex-shrink:0"><img src="https://koncarelektro.rs/wp-content/uploads/2026/04/CDBLI20358-1-300x300.jpg" alt="Cekic busilica"></div>
+            <div class="prod-info" style="flex:1">
+              <div class="prod-brand">Hilti</div>
+              <div class="prod-name">TE 60-A36 Akumulatorski čekić SDS-max</div>
+              <div class="prod-price"><span class="price-new">128.000 din</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brands panel -->
+      <div class="brands-panel">
+        <div class="brands-panel-header">🏭 Brendovi u ponudi</div>
+        <ul class="brand-list">
+          <li><a href="#">Bosch <span class="brand-badge">312 prod.</span></a></li>
+          <li><a href="#">Makita <span class="brand-badge">248 prod.</span></a></li>
+          <li><a href="#">Metabo <span class="brand-badge">189 prod.</span></a></li>
+          <li><a href="#">Dewalt <span class="brand-badge">145 prod.</span></a></li>
+          <li><a href="#">Stanley <span class="brand-badge">134 prod.</span></a></li>
+          <li><a href="#">Knipex <span class="brand-badge">98 prod.</span></a></li>
+          <li><a href="#">ESAB <span class="brand-badge">76 prod.</span></a></li>
+          <li><a href="#">Gedore <span class="brand-badge">72 prod.</span></a></li>
+          <li><a href="#">Lincoln Electric <span class="brand-badge">54 prod.</span></a></li>
+          <li><a href="#">Telwin <span class="brand-badge">48 prod.</span></a></li>
+          <li><a href="#">Festool <span class="brand-badge">38 prod.</span></a></li>
+          <li><a href="#">Hilti <span class="brand-badge">29 prod.</span></a></li>
+          <li><a href="#" style="color:var(--accent);font-weight:700">→ Svi brendovi</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div class="container">
+    <div class="newsletter-inner">
+      <div class="newsletter-text">
+        <h3>Prijavi se na<br><span>Newsletter</span></h3>
+        <p>Budi prvi obavešten o akcijama, novim proizvodima i specijalnim ponudama.</p>
+      </div>
+      <div>
+        <div class="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Unesite vašu email adresu…">
+          <button class="newsletter-btn">Prijavi se →</button>
+        </div>
+        <p style="font-size:12px;color:var(--text3);margin-top:10px">Štitimo vašu privatnost. Bez spama, bez deljenja podataka.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="logo">KONČAR<span>ELEKTRO</span><small>Profesionalni alat i mašine</small></div>
+        <p>Više od 20 godina iskustva u prodaji profesionalnog alata i mašina. Zastupnici vodećih svetskih brendova za srpsko tržište.</p>
+        <div class="social-links">
+          <div class="social-btn">f</div>
+          <div class="social-btn">in</div>
+          <div class="social-btn">yt</div>
+          <div class="social-btn">ig</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Kategorije</h4>
+        <ul>
+          <li><a href="#">Električni alat</a></li>
+          <li><a href="#">Ručni alat i pribor</a></li>
+          <li><a href="#">Aparati za varenje</a></li>
+          <li><a href="#">Akumulatorski alat</a></li>
+          <li><a href="#">Pneumatski alat</a></li>
+          <li><a href="#">Zaštitna oprema</a></li>
+          <li><a href="#">Merini instrumenti</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Informacije</h4>
+        <ul>
+          <li><a href="#">O nama</a></li>
+          <li><a href="#">Dostava i plaćanje</a></li>
+          <li><a href="#">Reklamacije i povrat</a></li>
+          <li><a href="#">Garancija</a></li>
+          <li><a href="#">Politika privatnosti</a></li>
+          <li><a href="#">Uslovi korišćenja</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="#">+381 (0)61 65 444 90</a></li>
+          <li><a href="#">kontakt@koncarelektro.com</a></li>
+          <li><a href="#">Stanoja Glavasa br. 4, Leskovac</a></li>
+          <li><a href="#">Pon-Pet 08:00-17:00</a></li>
+        </ul>
+        <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border)">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Radno vreme</div>
+          <div style="font-size:13px;color:var(--text2)">Ponedeljak – Petak<br><strong style="color:var(--text)">08:00 – 17:00</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Končar Elektro. Sva prava zadržana.</span>
+      <div class="payment-icons">
+        <span class="pay-icon">VISA</span>
+        <span class="pay-icon">MC</span>
+        <span class="pay-icon">Dina</span>
+        <span class="pay-icon">IPS</span>
+        <span class="pay-icon">PayPal</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Slider
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+
+  function showSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = (n + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+  function changeSlide(dir) { showSlide(currentSlide + dir); }
+  function goSlide(n) { showSlide(n); }
+  setInterval(() => changeSlide(1), 5000);
+
+  // ── Category menu
+  function toggleCatMenu() {
+    document.getElementById('catMenu').classList.toggle('open');
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-cat-wrap')) {
+      document.getElementById('catMenu').classList.remove('open');
+    }
+  });
+
+  // ── Tabs
+  function switchTab(e, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // ── Countdown
+  function startCountdown() {
+    let total = 8 * 3600 + 45 * 60 + 30;
+    setInterval(() => {
+      if (total <= 0) return;
+      total--;
+      const h = Math.floor(total / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+      document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+      document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+    }, 1000);
+  }
+  startCountdown();
+
+  // ── Cart button feedback
+  document.querySelectorAll('.prod-cart').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Dodato!';
+      btn.style.background = '#2a7a2a';
+      btn.style.borderColor = '#2a7a2a';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.borderColor = '';
+      }, 1500);
+    });
+  });
+</script>
+</body>
+</html>
+

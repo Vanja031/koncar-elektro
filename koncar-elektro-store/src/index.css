@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 45% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 45% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 45% 15%;
+
+    /* Navy = brand primary */
+    --primary: 220 75% 22%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 220 45% 15%;
+
+    --muted: 210 18% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Yellow = CTA / accent */
+    --accent: 45 100% 51%;
+    --accent-foreground: 220 45% 12%;
+
+    --destructive: 0 84% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 16% 88%;
+    --input: 210 16% 92%;
+    --ring: 45 100% 51%;
+
+    --surface-1: 0 0% 100%;
+    --surface-2: 210 20% 97%;
+    --surface-3: 210 16% 92%;
+
+    --navy: 220 75% 22%;
+    --navy-dark: 220 80% 14%;
+    --yellow: 45 100% 51%;
+    --viber: #6F3FAA;
+
+    --radius: 0.375rem;
+
+    --shadow-card: 0 2px 12px -2px hsl(220 45% 15% / 0.08);
+    --shadow-elevated: 0 8px 30px -4px hsl(220 45% 15% / 0.12);
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .section-heading {
+    @apply title-accent-line font-display font-bold text-xl md:text-2xl uppercase tracking-wide text-primary;
+  }
+  .section-heading-light {
+    @apply title-accent-line font-display font-bold text-base uppercase tracking-wide text-white mb-5;
+  }
+  .title-accent-line {
+    @apply relative pb-3;
+  }
+  .title-accent-line::after {
+    content: '';
+    @apply absolute left-0 bottom-0 block h-[3px] w-10 rounded-sm bg-accent;
+  }
+  .section-link {
+    @apply text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0;
+  }
+  .product-card-home {
+    @apply relative bg-card border border-border rounded-md overflow-hidden flex flex-col;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+  }
+  .product-card-home:hover {
+    box-shadow: var(--shadow-elevated);
+    @apply border-primary/20;
+  }
+  .badge-discount {
+    @apply absolute top-2 left-2 z-10 bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-sm;
+  }
+  .badge-rank {
+    @apply absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center;
+  }
+  .btn-yellow {
+    @apply bg-accent text-accent-foreground font-display font-semibold uppercase text-sm tracking-wide px-5 py-2.5 rounded hover:brightness-105 transition-all;
+  }
+  .btn-navy {
+    @apply bg-primary text-primary-foreground font-display font-semibold uppercase text-sm tracking-wide px-5 py-2.5 rounded hover:brightness-110 transition-all;
+  }
+  .btn-outline-white {
+    @apply border-2 border-white text-white font-display font-semibold uppercase text-sm tracking-wide px-5 py-2 rounded hover:bg-white/10 transition-all;
+  }
+  .footer-link {
+    @apply text-sm text-white/80 hover:text-white transition-colors flex items-center justify-between gap-3 py-2;
+  }
+  .trust-card-icon {
+    @apply w-14 h-14 rounded-full flex items-center justify-center text-primary;
+    border: 2px solid hsl(var(--primary) / 0.22);
+    background: hsl(var(--primary) / 0.06);
+  }
+  .footer-contact-icon {
+    @apply w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white text-primary text-sm;
+  }
+  .footer-payment-badge {
+    @apply inline-flex items-center justify-center px-4 py-2 bg-white rounded text-xs font-bold text-primary tracking-wide min-h-[36px];
+  }
+  .footer-payment-bank {
+    @apply inline-flex items-center px-3 py-2 text-xs font-semibold text-white/90 uppercase tracking-wide;
+  }
+  .google-reviews-card {
+    @apply bg-white rounded-lg p-5 shadow-md;
+  }
+  .google-reviews-rating {
+    font-family: 'Roboto', Arial, sans-serif;
+    @apply text-4xl font-medium text-[#202124] leading-none;
+  }
+  .google-reviews-rating-dark {
+    font-family: 'Roboto', Arial, sans-serif;
+    @apply text-4xl font-medium text-white leading-none;
+  }
+  .google-reviews-brand {
+    font-family: 'Roboto', Arial, sans-serif;
+    @apply text-base font-medium text-white tracking-tight;
+  }
+  .google-reviews-link {
+    font-family: 'Roboto', Arial, sans-serif;
+    @apply inline-flex items-center gap-1 text-sm font-medium text-[#1a73e8] hover:underline;
+  }
+  .trust-section-grid {
+    @apply lg:min-h-[19.5rem];
+  }
+  .faq-accordion {
+    min-height: 15.5rem;
+  }
+  .mega-menu-panel {
+    @apply pt-0 -mt-px;
+  }
+  .mega-menu-inner {
+    @apply border border-border/70 rounded-xl overflow-hidden bg-white items-stretch;
+    min-height: 28.5rem;
+    max-height: min(36rem, calc(100vh - 11rem));
+    box-shadow: 0 16px 40px -12px rgb(0 27 68 / 0.22);
+  }
+  .mega-menu-sidebar {
+    @apply bg-[#eef2f7] border-r border-border/50 self-stretch;
+  }
+  .koncar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.7) transparent;
+  }
+  .koncar-scrollbar::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+  .koncar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .koncar-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.55);
+    border-radius: 999px;
+  }
+  .koncar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.85);
+  }
+  .koncar-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  .mega-menu-content {
+    min-height: 28.5rem;
+  }
+  .mega-menu-grid {
+    @apply flex-1 min-h-0;
+  }
+  .mega-menu-footer {
+    @apply mt-auto;
+  }
+  .mega-menu-card {
+    @apply bg-white border border-border/70 rounded-md overflow-hidden hover:border-primary/25 hover:shadow-card transition-all flex flex-col min-h-[6.75rem];
+  }
+  .mega-menu-card-image {
+    @apply h-[4.25rem] flex items-center justify-center px-2 pt-2 shrink-0;
+  }
+  .mega-menu-card-body {
+    @apply px-2.5 pb-2.5 pt-0.5 relative flex-1;
+  }
+  .mega-menu-view-all {
+    @apply flex items-center justify-center gap-2 bg-[#e8f0fe] text-primary font-display font-semibold text-sm px-5 py-2.5 rounded hover:bg-primary/10 transition-colors w-full;
+  }
+  .mega-menu-nav-item {
+    @apply flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground transition-colors;
+  }
+  .mega-menu-nav-item:hover,
+  .mega-menu-nav-item--active {
+    @apply bg-primary/10 text-primary font-medium;
+  }
+  .catalog-filters {
+    @apply bg-white border border-border rounded-lg p-4 pr-3 lg:sticky lg:top-28 lg:self-start lg:max-h-[calc(100vh-8.5rem)] lg:overflow-y-auto lg:overscroll-y-contain;
+  }
+  .catalog-product-card {
+    @apply relative bg-white border border-border rounded-lg overflow-hidden flex flex-col h-full hover:border-primary/25 hover:shadow-card transition-all;
+  }
+  .catalog-product-card--bestseller {
+    @apply bg-accent/10 border-accent/30;
+  }
+  .catalog-product-card--list {
+    @apply flex-row h-auto min-h-[10.5rem];
+  }
+  .catalog-product-card-media {
+    @apply aspect-square p-5 flex items-center justify-center bg-white border-b border-border;
+  }
+  .catalog-product-card--bestseller .catalog-product-card-media {
+    @apply bg-accent/5;
+  }
+  .catalog-product-card-media--list {
+    @apply w-[11rem] shrink-0 flex items-center justify-center p-5 border-b-0 border-r border-border bg-white;
+  }
+  .catalog-product-card--bestseller .catalog-product-card-media--list {
+    @apply bg-accent/5;
+  }
+  .catalog-product-card-body {
+    @apply p-4 flex flex-col gap-2 flex-1;
+  }
+  .catalog-product-card-body--list {
+    @apply flex-1 flex flex-row items-stretch gap-6 p-4 min-w-0;
+  }
+  .catalog-product-card-main--list {
+    @apply flex-1 flex flex-col gap-2 min-w-0 pr-4;
+  }
+  .catalog-product-card-actions {
+    @apply mt-auto pt-2;
+  }
+  .catalog-product-card-actions--list {
+    @apply shrink-0 w-[12.5rem] flex flex-col justify-center gap-2 border-l border-border pl-5;
+  }
+  .catalog-toolbar {
+    @apply flex flex-wrap items-center justify-between gap-4 mb-5 pb-4 border-b border-border;
+  }
+  .catalog-toolbar-field {
+    @apply flex items-center gap-2.5;
+  }
+  .catalog-toolbar-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-muted-foreground shrink-0;
+  }
+  .catalog-toolbar-select {
+    @apply appearance-none bg-white border border-border rounded-md pl-3 pr-9 py-2 text-sm font-medium text-foreground outline-none cursor-pointer hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/10 min-w-[10.5rem];
+  }
+  .catalog-toolbar-select--compact {
+    @apply min-w-[5.5rem];
+  }
+  .catalog-view-toggle {
+    @apply inline-flex items-center rounded-md border border-border bg-white p-0.5;
+  }
+  .catalog-view-toggle-btn {
+    @apply p-2 rounded text-muted-foreground hover:text-primary hover:bg-secondary/60 transition-colors;
+  }
+  .catalog-view-toggle-btn--active {
+    @apply p-2 rounded bg-primary text-white shadow-sm;
+  }
+  @media (max-width: 767px) {
+    .catalog-product-card--list {
+      @apply flex-col min-h-0;
+    }
+    .catalog-product-card-media--list {
+      @apply w-full border-r-0 border-b;
+    }
+    .catalog-product-card-body--list {
+      @apply flex-col gap-4;
+    }
+    .catalog-product-card-actions--list {
+      @apply w-full border-l-0 border-t border-border pt-4 pl-0;
+    }
+  }
+  .catalog-badge-bestseller {
+    @apply absolute top-2 left-2 z-10 bg-accent text-accent-foreground text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm;
+  }
+  .catalog-wishlist {
+    @apply absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center text-muted-foreground hover:text-primary transition-colors;
+  }
+  .catalog-spec-chip {
+    @apply text-[10px] px-2 py-0.5 rounded bg-secondary text-muted-foreground border border-border;
+  }
+  .catalog-chip {
+    @apply flex items-center gap-3 border border-border rounded-lg bg-white px-4 py-3 min-w-[11rem] hover:border-primary/25 hover:shadow-sm transition-all;
+  }
+  .catalog-chip--featured {
+    @apply border-accent/40 bg-accent/5;
+  }
+  .catalog-chip--listing {
+    @apply flex items-center gap-2.5 border border-border rounded-lg bg-white px-2.5 py-4 min-w-0 min-h-[6.25rem] hover:border-primary/25 hover:shadow-sm transition-all;
+  }
+}

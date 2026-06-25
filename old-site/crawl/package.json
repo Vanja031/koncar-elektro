@@ -1,0 +1,9 @@
+{
+  "name": "seo-crawler",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SEO baseline crawler za koncarelektro.rs — generiše seo-baseline.csv",
+  "scripts": {
+    "crawl": "node seo-crawler.js"
+  }
+}
