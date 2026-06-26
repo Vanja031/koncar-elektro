@@ -7,9 +7,11 @@ import { FaIcon, footerIcons, trustIcons } from './FaIcon';
 import { SocialIcon } from './SocialIcon';
 import { SocialLinks } from './SocialLinks';
 import { MegaMenu } from './MegaMenu';
+import { MobileNav } from '@/components/layout/MobileNav';
+import { MobileSearch } from '@/components/layout/MobileSearch';
+import { useCart } from '@/context/CartContext';
 import type { MegaMenuMode } from '@/data/navigation';
-
-type Props = { cartCount: number };
+import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
 
 type NavItem = {
   label: string;
@@ -19,17 +21,22 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { label: 'Početna', href: '/' },
-  { label: 'Akcija', href: '#', highlight: true },
-  { label: 'Alati', href: '/kategorija/alati', megaMode: 'alati' },
-  { label: 'Elektromaterijal', href: '#', megaMode: 'elektromaterijal' },
-  { label: 'Rasveta', href: '#', megaMode: 'rasveta' },
-  { label: 'Solarne elektrane', href: '#', megaMode: 'solarne' },
+  { label: 'Početna', href: ROUTES.home },
+  { label: 'Akcija', href: ROUTES.sale, highlight: true },
+  { label: 'Alati', href: getTopCategoryUrl('alati'), megaMode: 'alati' },
+  { label: 'Elektromaterijal', href: getTopCategoryUrl('elektromaterijal'), megaMode: 'elektromaterijal' },
+  { label: 'Rasveta', href: getTopCategoryUrl('rasveta'), megaMode: 'rasveta' },
+  { label: 'Solarne elektrane', href: getTopCategoryUrl('solarne'), megaMode: 'solarne' },
+  { label: 'O nama', href: ROUTES.about },
+  { label: 'Kontakt', href: ROUTES.contact },
 ];
 
-export const SiteHeader = ({ cartCount }: Props) => {
+export const SiteHeader = () => {
+  const { itemCount: cartCount } = useCart();
   const [megaOpen, setMegaOpen] = useState(false);
   const [megaMode, setMegaMode] = useState<MegaMenuMode>('alati');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const megaZoneRef = useRef<HTMLDivElement>(null);
 
   const openMega = (mode: MegaMenuMode) => {
@@ -40,8 +47,8 @@ export const SiteHeader = ({ cartCount }: Props) => {
   const closeMega = () => setMegaOpen(false);
 
   const handleMegaZoneLeave = (e: React.MouseEvent) => {
-    const related = e.relatedTarget as Node | null;
-    if (related && megaZoneRef.current?.contains(related)) return;
+    const related = e.relatedTarget;
+    if (related instanceof Node && megaZoneRef.current?.contains(related)) return;
     closeMega();
   };
 
@@ -55,7 +62,10 @@ export const SiteHeader = ({ cartCount }: Props) => {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeMega();
+      if (e.key === 'Escape') {
+        closeMega();
+        setMobileSearchOpen(false);
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -63,7 +73,12 @@ export const SiteHeader = ({ cartCount }: Props) => {
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (megaZoneRef.current && !megaZoneRef.current.contains(e.target as Node)) {
+      const target = e.target;
+      if (
+        megaZoneRef.current &&
+        target instanceof Node &&
+        !megaZoneRef.current.contains(target)
+      ) {
         closeMega();
       }
     };
@@ -117,8 +132,17 @@ export const SiteHeader = ({ cartCount }: Props) => {
       </div>
 
       <header className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="container py-3 flex items-center gap-4 lg:gap-6">
-          <Link to="/" className="shrink-0">
+        <div className="container py-3 flex items-center gap-3 lg:gap-6">
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(true)}
+            className="lg:hidden flex items-center justify-center w-10 h-10 -ml-1 rounded-lg border border-border hover:bg-secondary transition-colors shrink-0"
+            aria-label="Otvori meni"
+          >
+            <Menu className="w-5 h-5 text-primary" />
+          </button>
+
+          <Link to="/" className="shrink-0 min-w-0">
             <div className="font-display font-bold text-2xl leading-none text-primary tracking-tight">
               KONČAR <span className="text-accent">ALATI</span>
             </div>
@@ -159,18 +183,28 @@ export const SiteHeader = ({ cartCount }: Props) => {
             </a>
           </div>
 
-          <div className="flex items-center gap-3 ml-auto shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobileSearchOpen(true)}
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg border border-border hover:bg-secondary transition-colors"
+              aria-label="Pretraga"
+            >
+              <Search className="w-5 h-5 text-primary" />
+            </button>
             <a href="#" className="hidden sm:flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors">
               <User className="w-5 h-5" />
               <span className="hidden lg:inline">Prijava / registracija</span>
             </a>
-            <a href="#" className="flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors relative">
+            <Link to={ROUTES.cart} className="flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors relative">
               <ShoppingCart className="w-5 h-5" />
               <span className="hidden lg:inline font-medium">Korpa</span>
-              <span className="absolute -top-2 -right-2 lg:static lg:ml-0 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            </a>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 lg:static lg:ml-0 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
 
@@ -246,6 +280,9 @@ export const SiteHeader = ({ cartCount }: Props) => {
 
           {megaOpen && <MegaMenu mode={megaMode} onClose={closeMega} />}
         </div>
+
+        <MobileNav open={mobileNavOpen} onOpenChange={setMobileNavOpen} />
+        <MobileSearch open={mobileSearchOpen} onOpenChange={setMobileSearchOpen} />
       </header>
     </>
   );

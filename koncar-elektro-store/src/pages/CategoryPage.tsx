@@ -6,21 +6,37 @@ import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { Carousel } from '@/components/home/Carousel';
 import { ProductCard } from '@/components/home/ProductCard';
 import { getCategoryPage } from '@/data/categoryPages';
+import {
+  getProductCategoryUrl,
+  getProductListingUrl,
+  getTopCategoryUrl,
+} from '@/lib/catalogUrls';
 
-const CategoryPage = () => {
-  const { slug = 'alati' } = useParams();
+type Props = {
+  /** When rendered from `/product-category/:program`, bypass URL param. */
+  programSlug?: string;
+};
+
+const CategoryPage = ({ programSlug }: Props) => {
+  const { slug: paramSlug } = useParams();
+  const slug = programSlug ?? paramSlug ?? 'alati';
   const data = getCategoryPage(slug);
 
   if (!data) {
-    return <Navigate to="/kategorija/alati" replace />;
+    return <Navigate to={getTopCategoryUrl('alati')} replace />;
   }
+
+  const listingHref =
+    slug === 'alati'
+      ? getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci')
+      : getProductCategoryUrl(slug, data.subcategories[0]?.slug ?? '');
 
   return (
     <ShopLayout>
       <CategoryHero data={data} />
 
       <SubcategoryGrid
-        title="Izaberite kategoriju alata"
+        title={data.slug === 'alati' ? 'Izaberite kategoriju alata' : 'Izaberite podkategoriju'}
         items={data.subcategories}
         categorySlug={data.slug}
       />
@@ -30,7 +46,7 @@ const CategoryPage = () => {
           <h2 className="section-heading text-lg md:text-xl">
             Najprodavaniji proizvodi iz kategorije {data.title.toLowerCase()}
           </h2>
-          <Link to={`/kategorija/${data.slug}/elektricni-alat/busilice-i-odvijaci`} className="section-link">
+          <Link to={listingHref} className="section-link">
             Pogledajte sve proizvode <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

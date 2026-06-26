@@ -1,23 +1,31 @@
 import { Star, Flame, ChevronRight, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { saleProducts, bestSellerProducts, featuredBrands, whyChooseItems, categoryBanners } from '@/data/homepage';
+import { getTopCategoryUrl } from '@/lib/catalogUrls';
 import { Carousel } from './Carousel';
 import { ProductCard } from './ProductCard';
 import { GoogleReviews } from './GoogleReviews';
 import { FaqAccordion } from './FaqAccordion';
 import agentAvatar from '@/assets/agent-avatar.png';
 
-export const ProductSections = ({ onAdd }: { onAdd: () => void }) => (
+const bannerUrls: Record<string, string> = {
+  Elektromaterijal: getTopCategoryUrl('elektromaterijal'),
+  Rasveta: getTopCategoryUrl('rasveta'),
+  'Solarne elektrane': getTopCategoryUrl('solarne'),
+};
+
+export const ProductSections = () => (
   <>
     <section className="container py-6">
       <div className="flex items-center justify-between mb-4 gap-4">
         <h2 className="section-heading flex items-center gap-2">
           <Flame className="w-5 h-5 fill-accent text-accent" /> Proizvodi na akciji
         </h2>
-        <a href="#" className="section-link">Pogledajte sve akcije <ChevronRight className="w-4 h-4" /></a>
+        <Link to="/akcija" className="section-link">Pogledajte sve akcije <ChevronRight className="w-4 h-4" /></Link>
       </div>
       <Carousel>
         {saleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} onAdd={onAdd} />
+          <ProductCard key={p.id} product={p} />
         ))}
       </Carousel>
     </section>
@@ -31,7 +39,7 @@ export const ProductSections = ({ onAdd }: { onAdd: () => void }) => (
       </div>
       <Carousel>
         {bestSellerProducts.map((p, i) => (
-          <ProductCard key={p.id} product={p} rank={i + 1} onAdd={onAdd} />
+          <ProductCard key={p.id} product={p} rank={i + 1} />
         ))}
       </Carousel>
     </section>
@@ -80,9 +88,9 @@ export const ProductSections = ({ onAdd }: { onAdd: () => void }) => (
 
     <section className="container py-8 grid grid-cols-1 md:grid-cols-3 gap-4">
       {categoryBanners.map((b) => (
-        <a
+        <Link
           key={b.title}
-          href="#"
+          to={bannerUrls[b.title] ?? getTopCategoryUrl('alati')}
           className={`relative rounded-lg overflow-hidden min-h-[9.5rem] flex items-stretch group ${b.className}`}
         >
           <div className="relative z-10 flex-1 p-5 flex flex-col justify-center max-w-[58%]">
@@ -100,7 +108,7 @@ export const ProductSections = ({ onAdd }: { onAdd: () => void }) => (
             className="absolute right-1 bottom-0 h-[108%] max-w-[48%] object-contain object-bottom pointer-events-none group-hover:scale-[1.03] transition-transform"
             loading="lazy"
           />
-        </a>
+        </Link>
       ))}
     </section>
 

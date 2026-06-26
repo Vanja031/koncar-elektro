@@ -12,6 +12,10 @@ import imgProfesionalni from '@/assets/prefesionalni-alati.png';
 import imgElektromaterijal from '@/assets/elektromaterijal.png';
 import imgRasveta from '@/assets/rasveta.png';
 import imgSolarne from '@/assets/solarne.png';
+import {
+  getBestSellerProductsFromKoncar,
+  getSaleProductsFromKoncar,
+} from '@/data/koncarProducts';
 
 export type Product = {
   id: number;
@@ -29,23 +33,9 @@ export type Product = {
 export const formatPrice = (n: number) =>
   n.toLocaleString('sr-RS', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' RSD';
 
-export const saleProducts: Product[] = [
-  { id: 1, brand: 'Bosch', name: 'Bosch GSB 18V-55', category: 'Aku udarna bušilica-odvijač', description: 'Aku udarna bušilica-odvijač', price: 21990, oldPrice: 27490, rating: 5, reviews: 24, image: 'https://images.unsplash.com/photo-1572981779307-38bfe4d974fb?w=400&h=400&fit=crop' },
-  { id: 2, brand: 'Makita', name: 'Makita DHP484Z', category: 'Aku bušilica-odvijač', description: 'Aku bušilica-odvijač 18V', price: 18990, oldPrice: 22350, rating: 5, reviews: 18, image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&h=400&fit=crop' },
-  { id: 3, brand: 'Metabo', name: 'Metabo W 18 LTX', category: 'Aku ugaona brusilica', description: 'Aku ugaona brusilica 125mm', price: 15490, oldPrice: 18200, rating: 4, reviews: 12, image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=400&fit=crop' },
-  { id: 4, brand: 'Einhell', name: 'Einhell TE-VC 18', category: 'Aku usisivač', description: 'Aku usisivač za radionicu', price: 12990, oldPrice: 15300, rating: 5, reviews: 31, image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop' },
-  { id: 5, brand: 'Villager', name: 'Villager VLN 1055', category: 'Električna lančana testera', description: 'Električna lančana testera', price: 8990, oldPrice: 10580, rating: 4, reviews: 9, image: 'https://images.unsplash.com/photo-1597479266331-7e73e4d5c362?w=400&h=400&fit=crop' },
-  { id: 6, brand: 'Ingco', name: 'Ingco CDLI205581', category: 'Aku odvijač', description: 'Aku odvijač 20V', price: 7490, oldPrice: 8800, rating: 5, reviews: 42, image: 'https://images.unsplash.com/photo-1530124566582-538217625050?w=400&h=400&fit=crop' },
-];
+export const saleProducts: Product[] = getSaleProductsFromKoncar();
 
-export const bestSellerProducts: Product[] = [
-  { id: 7, brand: 'Bosch', name: 'Bosch GWS 750', category: 'Ugaona brusilica', description: 'Ugaona brusilica 115mm', price: 6490, rating: 5, reviews: 56, image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=400&fit=crop' },
-  { id: 8, brand: 'Makita', name: 'Makita HR2630', category: 'Bušač-čekić', description: 'Električni bušač-čekić SDS+', price: 22990, rating: 5, reviews: 38, image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&h=400&fit=crop' },
-  { id: 9, brand: 'Metabo', name: 'Metabo BS 18 LTX', category: 'Aku testera', description: 'Aku testera za drvo', price: 19990, rating: 4, reviews: 22, image: 'https://images.unsplash.com/photo-1597479266331-7e73e4d5c362?w=400&h=400&fit=crop' },
-  { id: 10, brand: 'Hyundai', name: 'Hyundai HYM 5100', category: 'Benzinska kosačica', description: 'Benzinska kosačica 51cm', price: 89990, rating: 5, reviews: 14, image: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?w=400&h=400&fit=crop' },
-  { id: 11, brand: 'Scheppach', name: 'Scheppach HC52', category: 'Kompresor', description: 'Kompresor 50L', price: 34990, rating: 4, reviews: 19, image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=400&fit=crop' },
-  { id: 12, brand: 'Villager', name: 'Villager VTP 1960', category: 'Traktorska kosačica', description: 'Traktorska kosačica 19KS', price: 189990, rating: 5, reviews: 7, image: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?w=400&h=400&fit=crop' },
-];
+export const bestSellerProducts: Product[] = getBestSellerProductsFromKoncar();
 
 export const popularCategories = [
   { name: 'Električni alati', image: catElektricni },
@@ -133,7 +123,6 @@ export const footerInfoLinks = [
   'O nama', 'Blog', 'Uslovi korišćenja', 'Politika privatnosti', 'Politika kolačića',
 ];
 
-export const paymentCards = ['VISA', 'Mastercard', 'DinaCard', 'Maestro'];
 export const paymentBanks = ['Banca Intesa', 'OTP banka'];
 
 export const googleReviewsUrl =

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { ListingHero } from '@/components/catalog/ListingHero';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
@@ -8,32 +8,69 @@ import { ProductFilters } from '@/components/catalog/ProductFilters';
 import { SubcategoryChips } from '@/components/catalog/SubcategoryChips';
 import { ListingToolbar } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
-import { getProductListing } from '@/data/catalogListing';
+import { ParentHubBestSellers } from '@/components/catalog/ParentHubBestSellers';
+import { getParentHubBestSellers, getParentListing, getProductListing, getProgramListing } from '@/data/catalogListing';
+import { getTopCategoryUrl, isLeafProgramListingRoute, isParentListingRoute } from '@/lib/catalogUrls';
 
-const ProductsPage = () => {
-  const { categorySlug = 'alati', parentSlug = 'elektricni-alat', slug = 'busilice-i-odvijaci' } = useParams();
-  const data = getProductListing(categorySlug, parentSlug, slug);
+type Props = {
+  categorySlug?: string;
+  parentSlug?: string;
+  listingSlug?: string;
+};
+
+const ProductsPage = ({
+  categorySlug = 'alati',
+  parentSlug = 'elektricni-alat',
+  listingSlug,
+}: Props) => {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
-  if (!data) {
-    return <Navigate to="/kategorija/alati" replace />;
+  const parentData = isParentListingRoute(categorySlug, parentSlug, listingSlug)
+    ? getParentListing(categorySlug, parentSlug)
+    : undefined;
+
+  const listingData = listingSlug
+    ? getProductListing(categorySlug, parentSlug, listingSlug)
+    : isLeafProgramListingRoute(categorySlug, parentSlug, listingSlug)
+      ? getProgramListing(categorySlug, parentSlug)
+      : undefined;
+
+  if (parentData) {
+    const bestSellers = getParentHubBestSellers(parentSlug);
+    const firstChipHref = parentData.chips[0]?.href;
+
+    return (
+      <ShopLayout>
+        <ListingHero breadcrumbs={parentData.breadcrumbs} title={parentData.title} />
+        <SubcategoryChips chips={parentData.chips} description={parentData.description} />
+        <ParentHubBestSellers
+          title={`Najprodavaniji u kategoriji ${parentData.title.toLowerCase()}`}
+          products={bestSellers}
+          viewAllHref={firstChipHref}
+        />
+      </ShopLayout>
+    );
+  }
+
+  if (!listingData) {
+    return <Navigate to={getTopCategoryUrl('alati')} replace />;
   }
 
   return (
     <ShopLayout>
-      <ListingHero breadcrumbs={data.breadcrumbs} title={data.title} />
+      <ListingHero breadcrumbs={listingData.breadcrumbs} title={listingData.title} />
 
-      <SubcategoryChips chips={data.chips} description={data.description} />
+      <SubcategoryChips chips={listingData.chips} description={listingData.description} />
 
       <section className="container py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
-          <ProductFilters filters={data.filters} />
+          <ProductFilters filters={listingData.filters} />
 
           <div>
             <ListingToolbar view={view} onViewChange={setView} />
 
             <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4' : 'flex flex-col gap-3'}>
-              {data.products.map((product) => (
+              {listingData.products.map((product) => (
                 <CatalogProductCard key={product.id} product={product} view={view} />
               ))}
             </div>
@@ -65,8 +102,8 @@ const ProductsPage = () => {
 
       <CatalogInfoSections
         variant="category"
-        whyBuy={data.whyBuy}
-        faq={data.faq}
+        whyBuy={listingData.whyBuy}
+        faq={listingData.faq}
         whyTitle="Zašto kupiti bušilicu kod nas?"
       />
     </ShopLayout>

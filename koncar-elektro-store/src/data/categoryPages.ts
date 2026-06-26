@@ -9,7 +9,12 @@ import catHtz from '@/assets/htz-oprema.jpg';
 import catTraktor from '@/assets/traktor.png';
 import catVarenje from '@/assets/aparat-za-varenje.webp';
 import catDvorishte from '@/assets/oprema-za-dvoriste.jpg';
+import imgElektromaterijal from '@/assets/elektromaterijal.png';
+import imgRasveta from '@/assets/rasveta.png';
+import imgSolarne from '@/assets/solarne.png';
 import { bestSellerProducts } from '@/data/homepage';
+import { otherProgramCategories } from '@/data/navigation';
+import { slugify } from '@/lib/slugify';
 
 export type BreadcrumbItem = { label: string; href?: string };
 
@@ -33,13 +38,47 @@ export type CategoryPageData = {
   faq: { question: string; answer: string }[];
 };
 
-const slugify = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
+const programSubcategories = (programId: string) => {
+  const program = otherProgramCategories.find((c) => c.id === programId);
+  if (!program) return [];
+  return program.subcategories.map((sub) => ({
+    slug: slugify(sub.label),
+    name: sub.label,
+    image: sub.image,
+    productCount: sub.count,
+  }));
+};
+
+const programPage = (
+  slug: string,
+  title: string,
+  subtitle: string,
+  description: string,
+  heroImage: string,
+): CategoryPageData => ({
+  slug,
+  title,
+  subtitle,
+  description,
+  heroImage,
+  breadcrumbs: [
+    { label: 'Početna', href: '/' },
+    { label: title },
+  ],
+  subcategories: programSubcategories(slug),
+  bestSellers: bestSellerProducts,
+  whyBuy: [
+    'Širok asortiman proverenih brendova',
+    'Brza isporuka na teritoriji Srbije',
+    'Stručna podrška pri izboru',
+    'Garancija na sve proizvode',
+  ],
+  faq: [
+    { question: 'Kako da izaberem pravi proizvod?', answer: 'Naš tim vam pomaže pri izboru prema nameni i budžetu.' },
+    { question: 'Koliko traje isporuka?', answer: 'Isporuka je u roku od 1–2 radna dana.' },
+    { question: 'Da li nudite garanciju?', answer: 'Da, svi proizvodi imaju fabričku garanciju.' },
+  ],
+});
 
 export const alatiSubcategories: SubcategoryItem[] = [
   { name: 'Električni alat', image: catElektricni, slug: 'elektricni-alat', productCount: 312 },
@@ -80,8 +119,29 @@ export const categoryPages: Record<string, CategoryPageData> = {
       { question: 'Koliko traje isporuka alata?', answer: 'Isporuka je u roku od 1–2 radna dana.' },
     ],
   },
+  elektromaterijal: programPage(
+    'elektromaterijal',
+    'ELEKTROMATERIJAL',
+    'Kablovi, prekidači, osigurači i oprema za instalacije',
+    'Kompletna ponuda elektromaterijala za profesionalne i kućne instalacije — kablovi, osigurači, prekidači, razvodne table i prateća oprema.',
+    imgElektromaterijal,
+  ),
+  rasveta: programPage(
+    'rasveta',
+    'RASVETA',
+    'Unutrašnja i spoljašnja rasveta za svaki prostor',
+    'LED sijalice, paneli, reflektori, lusteri i industrijska rasveta — sve na jednom mestu uz stručnu podršku.',
+    imgRasveta,
+  ),
+  solarne: programPage(
+    'solarne',
+    'SOLARNE ELEKTRANE',
+    'Kompletna oprema za solarnu energiju',
+    'Solarni paneli, inverteri, baterije i kompleti za domaćinstva i privredu — ušteda energije i novca.',
+    imgSolarne,
+  ),
 };
 
 export const getCategoryPage = (slug: string) => categoryPages[slug];
 
-export const getSubcategorySlug = slugify;
+export { slugify as getSubcategorySlug } from '@/lib/slugify';

@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Breadcrumbs } from './Breadcrumbs';
 import type { CategoryPageData } from '@/data/categoryPages';
+import { getAlatiSubcategoryUrl, getProductCategoryUrl } from '@/lib/catalogUrls';
 
 type Props = {
   data: CategoryPageData;
@@ -36,14 +37,16 @@ export const SubcategoryGrid = ({ title, items, categorySlug }: SubcategoryGridP
   <section className="container py-10">
     <h2 className="section-heading mb-6">{title}</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {items.map((item) => (
+      {items.map((item) => {
+        const href =
+          categorySlug === 'alati'
+            ? getAlatiSubcategoryUrl(item.slug)
+            : getProductCategoryUrl(categorySlug, item.slug);
+
+        return (
         <Link
           key={item.slug}
-          to={
-            item.slug === 'elektricni-alat'
-              ? `/kategorija/${categorySlug}/${item.slug}/busilice-i-odvijaci`
-              : `/kategorija/${categorySlug}/${item.slug}`
-          }
+          to={href}
           className="group flex items-stretch bg-white border border-border rounded-lg overflow-hidden hover:border-primary/25 hover:shadow-card transition-all min-h-[6.75rem]"
         >
           <div className="w-[7.5rem] shrink-0 flex items-center justify-center p-3 border-r border-border/60 bg-secondary/20">
@@ -63,7 +66,8 @@ export const SubcategoryGrid = ({ title, items, categorySlug }: SubcategoryGridP
             </span>
           </div>
         </Link>
-      ))}
+        );
+      })}
     </div>
   </section>
 );

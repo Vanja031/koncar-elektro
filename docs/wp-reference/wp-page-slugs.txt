@@ -1,0 +1,21 @@
+yith-compare | Compare
+uslovi-koriscenja | Uslovi korišćenja
+lista-zelja | Lista želja
+uporedite | Uporedite
+akcija | Akcija
+reklamacije | Reklamacije
+pravo-na-odustajanje | Pravo na odustajanje
+nacini-isporuke | Načini isporuke
+nacin-placanja | Način plaćanja
+narucivanje | Naručivanje
+kolacici-cookies | Kolačići (cookies)
+politika-privatnosti | Politika privatnosti
+podaci-o-firmi | Podaci o firmi
+o-nama | O nama
+kontakt | Kontakt
+novosti | Novosti
+naslovna-strana-koncar-elektro | Naslovna
+moj-nalog | Moj nalog
+proizvodi | Proizvodi
+placanje-odjava | Plaćanje / Odjava
+korpa | Korpa
