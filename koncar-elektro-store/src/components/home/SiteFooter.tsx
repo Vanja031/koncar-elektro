@@ -1,17 +1,51 @@
+import { Link } from 'react-router-dom';
 import {
   ChevronRight,
   Drill, Plug, Lightbulb, Sun,
 } from 'lucide-react';
 import {
   categoryHighlights, valueProps, footerServiceLinks, footerInfoLinks,
-  paymentCards, paymentBanks,
+  paymentBanks,
 } from '@/data/homepage';
+import { footerLinkRoutes } from '@/data/staticPages';
+import { getTopCategoryUrl } from '@/lib/catalogUrls';
+import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { SocialLinks } from './SocialLinks';
 import { FaIcon, trustIcons, footerIcons } from './FaIcon';
 
 const iconMap = { drill: Drill, plug: Plug, bulb: Lightbulb, solar: Sun } as const;
 
 const valuePropIcons = [trustIcons.warranty, trustIcons.support, trustIcons.delivery] as const;
+
+const footerLink = (label: string) => footerLinkRoutes[label];
+
+const FooterNavLink = ({ label }: { label: string }) => {
+  const href = footerLink(label);
+  const className = 'footer-link group';
+
+  if (href) {
+    return (
+      <Link to={href} className={className}>
+        <span>{label}</span>
+        <ChevronRight className="w-3.5 h-3.5 text-white/40 group-hover:text-accent transition-colors shrink-0" />
+      </Link>
+    );
+  }
+
+  return (
+    <a href="#" className={className}>
+      <span>{label}</span>
+      <ChevronRight className="w-3.5 h-3.5 text-white/40 group-hover:text-accent transition-colors shrink-0" />
+    </a>
+  );
+};
+
+const highlightUrls: Record<string, string> = {
+  'Profesionalni alati': getTopCategoryUrl('alati'),
+  Elektromaterijal: getTopCategoryUrl('elektromaterijal'),
+  Rasveta: getTopCategoryUrl('rasveta'),
+  'Solarne elektrane': getTopCategoryUrl('solarne'),
+};
 
 export const CategoryHighlights = () => (
   <section className="bg-secondary/40 py-10">
@@ -21,9 +55,9 @@ export const CategoryHighlights = () => (
           const Icon = iconMap[c.icon];
           const iconOnYellow = i % 2 === 1;
           return (
-            <a
+            <Link
               key={c.title}
-              href="#"
+              to={highlightUrls[c.title] ?? getTopCategoryUrl('alati')}
               className="flex flex-col bg-white rounded-lg border border-border/60 shadow-sm hover:shadow-card hover:border-primary/20 transition-all group overflow-hidden h-full"
             >
               <div className="relative h-[8.5rem] sm:h-[9rem] px-3 pt-3 shrink-0">
@@ -54,7 +88,7 @@ export const CategoryHighlights = () => (
                 </h3>
                 <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">{c.desc}</p>
               </div>
-            </a>
+            </Link>
           );
         })}
       </div>
@@ -130,10 +164,7 @@ export const SiteFooter = () => (
           <ul className="space-y-0.5">
             {footerServiceLinks.map((l) => (
               <li key={l}>
-                <a href="#" className="footer-link group">
-                  <span>{l}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-white/40 group-hover:text-accent transition-colors shrink-0" />
-                </a>
+                <FooterNavLink label={l} />
               </li>
             ))}
           </ul>
@@ -144,10 +175,7 @@ export const SiteFooter = () => (
           <ul className="space-y-0.5">
             {footerInfoLinks.map((l) => (
               <li key={l}>
-                <a href="#" className="footer-link group">
-                  <span>{l}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-white/40 group-hover:text-accent transition-colors shrink-0" />
-                </a>
+                <FooterNavLink label={l} />
               </li>
             ))}
           </ul>
@@ -188,11 +216,9 @@ export const SiteFooter = () => (
     <div className="border-t border-white/10 bg-[#0c1a33]">
       <div className="container py-5">
         <p className="title-accent-line text-[11px] text-white/45 uppercase tracking-widest mb-4 font-semibold">Načini plaćanja</p>
-        <div className="flex flex-wrap items-center gap-2">
-          {paymentCards.map((p) => (
-            <span key={p} className="footer-payment-badge">{p}</span>
-          ))}
-          <span className="hidden sm:inline w-px h-6 bg-white/20 mx-1" aria-hidden />
+        <div className="flex flex-wrap items-center gap-3">
+          <PaymentCardIcons size="sm" className="footer-payment-cards" />
+          <span className="hidden sm:inline w-px h-6 bg-white/20" aria-hidden />
           {paymentBanks.map((p) => (
             <span key={p} className="footer-payment-bank">{p}</span>
           ))}
@@ -216,11 +242,11 @@ export const SiteFooter = () => (
 );
 
 export const FloatingChat = () => (
-  <a
-    href="#"
+  <Link
+    to="/kontakt"
     className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-primary text-white pl-4 pr-5 py-3 rounded-full shadow-lg hover:brightness-110 transition-all text-sm font-semibold"
   >
     <FaIcon icon={footerIcons.chat} className="text-base" />
     Pitaj stručnjaka
-  </a>
+  </Link>
 );

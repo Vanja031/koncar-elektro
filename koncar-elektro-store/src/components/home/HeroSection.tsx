@@ -1,5 +1,7 @@
 import { Phone, Check, ChevronRight as ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { popularCategories } from '@/data/homepage';
+import { getPopularCategoryUrl, getTopCategoryUrl } from '@/lib/catalogUrls';
 import { leftCarouselSlides, rightCarouselSlides } from '@/data/homeHero';
 import { FaIcon, trustIcons } from './FaIcon';
 import { HeroCarousel } from './HeroCarousel';
@@ -47,13 +49,13 @@ export const HeroSection = () => (
     <section className="container py-6">
       <div className="flex items-center justify-between mb-4 gap-4">
         <h2 className="section-heading">Popularne kategorije</h2>
-        <a href="#" className="section-link">Pogledajte sve kategorije <ArrowRight className="w-4 h-4" /></a>
+        <Link to={getTopCategoryUrl('alati')} className="section-link">Pogledajte sve kategorije <ArrowRight className="w-4 h-4" /></Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         {popularCategories.map((c) => (
-          <a
+          <Link
             key={c.name}
-            href="#"
+            to={getPopularCategoryUrl(c.name)}
             className="group flex items-center gap-3 bg-white border border-border rounded p-3 hover:border-primary/30 hover:shadow-card transition-all"
           >
             <div className="flex-1 min-w-0">
@@ -63,7 +65,7 @@ export const HeroSection = () => (
             <span className="w-6 h-6 rounded-full bg-accent flex items-center justify-center shrink-0">
               <ArrowRight className="w-3.5 h-3.5 text-accent-foreground" />
             </span>
-          </a>
+          </Link>
         ))}
       </div>
     </section>

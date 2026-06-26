@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Check, ChevronRight, Plus, Minus, Phone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { GoogleReviews } from '@/components/home/GoogleReviews';
+import { ROUTES } from '@/lib/catalogUrls';
 import agentAvatar from '@/assets/agent-avatar.png';
 
 type FaqItem = { question: string; answer: string };
@@ -87,9 +89,9 @@ export const CatalogInfoSections = ({ variant, whyBuy, faq, whyTitle }: Props) =
                     );
                   })}
                 </ul>
-                <a href="#" className="text-sm text-primary font-medium inline-flex items-center gap-1 hover:underline">
+                <Link to={ROUTES.faq} className="text-sm text-primary font-medium inline-flex items-center gap-1 hover:underline">
                   Pogledajte sva pitanja <ChevronRight className="w-4 h-4" />
-                </a>
+                </Link>
               </>
             ) : (
               <div className="bg-primary rounded-lg p-6 text-white relative overflow-hidden min-h-[220px]">

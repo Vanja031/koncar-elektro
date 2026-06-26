@@ -1,0 +1,37 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/kategorija/alati",
+      "destination": "/proizvodi",
+      "permanent": true
+    },
+    {
+      "source": "/kategorija/elektromaterijal",
+      "destination": "/product-category/elektromaterijal-i-oprema",
+      "permanent": true
+    },
+    {
+      "source": "/kategorija/rasveta",
+      "destination": "/product-category/rasveta",
+      "permanent": true
+    },
+    {
+      "source": "/kategorija/solarne",
+      "destination": "/product-category/solarne",
+      "permanent": true
+    },
+    {
+      "source": "/placanje",
+      "destination": "/placanje-odjava",
+      "permanent": true
+    },
+    {
+      "source": "/placanje/hvala",
+      "destination": "/placanje-odjava/order-received",
+      "permanent": true
+    }
+  ]
+}

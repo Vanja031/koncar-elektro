@@ -3,11 +3,17 @@ import { ChevronDown, LayoutGrid, List } from 'lucide-react';
 type Props = {
   view: 'grid' | 'list';
   onViewChange: (view: 'grid' | 'list') => void;
+  productCount?: number;
 };
 
-export const ListingToolbar = ({ view, onViewChange }: Props) => (
+export const ListingToolbar = ({ view, onViewChange, productCount }: Props) => (
   <div className="catalog-toolbar">
     <div className="flex flex-wrap items-center gap-3">
+      {productCount != null && (
+        <p className="text-sm text-muted-foreground mr-1">
+          <span className="font-semibold text-foreground">{productCount}</span> proizvoda
+        </p>
+      )}
       <div className="catalog-toolbar-field">
         <label htmlFor="sort-by" className="catalog-toolbar-label">Sortiraj</label>
         <div className="relative">

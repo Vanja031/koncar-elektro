@@ -1,13 +1,20 @@
-import { bestSellerProducts, type Product } from '@/data/homepage';
+import { alatiSubcategories } from '@/data/categoryPages';
+import { getProductsByCategorySlug, getSaleCatalogProducts, koncarProducts, type KoncarCatalogProduct } from '@/data/koncarProducts';
+import { otherProgramCategories } from '@/data/navigation';
+import {
+  findMenuCategoryByParentSlug,
+  getMegaMenuSubcategoryUrl,
+  getProductCategoryUrl,
+  getProductListingUrl,
+  getTopCategoryUrl,
+  slugify,
+} from '@/lib/catalogUrls';
+import { PROGRAM_SLUGS } from '@/lib/wcSlugs';
+import { parentSlugToCatalogPrefix } from '@/lib/parentCatalogSlugs';
 import catAku from '@/assets/aku-alat.png';
 import catElektricni from '@/assets/elektricni-alat.png';
 
-export type CatalogProduct = Product & {
-  subtitle: string;
-  specs: string[];
-  inStock: boolean;
-  bestseller?: boolean;
-};
+export type CatalogProduct = KoncarCatalogProduct;
 
 export type FilterGroup = {
   id: string;
@@ -22,6 +29,7 @@ export type ListingChip = {
   count: number;
   image?: string;
   featured?: boolean;
+  href?: string;
 };
 
 export type ProductListingData = {
@@ -38,23 +46,25 @@ export type ProductListingData = {
   faq: { question: string; answer: string }[];
 };
 
-const catalogProducts: CatalogProduct[] = [
-  ...bestSellerProducts.slice(0, 4).map((p, i) => ({
-    ...p,
-    subtitle: p.description,
-    specs: ['18V', '55 Nm', '1.5 kg'],
-    inStock: true,
-    bestseller: i < 2,
-  })),
-  ...bestSellerProducts.map((p, i) => ({
-    ...p,
-    id: p.id + 100,
-    subtitle: p.description,
-    specs: i % 2 === 0 ? ['18V', '2.0 Ah'] : ['220V', '750W'],
-    inStock: i !== 3,
-    bestseller: false,
-  })),
+export type ParentListingData = {
+  parentSlug: string;
+  categorySlug: string;
+  title: string;
+  description: string;
+  breadcrumbs: { label: string; href?: string }[];
+  chips: (ListingChip & { href: string })[];
+};
+
+const listingSources = [
+  ...getProductsByCategorySlug('elektricni-alat/busilice'),
+  ...getProductsByCategorySlug('akumulatorski-alat/akumulatorske-busilice-odvijaci'),
+  ...koncarProducts.filter((p) => /bušil|busil|odvija/i.test(`${p.name} ${p.category}`)),
 ];
+
+const catalogProducts: CatalogProduct[] = listingSources
+  .filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i)
+  .slice(0, 16)
+  .map((p, i) => ({ ...p, bestseller: i < 2 }));
 
 export const busiliceListing: ProductListingData = {
   slug: 'busilice-i-odvijaci',
@@ -62,18 +72,18 @@ export const busiliceListing: ProductListingData = {
   categorySlug: 'alati',
   title: 'BUŠILICE I ODVIJAČI',
   description:
-    'Aku i električne bušilice, odvijači i udarni alati za profesionalnu upotrebu i kućne majstore. U ponudi Bosch, Makita, Metabo, Einhell i drugi vodeći brendovi.',
+    'Aku i električne bušilice, odvijači i udarni alati za profesionalnu upotrebu i kućne majstore. U ponudi INGCO, Makita, Metabo, Bosch i drugi vodeći brendovi.',
   breadcrumbs: [
     { label: 'Početna', href: '/' },
-    { label: 'Alati', href: '/kategorija/alati' },
-    { label: 'Električni alat', href: '/kategorija/alati/elektricni-alat' },
+    { label: 'Alati', href: getTopCategoryUrl('alati') },
+    { label: 'Električni alat', href: getProductCategoryUrl('elektricni-alat') },
     { label: 'Bušilice i odvijači' },
   ],
   chips: [
-    { slug: 'najprodavaniji', label: 'Najprodavaniji proizvodi', count: 24, featured: true },
-    { slug: 'aku-busilice', label: 'Aku bušilice', count: 132, image: catAku },
-    { slug: 'udarne-busilice', label: 'Udarna bušilice', count: 78, image: catElektricni },
-    { slug: 'elektricni-odvijaci', label: 'Električni odvijači', count: 64, image: catElektricni },
+    { slug: 'najprodavaniji', label: 'Najprodavaniji proizvodi', count: 24, featured: true, href: getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci') },
+    { slug: 'aku-busilice', label: 'Aku bušilice', count: 132, image: catAku, href: getProductListingUrl('alati', 'elektricni-alat', 'aku-busilice') },
+    { slug: 'udarne-busilice', label: 'Udarna bušilica', count: 78, image: catElektricni, href: getProductListingUrl('alati', 'elektricni-alat', 'udarne-busilice') },
+    { slug: 'elektricni-odvijaci', label: 'Električni odvijači', count: 64, image: catElektricni, href: getProductListingUrl('alati', 'elektricni-alat', 'elektricni-odvijaci') },
   ],
   filters: [
     {
@@ -81,12 +91,12 @@ export const busiliceListing: ProductListingData = {
       label: 'Brend',
       type: 'checkbox',
       options: [
-        { label: 'Bosch', count: 48 },
+        { label: 'INGCO', count: 48 },
         { label: 'Makita', count: 36 },
-        { label: 'DeWalt', count: 28 },
+        { label: 'Bosch', count: 28 },
         { label: 'Metabo', count: 22 },
         { label: 'Einhell', count: 19 },
-        { label: 'Ingco', count: 31 },
+        { label: 'Hyundai', count: 12 },
       ],
     },
     {
@@ -137,9 +147,159 @@ export const busiliceListing: ProductListingData = {
   ],
 };
 
-export const getProductListing = (categorySlug: string, parentSlug: string, slug: string) => {
+const defaultProducts = (): CatalogProduct[] => catalogProducts;
+
+const buildListing = (
+  categorySlug: string,
+  parentSlug: string,
+  slug: string,
+  title: string,
+  parentLabel: string,
+): ProductListingData => ({
+  ...busiliceListing,
+  slug,
+  parentSlug,
+  categorySlug,
+  title: title.toUpperCase(),
+  breadcrumbs: [
+    { label: 'Početna', href: '/' },
+    { label: 'Alati', href: getTopCategoryUrl('alati') },
+    { label: parentLabel, href: getProductCategoryUrl(parentSlug) },
+    { label: title },
+  ],
+  products: defaultProducts(),
+});
+
+export const getParentListing = (
+  categorySlug: string,
+  parentSlug: string,
+): ParentListingData | undefined => {
+  if (categorySlug !== 'alati') return undefined;
+
+  const menuCategory = findMenuCategoryByParentSlug(parentSlug);
+  const alatiItem = alatiSubcategories.find((s) => s.slug === parentSlug);
+  const title = menuCategory?.label ?? alatiItem?.name ?? parentSlug;
+  const description = menuCategory
+    ? `Izaberite podkategoriju iz ponude: ${menuCategory.label.toLowerCase()}.`
+    : `Pregledajte ponudu u kategoriji ${title.toLowerCase()}.`;
+
+  const chips: ParentListingData['chips'] = menuCategory
+    ? menuCategory.subcategories.map((sub, i) => ({
+        slug: slugify(sub.label),
+        label: sub.label,
+        count: sub.count,
+        image: sub.image,
+        featured: i === 0,
+        href: getMegaMenuSubcategoryUrl(menuCategory.id, sub.label),
+      }))
+    : [
+        {
+          slug: 'svi-proizvodi',
+          label: 'Svi proizvodi',
+          count: alatiItem?.productCount ?? 0,
+          featured: true,
+          href: getProductListingUrl(categorySlug, parentSlug, 'svi-proizvodi'),
+        },
+      ];
+
+  return {
+    parentSlug,
+    categorySlug,
+    title: title.toUpperCase(),
+    description,
+    breadcrumbs: [
+      { label: 'Početna', href: '/' },
+      { label: 'Alati', href: getTopCategoryUrl('alati') },
+      { label: title },
+    ],
+    chips,
+  };
+};
+
+export const getProgramListing = (
+  programSlug: string,
+  listingSlug: string,
+): ProductListingData | undefined => {
+  const program = otherProgramCategories.find((c) => c.id === programSlug);
+  if (!program) return undefined;
+
+  const sub = program.subcategories.find((s) => slugify(s.label) === listingSlug);
+  const title = sub?.label ?? listingSlug.replace(/-/g, ' ');
+
+  return {
+    ...busiliceListing,
+    slug: listingSlug,
+    parentSlug: programSlug,
+    categorySlug: programSlug,
+    title: title.toUpperCase(),
+    description: `Ponuda proizvoda iz kategorije ${title.toLowerCase()}.`,
+    breadcrumbs: [
+      { label: 'Početna', href: '/' },
+      { label: program.label, href: getTopCategoryUrl(programSlug) },
+      { label: title },
+    ],
+    products: defaultProducts(),
+  };
+};
+
+export const getProductListing = (
+  categorySlug: string,
+  parentSlug: string,
+  slug?: string,
+) => {
+  if (!slug) return undefined;
+
+  const programListing = getProgramListing(categorySlug, slug);
+  if (programListing && PROGRAM_SLUGS.has(categorySlug)) {
+    return programListing;
+  }
+
   if (categorySlug === 'alati' && slug === 'busilice-i-odvijaci') {
     return busiliceListing;
   }
-  return busiliceListing;
+
+  const menuCategory = findMenuCategoryByParentSlug(parentSlug);
+  const parentLabel =
+    menuCategory?.label ??
+    alatiSubcategories.find((s) => s.slug === parentSlug)?.name ??
+    parentSlug;
+
+  const subLabel =
+    menuCategory?.subcategories.find((s) => slugify(s.label) === slug)?.label ??
+    slug.replace(/-/g, ' ');
+
+  return buildListing(categorySlug, parentSlug, slug, subLabel, parentLabel);
+};
+
+export const getParentHubBestSellers = (parentSlug: string): CatalogProduct[] => {
+  const prefix = parentSlugToCatalogPrefix[parentSlug] ?? parentSlug;
+  const matches = getProductsByCategorySlug(prefix);
+  const pool = matches.length > 0 ? matches : koncarProducts;
+  return pool
+    .slice()
+    .sort((a, b) => b.reviews - a.reviews)
+    .slice(0, 8)
+    .map((p, i) => ({ ...p, bestseller: i < 2 }));
+};
+
+export const saleListing = {
+  title: 'AKCIJA',
+  description:
+    'Proizvodi sa najvećim popustima u ponudi — sortirano po uštedi. Ograničene količine, iskoristite akcijske cene dok traju.',
+  breadcrumbs: [
+    { label: 'Početna', href: '/' },
+    { label: 'Akcija' },
+  ],
+  products: getSaleCatalogProducts().map((p) => ({ ...p })) as CatalogProduct[],
+  whyBuy: [
+    'Najveći popusti na proverene brendove',
+    'Ista garancija kao za redovnu cenu',
+    'Brza isporuka na adresu',
+    'Akcija važi dok traju zalihe',
+  ],
+  faq: [
+    { question: 'Da li akcijski proizvodi imaju garanciju?', answer: 'Da, svi proizvodi na akciji imaju punu fabričku garanciju.' },
+    { question: 'Koliko dugo važi akcijska cena?', answer: 'Akcijske cene važe do isteka zaliha ili do kraja promotivnog perioda.' },
+    { question: 'Mogu li da kombinujem akciju sa drugim popustima?', answer: 'Akcijska cena je konačna i ne kombinuje se sa dodatnim kodovima.' },
+  ],
 };

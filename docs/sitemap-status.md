@@ -31,7 +31,7 @@
 ## Napomena o automatskom fetchingu
 
 Server blokira automatske HTTP zahteve (Cloudflare WAF) — sitemapovi su dostupni samo iz browsera.
-URL inventar se prikuplja lokalnom Node.js skriptom (`crawl/seo-crawler.js`).
+URL inventar se prikuplja lokalnom Node.js skriptom ([crawl/seo-crawler.js](./crawl/seo-crawler.js)).
 
 ## Sitemap http → https (sitnica za popraviti)
 
