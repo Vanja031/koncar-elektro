@@ -1,0 +1,1548 @@
+﻿node : ponuda: 4
+At C:\Users\vtomi\AppData\Local\Temp\ps-script-5761f67e-1eff-4234-84cd-85cdb708f95a.ps1:92 char:1
++ node scripts/scrape-products.mjs 2>&1 | Out-File -FilePath scripts/sc ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ponuda: 4:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+aparati-za-varenje: 4
+aparati-za-varenje/inverterski-aparati: 4
+aparati-za-varenje/tig-aparati: 4
+aparati-za-varenje/mig-mag-aparati: 4
+aparati-za-varenje/plazma-aparati-za-secenje: 3
+elektricni-alat: 4
+elektricni-alat/busilice: 4
+elektricni-alat/cekic-busilice-i-stemarice: 4
+elektricni-alat/brusilice: 4
+elektricni-alat/testere-i-cirkulari: 4
+elektricni-alat/usisivaci: 4
+elektricni-alat/peraci: 4
+rucni-alat: 4
+rucni-alat/klesta: 4
+rucni-alat/setovi-alata-i-kljuceva: 4
+rucni-alat/odvijaci-i-zavrtaci: 4
+rucni-alat-i-pribor/torbe-i-nosaci-alata: 4
+akumulatorski-alat: 4
+akumulatorski-alat/akumulatorske-busilice-odvijaci: 4
+akumulatorski-alat/akumulatorske-brusilice: 4
+akumulatorski-alat/akumulatorski-setovi: 4
+agregati: 4
+agregati/benzinski-agregati: 4
+agregati/inverterski-agregati: 4
+kompresori-i-pneumatski-alati: 4
+kompresori-i-pneumatski-alati/pneumatski-alati-i-pribor: 4
+kosacice-i-trimeri: 4
+kosacice-i-trimeri/benzinski-trimeri: 4
+kosacice-i-trimeri/benzinske-kosacice: 4
+kosacice-i-trimeri/elektricne-kosacice: 4
+poljoprivredni-alati-i-oprema: 4
+pumpe-za-vodu: 4
+pumpe-za-vodu/hidrofori: 4
+htz-oprema: 4
+htz-oprema/radne-rukavice: 2
+oprema-za-dvoriste: 4
+elektromaterijal-i-oprema: 4
+elektromaterijal-i-oprema/automatski-osiguraci: 0
+elektromaterijal-i-oprema/fid-sklopke: 0
+elektromaterijal-i-oprema/merni-instrumenti: 4
+razvodni-ormani-i-table: 0
+kablovi-i-provodnici: 0
+kablovi-i-provodnici/instalacioni-kablovi: 0
+rasveta: 4
+rasveta/led-sijalice: 0
+rasveta/unutrasnja-rasveta: 0
+rasveta/spoljna-rasveta: 4
+rasveta/led-reflektori: 4
+[
+  {
+    "name": "Akumulatorska ugaona brusilica CAGLI27153E 115mm 20V SOLO SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "ponuda",
+    "description": "Akumulatorska ugaona brusilica CAGLI27153E 115mm 20V SOLO SUPER INGCO",
+    "price": 5690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/CAGLI27153E-1.jpg",
+    "sku": "34102",
+    "inStock": true,
+    "id": 1
+  },
+  {
+    "name": "List testere za drvo TSB2103 40 zuba 210mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "ponuda",
+    "description": "List testere za drvo TSB2103 40 zuba 210mm SUPER INGCO",
+    "price": 1150,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/TSB2103-1.jpg",
+    "sku": "34097",
+    "inStock": true,
+    "id": 2
+  },
+  {
+    "name": "Akumulatorska vibraciona ┼ílajferica CPSLI2024 Solo SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorske ┼ílajferice",
+    "categorySlug": "ponuda",
+    "description": "Akumulatorska vibraciona ┼ílajferica CPSLI2024 Solo SUPER INGCO",
+    "price": 3990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/CPSLI2024-1.jpg",
+    "sku": "34092",
+    "inStock": true,
+    "id": 3
+  },
+  {
+    "name": "Kolica sa alatom HTCS273561 356kom. SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kolica i pribor",
+    "categorySlug": "ponuda",
+    "description": "Kolica sa alatom HTCS273561 356kom. SUPER INGCO",
+    "price": 99900,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HTCS273561-1.jpg",
+    "sku": "34086",
+    "inStock": true,
+    "id": 4
+  },
+  {
+    "name": "Hugong Inverterski aparat za zavarivanje NVM 350 (988154)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje",
+    "description": "Hugong Inverterski aparat za zavarivanje NVM 350 (988154)",
+    "price": 233690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/NVM350.png",
+    "sku": "33951",
+    "inStock": true,
+    "id": 5
+  },
+  {
+    "name": "Hugong Inverterski aparat za zavarivanje NVM 250 HF (988162)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje",
+    "description": "Hugong Inverterski aparat za zavarivanje NVM 250 HF (988162)",
+    "price": 131000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/NVM-250-HF.png",
+    "sku": "33940",
+    "inStock": true,
+    "id": 6
+  },
+  {
+    "name": "Hugong Inverterski aparat za zavarivanje NVM 251 HF (988161)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje",
+    "description": "Hugong Inverterski aparat za zavarivanje NVM 251 HF (988161)",
+    "price": 119690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/Hugong-NVM-251-HF.png",
+    "sku": "33935",
+    "inStock": true,
+    "id": 7
+  },
+  {
+    "name": "Hugong Hibridni Inverterski aparat za zavarivanje NVB 750 (988151)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje",
+    "description": "Hugong Hibridni Inverterski aparat za zavarivanje NVB 750 (988151)",
+    "price": 222000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/Hugong-NVB-750.png",
+    "sku": "33904",
+    "inStock": true,
+    "id": 8
+  },
+  {
+    "name": "Aparat za zavarivanje Varstroj Varmig 301-i LCD Pulse vodeno hladjenje (632447)",
+    "brand": "Aparat",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/mig-mag-aparati",
+    "description": "Aparat za zavarivanje Varstroj Varmig 301-i LCD Pulse vodeno hladjenje (632447)",
+    "price": 420000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/01/632447-1.jpg",
+    "sku": "32330",
+    "inStock": true,
+    "id": 9
+  },
+  {
+    "name": "Hugong inverter aparat za varenje EMIG 300 LCD (988815)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/mig-mag-aparati",
+    "description": "Hugong inverter aparat za varenje EMIG 300 LCD (988815)",
+    "price": 142490,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/05/EMIG-300-1.jpg",
+    "sku": "25562",
+    "inStock": true,
+    "id": 10
+  },
+  {
+    "name": "Hugong inverterski aparat za zavarivanje EMIG 250D MIG/MAG(GMAW)",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/mig-mag-aparati",
+    "description": "Hugong inverterski aparat za zavarivanje EMIG 250D MIG/MAG(GMAW)",
+    "price": 114000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/02/EMIG-250D-1.jpg",
+    "sku": "24156",
+    "inStock": true,
+    "id": 11
+  },
+  {
+    "name": "Hugong Invermatrix 270 Pulse (988811) inverterski aparat za varenje",
+    "brand": "HUGONG",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/mig-mag-aparati",
+    "description": "Hugong Invermatrix 270 Pulse (988811) inverterski aparat za varenje",
+    "price": 279000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/08/Invermatrix-270-Pulse-1.jpg",
+    "sku": "20126",
+    "inStock": true,
+    "id": 12
+  },
+  {
+    "name": "Aparat za plazma se─ìenje D-4005 (607530) Varstroj",
+    "brand": "Aparat",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/plazma-aparati-za-secenje",
+    "description": "Aparat za plazma se─ìenje D-4005 (607530) Varstroj",
+    "price": 64990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/04/D-4005-1.jpg",
+    "sku": "29856",
+    "inStock": true,
+    "id": 13
+  },
+  {
+    "name": "Aparat za plazma se─ìenje Varstroj PLAZMA D 5000",
+    "brand": "Aparat",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/plazma-aparati-za-secenje",
+    "description": "Aparat za plazma se─ìenje Varstroj PLAZMA D 5000",
+    "price": 164000,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/01/PLAZMA-5000.png",
+    "inStock": true,
+    "id": 14
+  },
+  {
+    "name": "Inverter plazma za secenje CUT-40 i 230V HYUNDAI",
+    "brand": "HYUNDAI",
+    "category": "Aparati za varenje",
+    "categorySlug": "aparati-za-varenje/plazma-aparati-za-secenje",
+    "description": "Inverter plazma za secenje CUT-40 i 230V HYUNDAI",
+    "price": 46300,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2021/04/CUT-40-i-1.jpg",
+    "sku": "7500",
+    "inStock": true,
+    "id": 15
+  },
+  {
+    "name": "Elektri─ìna bu┼íilica ID71182E 710W SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Bu┼íilice",
+    "categorySlug": "elektricni-alat",
+    "description": "Elektri─ìna bu┼íilica ID71182E 710W SUPER INGCO",
+    "price": 3690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/ID71182E-1-1.jpg",
+    "sku": "34071",
+    "inStock": true,
+    "id": 16
+  },
+  {
+    "name": "Brusilica za zidove (┼╛irafa) TC-DW 225 600W Einhell",
+    "brand": "EINHELL",
+    "category": "Brusilice",
+    "categorySlug": "elektricni-alat",
+    "description": "Brusilica za zidove (┼╛irafa) TC-DW 225 600W Einhell",
+    "price": 18999,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/TC-DW-225-1.jpg",
+    "sku": "33733",
+    "inStock": true,
+    "id": 17
+  },
+  {
+    "name": "┼╜i─ìana ─ìetka WB11001 100mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Pribor",
+    "categorySlug": "elektricni-alat",
+    "description": "┼╜i─ìana ─ìetka WB11001 100mm SUPER INGCO",
+    "price": 450,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/WB11001-1.jpg",
+    "sku": "33406",
+    "inStock": true,
+    "id": 18
+  },
+  {
+    "name": "┼╜i─ìana ─ìetka WB10751 75mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Pribor",
+    "categorySlug": "elektricni-alat",
+    "description": "┼╜i─ìana ─ìetka WB10751 75mm SUPER INGCO",
+    "price": 350,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/WB10751-1.jpg",
+    "sku": "33401",
+    "inStock": true,
+    "id": 19
+  },
+  {
+    "name": "Vibraciona bu┼íilica SBE 650 Impuls (600743500) Metabo",
+    "brand": "METABO",
+    "category": "Bu┼íilice",
+    "categorySlug": "elektricni-alat/busilice",
+    "description": "Vibraciona bu┼íilica SBE 650 Impuls (600743500) Metabo",
+    "price": 9120,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/06/600743500-1.jpg",
+    "sku": "26232",
+    "inStock": true,
+    "id": 20
+  },
+  {
+    "name": "Elektri─ìna vibraciona bu┼íilica SBE 650 (600742500) Metabo",
+    "brand": "METABO",
+    "category": "Bu┼íilice",
+    "categorySlug": "elektricni-alat/busilice",
+    "description": "Elektri─ìna vibraciona bu┼íilica SBE 650 (600742500) Metabo",
+    "price": 9350,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/06/600742500-1.jpg",
+    "sku": "26222",
+    "inStock": true,
+    "id": 21
+  },
+  {
+    "name": "Elektri─ìna vibraciona bu┼íilica SBE 650 (600671000) Metabo",
+    "brand": "METABO",
+    "category": "Bu┼íilice",
+    "categorySlug": "elektricni-alat/busilice",
+    "description": "Elektri─ìna vibraciona bu┼íilica SBE 650 (600671000) Metabo",
+    "price": 9390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/06/600671000-1.jpg",
+    "sku": "26216",
+    "inStock": true,
+    "id": 22
+  },
+  {
+    "name": "Elektri─ìna ─ìeki─ç bu┼íilica HR2670 SDS PLUS 3J 800W MAKITA",
+    "brand": "MAKITA",
+    "category": "─îeki─ç Bu┼íilice i ┼átemarice",
+    "categorySlug": "elektricni-alat/cekic-busilice-i-stemarice",
+    "description": "Elektri─ìna ─ìeki─ç bu┼íilica HR2670 SDS PLUS 3J 800W MAKITA",
+    "price": 23990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/12/HR2670-01.jpg",
+    "sku": "32026",
+    "inStock": true,
+    "id": 23
+  },
+  {
+    "name": "Elektri─ìna ─ìeki─ç bu┼íilica RH1700558 1700W SUPER INGCO",
+    "brand": "INGCO",
+    "category": "─îeki─ç Bu┼íilice i ┼átemarice",
+    "categorySlug": "elektricni-alat/cekic-busilice-i-stemarice",
+    "description": "Elektri─ìna ─ìeki─ç bu┼íilica RH1700558 1700W SUPER INGCO",
+    "price": 56990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/RH1700558-1.jpg",
+    "sku": "31188",
+    "inStock": true,
+    "id": 24
+  },
+  {
+    "name": "Masina za razbijanje i rusenje PDB170068 1700W SUPER INGCO",
+    "brand": "INGCO",
+    "category": "─îeki─ç Bu┼íilice i ┼átemarice",
+    "categorySlug": "elektricni-alat/cekic-busilice-i-stemarice",
+    "description": "Masina za razbijanje i rusenje PDB170068 1700W SUPER INGCO",
+    "price": 21650,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/PDB170068-1.jpg",
+    "sku": "31036",
+    "inStock": true,
+    "id": 25
+  },
+  {
+    "name": "Elektri─ìna ─ìeki─ç bu┼íilica RH1200428 2-10J 1200W SUPER INGCO",
+    "brand": "INGCO",
+    "category": "─îeki─ç Bu┼íilice i ┼átemarice",
+    "categorySlug": "elektricni-alat/cekic-busilice-i-stemarice",
+    "description": "Elektri─ìna ─ìeki─ç bu┼íilica RH1200428 2-10J 1200W SUPER INGCO",
+    "price": 26190,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/RH1200428-1.jpg",
+    "sku": "31029",
+    "inStock": true,
+    "id": 26
+  },
+  {
+    "name": "Brusilica za zidove (┼╛irafa) DS920X 710W Scheppach",
+    "brand": "Scheppach",
+    "category": "Brusilice",
+    "categorySlug": "elektricni-alat/brusilice",
+    "description": "Brusilica za zidove (┼╛irafa) DS920X 710W Scheppach",
+    "price": 18990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/DS920X-1.jpg",
+    "sku": "32806",
+    "inStock": true,
+    "id": 27
+  },
+  {
+    "name": "Brusilica za zidove (┼╛irafa) DS930 710W Scheppach",
+    "brand": "Scheppach",
+    "category": "Brusilice",
+    "categorySlug": "elektricni-alat/brusilice",
+    "description": "Brusilica za zidove (┼╛irafa) DS930 710W Scheppach",
+    "price": 19990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/DS930-1.jpg",
+    "sku": "32801",
+    "inStock": true,
+    "id": 28
+  },
+  {
+    "name": "Okvir za brusilicu YKS040 (nosa─ì za se─ìenje pod uglom) DEDRA",
+    "brand": "Okvir",
+    "category": "Brusilice",
+    "categorySlug": "elektricni-alat/brusilice",
+    "description": "Okvir za brusilicu YKS040 (nosa─ì za se─ìenje pod uglom) DEDRA",
+    "price": 4990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/YKS040-1.jpg",
+    "sku": "32554",
+    "inStock": true,
+    "id": 29
+  },
+  {
+    "name": "Elektri─ìna testera AET 1821 1800W AGM",
+    "brand": "Elektri─ìna",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/testere-i-cirkulari",
+    "description": "Elektri─ìna testera AET 1821 1800W AGM",
+    "price": 6990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/04/AET-1821-1.jpg",
+    "sku": "33263",
+    "inStock": true,
+    "id": 30
+  },
+  {
+    "name": "Elektri─ìna testera ΓÇô bansek HBS400 750W Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/testere-i-cirkulari",
+    "description": "Elektri─ìna testera ΓÇô bansek HBS400 750W Scheppach",
+    "price": 73990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/HBS400-1.jpg",
+    "sku": "32823",
+    "inStock": true,
+    "id": 31
+  },
+  {
+    "name": "Stona testera &#8211; bansek HBS261 550W Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/testere-i-cirkulari",
+    "description": "Stona testera &#8211; bansek HBS261 550W Scheppach",
+    "price": 36990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/HBS261-1.jpg",
+    "sku": "32818",
+    "inStock": true,
+    "id": 32
+  },
+  {
+    "name": "Stona testera HS110 254mm 2000W Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/testere-i-cirkulari",
+    "description": "Stona testera HS110 254mm 2000W Scheppach",
+    "price": 26990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/HS110-1.jpg",
+    "sku": "32786",
+    "inStock": true,
+    "id": 33
+  },
+  {
+    "name": "Elekti─ìni usisiva─ì za pepeo AVC25 20 L; 1300W Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/usisivaci",
+    "description": "Elekti─ìni usisiva─ì za pepeo AVC25 20 L; 1300W Scheppach",
+    "price": 6590,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/AVC25-1.jpg",
+    "sku": "32567",
+    "inStock": true,
+    "id": 34
+  },
+  {
+    "name": "Usisiva─ì za dubinsko ─ìi┼í─çenje SprayVac20 1600W Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/usisivaci",
+    "description": "Usisiva─ì za dubinsko ─ìi┼í─çenje SprayVac20 1600W Scheppach",
+    "price": 15990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/SprayVac20-1.jpg",
+    "sku": "32536",
+    "inStock": true,
+    "id": 35
+  },
+  {
+    "name": "Usisiva─ì za suvo i mokro usisavanje VC14122 12L SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/usisivaci",
+    "description": "Usisiva─ì za suvo i mokro usisavanje VC14122 12L SUPER INGCO",
+    "price": 5700,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/06/VC14122-1.jpg",
+    "sku": "30260",
+    "inStock": true,
+    "id": 36
+  },
+  {
+    "name": "Potro┼íne kese 5 kom GAS 12-40MA i 400A (2608000888) BOSCH",
+    "brand": "BOSCH",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/usisivaci",
+    "description": "Potro┼íne kese 5 kom GAS 12-40MA i 400A (2608000888) BOSCH",
+    "price": 3900,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/04/2608000888-1.jpg",
+    "sku": "29882",
+    "inStock": true,
+    "id": 37
+  },
+  {
+    "name": "Benzinski pera─ì pod pritiskom HCP5000 5,9KS Scheppach",
+    "brand": "Scheppach",
+    "category": "Ba┼ítenski alat",
+    "categorySlug": "elektricni-alat/peraci",
+    "description": "Benzinski pera─ì pod pritiskom HCP5000 5,9KS Scheppach",
+    "price": 49990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/HCP5000-1.jpg",
+    "sku": "32613",
+    "inStock": true,
+    "id": 38
+  },
+  {
+    "name": "Pera─ì pod pritiskom HPC1600-Kit 135 bar Scheppach",
+    "brand": "Scheppach",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/peraci",
+    "description": "Pera─ì pod pritiskom HPC1600-Kit 135 bar Scheppach",
+    "price": 10990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/01/HPC1600-Kit-1.jpg",
+    "sku": "32364",
+    "inStock": true,
+    "id": 39
+  },
+  {
+    "name": "─îista─ì za dvori┼íta pod visokim pritiskom Aquasurf 250 (F016800486) Bosch",
+    "brand": "BOSCH",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/peraci",
+    "description": "─îista─ì za dvori┼íta pod visokim pritiskom Aquasurf 250 (F016800486) Bosch",
+    "price": 2990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/12/Aquasurf-250-1.jpg",
+    "sku": "32043",
+    "inStock": true,
+    "id": 40
+  },
+  {
+    "name": "Pera─ì pod pritiskom HPWR16008 1600W/140bara SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Elektri─ìni alat",
+    "categorySlug": "elektricni-alat/peraci",
+    "description": "Pera─ì pod pritiskom HPWR16008 1600W/140bara SUPER INGCO",
+    "price": 11390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/HPWR16008-1.jpg",
+    "sku": "31371",
+    "inStock": true,
+    "id": 41
+  },
+  {
+    "name": "Prava grip kle┼íta HSJP0110 10ΓÇ│ SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kle┼íta",
+    "categorySlug": "rucni-alat",
+    "description": "Prava grip kle┼íta HSJP0110 10ΓÇ│ SUPER INGCO",
+    "price": 650,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HSJP0110-1.jpg",
+    "sku": "34058",
+    "inStock": true,
+    "id": 42
+  },
+  {
+    "name": "Pneumatska ra─ìna ARW121 1/2 68Nm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat",
+    "description": "Pneumatska ra─ìna ARW121 1/2 68Nm SUPER INGCO",
+    "price": 4790,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/ARW121.png",
+    "sku": "34039",
+    "inStock": true,
+    "id": 43
+  },
+  {
+    "name": "Grip kle┼íta HCJLW0210 10ΓÇ│ SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kle┼íta",
+    "categorySlug": "rucni-alat/klesta",
+    "description": "Grip kle┼íta HCJLW0210 10ΓÇ│ SUPER INGCO",
+    "price": 600,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HCJLW0210-1.jpg",
+    "sku": "34014",
+    "inStock": true,
+    "id": 44
+  },
+  {
+    "name": "Set oja─ìanih kle┼íta HKCPS5841 4/1 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kle┼íta",
+    "categorySlug": "rucni-alat/klesta",
+    "description": "Set oja─ìanih kle┼íta HKCPS5841 4/1 SUPER INGCO",
+    "price": 3400,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HKCPS5841-1.jpg",
+    "sku": "33844",
+    "inStock": true,
+    "id": 45
+  },
+  {
+    "name": "Kle┼íta za krimpovanje HRCPG05210 160mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/klesta",
+    "description": "Kle┼íta za krimpovanje HRCPG05210 160mm SUPER INGCO",
+    "price": 1690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HRCPG05210-1.jpg",
+    "sku": "33574",
+    "inStock": true,
+    "id": 46
+  },
+  {
+    "name": "Set gedora 62/1 HKTS12602 1/2ΓÇ│ SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/setovi-alata-i-kljuceva",
+    "description": "Set gedora 62/1 HKTS12602 1/2ΓÇ│ SUPER INGCO",
+    "price": 7390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HKTS12602-1.jpg",
+    "sku": "33954",
+    "inStock": true,
+    "id": 47
+  },
+  {
+    "name": "Set gedora 46/1 HKTS14462 1/4ΓÇ│ SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/setovi-alata-i-kljuceva",
+    "description": "Set gedora 46/1 HKTS14462 1/4ΓÇ│ SUPER INGCO",
+    "price": 3400,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HKTS14462-1.jpg",
+    "sku": "33876",
+    "inStock": true,
+    "id": 48
+  },
+  {
+    "name": "Kutija sa alatom u fiokama HTCS221321 132/1 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/setovi-alata-i-kljuceva",
+    "description": "Kutija sa alatom u fiokama HTCS221321 132/1 SUPER INGCO",
+    "price": 23890,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HTCS221321-1.jpg",
+    "sku": "33702",
+    "inStock": true,
+    "id": 49
+  },
+  {
+    "name": "Odvija─ìi sa klju─ìem T-ru─ìka HKSDB0318 31/1 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/odvijaci-i-zavrtaci",
+    "description": "Odvija─ìi sa klju─ìem T-ru─ìka HKSDB0318 31/1 SUPER INGCO",
+    "price": 700,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HKSDB0318-1.jpg",
+    "sku": "33723",
+    "inStock": true,
+    "id": 50
+  },
+  {
+    "name": "SUPER INGCO ra─ìna-─ìegrtaljka 1/2ΓÇ¥ HRTH0812",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat",
+    "categorySlug": "rucni-alat/odvijaci-i-zavrtaci",
+    "description": "SUPER INGCO ra─ìna-─ìegrtaljka 1/2ΓÇ¥ HRTH0812",
+    "price": 1700,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HRTH0812-1.jpg",
+    "sku": "33656",
+    "inStock": true,
+    "id": 51
+  },
+  {
+    "name": "Set preciznih odvijaca i bitova 45kom HKSDB0458 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Odvija─ìi i zavrta─ìi",
+    "categorySlug": "rucni-alat/odvijaci-i-zavrtaci",
+    "description": "Set preciznih odvijaca i bitova 45kom HKSDB0458 SUPER INGCO",
+    "price": 950,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/HKSDB0458-1.jpg",
+    "inStock": true,
+    "id": 52
+  },
+  {
+    "name": "Ranac za alat (radni ranac) HBP03028 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat i pribor",
+    "categorySlug": "rucni-alat-i-pribor/torbe-i-nosaci-alata",
+    "description": "Ranac za alat (radni ranac) HBP03028 SUPER INGCO",
+    "price": 2850,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HBP03028-1.jpg",
+    "sku": "33959",
+    "inStock": true,
+    "id": 53
+  },
+  {
+    "name": "Torba za alat HTBG08 16ΓÇ¥ SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat i pribor",
+    "categorySlug": "rucni-alat-i-pribor/torbe-i-nosaci-alata",
+    "description": "Torba za alat HTBG08 16ΓÇ¥ SUPER INGCO",
+    "price": 2290,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HTBG08-1.jpg",
+    "sku": "33642",
+    "inStock": true,
+    "id": 54
+  },
+  {
+    "name": "Torba za alat HTBG281928 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat i pribor",
+    "categorySlug": "rucni-alat-i-pribor/torbe-i-nosaci-alata",
+    "description": "Torba za alat HTBG281928 SUPER INGCO",
+    "price": 1360,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/12/HTBG281928-1.jpg",
+    "sku": "31952",
+    "inStock": true,
+    "id": 55
+  },
+  {
+    "name": "Set torbi za alat COS230910 4/1 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ru─ìni alat i pribor",
+    "categorySlug": "rucni-alat-i-pribor/torbe-i-nosaci-alata",
+    "description": "Set torbi za alat COS230910 4/1 SUPER INGCO",
+    "price": 4999,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/COS230910-1.jpg",
+    "sku": "31658",
+    "inStock": true,
+    "id": 56
+  },
+  {
+    "name": "Akumulatorska udarna bu┼íilica CIDLI207686E 20V 2&#215;2,0Ah SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorske bu┼íilice - odvija─ìi",
+    "categorySlug": "akumulatorski-alat",
+    "description": "Akumulatorska udarna bu┼íilica CIDLI207686E 20V 2&#215;2,0Ah SUPER INGCO",
+    "price": 13100,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/CIDLI207686E-1.jpg",
+    "sku": "34065",
+    "inStock": true,
+    "id": 57
+  },
+  {
+    "name": "Akumulatorski set alata COSLI251292E 3/1 2&#215;4,0Ah SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat",
+    "description": "Akumulatorski set alata COSLI251292E 3/1 2&#215;4,0Ah SUPER INGCO",
+    "price": 26499,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/COSLI251292E-1.jpg",
+    "sku": "34032",
+    "inStock": true,
+    "id": 58
+  },
+  {
+    "name": "Akumulatorski mini odvija─ì CSDLI04425 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorske-busilice-odvijaci",
+    "description": "Akumulatorski mini odvija─ì CSDLI04425 SUPER INGCO",
+    "price": 2290,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/CSDLI04425-1.jpg",
+    "sku": "33491",
+    "inStock": true,
+    "id": 59
+  },
+  {
+    "name": "Akumulatorska ┼írafilica CDLI124561 20Nm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorske-busilice-odvijaci",
+    "description": "Akumulatorska ┼írafilica CDLI124561 20Nm SUPER INGCO",
+    "price": 2400,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/02/CDLI124561-1.jpg",
+    "sku": "32526",
+    "inStock": true,
+    "id": 60
+  },
+  {
+    "name": "Akumulatorska udarna bu┼íilica CIDLI201668 Solo SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorske-busilice-odvijaci",
+    "description": "Akumulatorska udarna bu┼íilica CIDLI201668 Solo SUPER INGCO",
+    "price": 14990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/01/CIDLI201668-01.jpg",
+    "sku": "32310",
+    "inStock": true,
+    "id": 61
+  },
+  {
+    "name": "Akumulatorska ugaona brusilica CAGLI221153 115mm 20V SOLO SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorske brusilice",
+    "categorySlug": "akumulatorski-alat/akumulatorske-brusilice",
+    "description": "Akumulatorska ugaona brusilica CAGLI221153 115mm 20V SOLO SUPER INGCO",
+    "price": 6250,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/CAGLI221153-1.jpg",
+    "sku": "31068",
+    "inStock": true,
+    "id": 62
+  },
+  {
+    "name": "Akumulatorska ugaona brusilica CAGLI2111561 1&#215;4,0Ah SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorske brusilice",
+    "categorySlug": "akumulatorski-alat/akumulatorske-brusilice",
+    "description": "Akumulatorska ugaona brusilica CAGLI2111561 1&#215;4,0Ah SUPER INGCO",
+    "price": 12250,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/CAGLI2111561-1.jpg",
+    "sku": "30978",
+    "inStock": true,
+    "id": 63
+  },
+  {
+    "name": "Akumulatorska vibraciona brusilica CFSLI2031 SOLO SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorske brusilice",
+    "categorySlug": "akumulatorski-alat/akumulatorske-brusilice",
+    "description": "Akumulatorska vibraciona brusilica CFSLI2031 SOLO SUPER INGCO",
+    "price": 5690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/07/CFSLI2031-1.jpg",
+    "sku": "30643",
+    "inStock": true,
+    "id": 64
+  },
+  {
+    "name": "Akumulatorski set alata COSLI251193E 5/1 20V 2├ù5,0Ah SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorski-setovi",
+    "description": "Akumulatorski set alata COSLI251193E 5/1 20V 2├ù5,0Ah SUPER INGCO",
+    "price": 37499,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/COSLI251193E-1.jpg",
+    "sku": "33505",
+    "inStock": true,
+    "id": 65
+  },
+  {
+    "name": "Merni set HLL680081-1 (LASER 0-35M + METAR 5m) SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorski-setovi",
+    "description": "Merni set HLL680081-1 (LASER 0-35M + METAR 5m) SUPER INGCO",
+    "price": 8500,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HLL680081-1-1.jpg",
+    "sku": "33339",
+    "inStock": true,
+    "id": 66
+  },
+  {
+    "name": "Akumulatorski set alata COSLI251192E 4/1 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Akumulatorski alat",
+    "categorySlug": "akumulatorski-alat/akumulatorski-setovi",
+    "description": "Akumulatorski set alata COSLI251192E 4/1 SUPER INGCO",
+    "price": 29999,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/COSLI251192E-1.jpg",
+    "sku": "33324",
+    "inStock": true,
+    "id": 67
+  },
+  {
+    "name": "Benzinski agregat (generator) AGP 2300S 2,2kW AGM",
+    "brand": "Benzinski",
+    "category": "Agregati",
+    "categorySlug": "agregati",
+    "description": "Benzinski agregat (generator) AGP 2300S 2,2kW AGM",
+    "price": 23900,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/01/AGP-2300S-1.jpg",
+    "inStock": true,
+    "id": 68
+  },
+  {
+    "name": "Benzinski agregat (generator) LC6500D-AS 5,5kW LONCIN",
+    "brand": "Benzinski",
+    "category": "Agregati",
+    "categorySlug": "agregati",
+    "description": "Benzinski agregat (generator) LC6500D-AS 5,5kW LONCIN",
+    "price": 114990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/01/LC6500D-AS-1.jpg",
+    "sku": "32297",
+    "inStock": true,
+    "id": 69
+  },
+  {
+    "name": "Dizel agregat (generator) DG15000SE3 11kW WIRMAN",
+    "brand": "Dizel",
+    "category": "Agregati",
+    "categorySlug": "agregati",
+    "description": "Dizel agregat (generator) DG15000SE3 11kW WIRMAN",
+    "price": 573990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/12/DG15000SE3-1.jpg",
+    "inStock": true,
+    "id": 70
+  },
+  {
+    "name": "Dizel agregat (generator) DG10000SE3 8kW WIRMAN",
+    "brand": "Dizel",
+    "category": "Agregati",
+    "categorySlug": "agregati",
+    "description": "Dizel agregat (generator) DG10000SE3 8kW WIRMAN",
+    "price": 246990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/12/DG10000SE3-01.jpg",
+    "sku": "32096",
+    "inStock": true,
+    "id": 71
+  },
+  {
+    "name": "Inverterski be┼íumni agregat (generator) GEI23006 2 kW INGCO",
+    "brand": "INGCO",
+    "category": "Agregati",
+    "categorySlug": "agregati/benzinski-agregati",
+    "description": "Inverterski be┼íumni agregat (generator) GEI23006 2 kW INGCO",
+    "price": 62690,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/06/GEI23006-1.jpg",
+    "sku": "30382",
+    "inStock": true,
+    "id": 72
+  },
+  {
+    "name": "Inverterski agregat (generator) TC-IG 2000 2,0 kW Einhell",
+    "brand": "EINHELL",
+    "category": "Agregati",
+    "categorySlug": "agregati/benzinski-agregati",
+    "description": "Inverterski agregat (generator) TC-IG 2000 2,0 kW Einhell",
+    "price": 56990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/06/TC-IG-2000-1.jpg",
+    "sku": "30271",
+    "inStock": true,
+    "id": 73
+  },
+  {
+    "name": "Inverterski be┼íumni agregat EU10i 1,0kW HONDA",
+    "brand": "HONDA",
+    "category": "Agregati",
+    "categorySlug": "agregati/inverterski-agregati",
+    "description": "Inverterski be┼íumni agregat EU10i 1,0kW HONDA",
+    "price": 149990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/09/EU10i-1.jpg",
+    "sku": "27486",
+    "inStock": true,
+    "id": 74
+  },
+  {
+    "name": "Inverterski be┼íumni agregat (generator) GEI35006 3,2 kW INGCO",
+    "brand": "INGCO",
+    "category": "Agregati",
+    "categorySlug": "agregati/inverterski-agregati",
+    "description": "Inverterski be┼íumni agregat (generator) GEI35006 3,2 kW INGCO",
+    "price": 74990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2024/03/GEI35006-1.jpg",
+    "sku": "24914",
+    "inStock": true,
+    "id": 75
+  },
+  {
+    "name": "Pneumatski udarni odvija─ì AIW11223 1800Nm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kompresori i pneumatski alati",
+    "categorySlug": "kompresori-i-pneumatski-alati",
+    "description": "Pneumatski udarni odvija─ì AIW11223 1800Nm SUPER INGCO",
+    "price": 15390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/AIW11223-2.png",
+    "sku": "34050",
+    "inStock": true,
+    "id": 76
+  },
+  {
+    "name": "Pneumatski udarni odvija─ì AIW341302 3/4ΓÇ│ 1600Nm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kompresori i pneumatski alati",
+    "categorySlug": "kompresori-i-pneumatski-alati",
+    "description": "Pneumatski udarni odvija─ì AIW341302 3/4ΓÇ│ 1600Nm SUPER INGCO",
+    "price": 15390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/aiw341302.png",
+    "sku": "34044",
+    "inStock": true,
+    "id": 77
+  },
+  {
+    "name": "Pneumatski pi┼ítolj za izduvavanje AWG1001 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kompresori i pneumatski alati",
+    "categorySlug": "kompresori-i-pneumatski-alati",
+    "description": "Pneumatski pi┼ítolj za izduvavanje AWG1001 SUPER INGCO",
+    "price": 1140,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/AWG1001-Pneumatski-pistolj-za-izduvavanje.png",
+    "sku": "33989",
+    "inStock": true,
+    "id": 78
+  },
+  {
+    "name": "Pneumatska rotaciona brusilica APS1512 150mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Kompresori i pneumatski alati",
+    "categorySlug": "kompresori-i-pneumatski-alati",
+    "description": "Pneumatska rotaciona brusilica APS1512 150mm SUPER INGCO",
+    "price": 6550,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/APS1512-1.jpg",
+    "sku": "33794",
+    "inStock": true,
+    "id": 79
+  },
+  {
+    "name": "Pneumatska heftalica TIP80 6-16mm NEO TOOLS",
+    "brand": "Pneumatska",
+    "category": "Kompresori i pneumatski alati",
+    "categorySlug": "kompresori-i-pneumatski-alati/pneumatski-alati-i-pribor",
+    "description": "Pneumatska heftalica TIP80 6-16mm NEO TOOLS",
+    "price": 4999,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/TIP80-1.jpg",
+    "sku": "31608",
+    "inStock": true,
+    "id": 80
+  },
+  {
+    "name": "Motorna samohodna kosa─ìica Prime 4111 T Villager",
+    "brand": "Villager",
+    "category": "Kosacice i Trimeri",
+    "categorySlug": "kosacice-i-trimeri",
+    "description": "Motorna samohodna kosa─ìica Prime 4111 T Villager",
+    "price": 29990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/Prime-4111-T-Villager.png",
+    "sku": "33933",
+    "inStock": true,
+    "id": 81
+  },
+  {
+    "name": "Samohodna motorna kosa─ìica SRCZ-56D5 6KS Shineray",
+    "brand": "Samohodna",
+    "category": "Kosacice i Trimeri",
+    "categorySlug": "kosacice-i-trimeri",
+    "description": "Samohodna motorna kosa─ìica SRCZ-56D5 6KS Shineray",
+    "price": 38990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/SRCZ-56D5-1.jpg",
+    "sku": "33523",
+    "inStock": true,
+    "id": 82
+  },
+  {
+    "name": "Samohodna motorna kosa─ìica SRCZ-51D3 5,2KS Shineray",
+    "brand": "Samohodna",
+    "category": "Kosacice i Trimeri",
+    "categorySlug": "kosacice-i-trimeri",
+    "description": "Samohodna motorna kosa─ìica SRCZ-51D3 5,2KS Shineray",
+    "price": 32990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/SRCZ-51D3-1.jpg",
+    "sku": "33517",
+    "inStock": true,
+    "id": 83
+  },
+  {
+    "name": "Samohodna motorna kosa─ìica SRCZ-46D2 3,8KS Shineray",
+    "brand": "Samohodna",
+    "category": "Kosacice i Trimeri",
+    "categorySlug": "kosacice-i-trimeri",
+    "description": "Samohodna motorna kosa─ìica SRCZ-46D2 3,8KS Shineray",
+    "price": 28990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/SRCZ-46D2-1.jpg",
+    "sku": "33513",
+    "inStock": true,
+    "id": 84
+  },
+  {
+    "name": "Univerzalni pojas za motorni trimer S01076 Ergo lux",
+    "brand": "Univerzalni",
+    "category": "Benzinski trimeri",
+    "categorySlug": "kosacice-i-trimeri/benzinski-trimeri",
+    "description": "Univerzalni pojas za motorni trimer S01076 Ergo lux",
+    "price": 1590,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/06/S01076-1.jpg",
+    "sku": "30422",
+    "inStock": true,
+    "id": 85
+  },
+  {
+    "name": "Motorni multifunkcionalni trimer GTB3302M 4u1 (31637) ADK",
+    "brand": "Motorni",
+    "category": "Benzinski trimeri",
+    "categorySlug": "kosacice-i-trimeri/benzinski-trimeri",
+    "description": "Motorni multifunkcionalni trimer GTB3302M 4u1 (31637) ADK",
+    "price": 21390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/03/31637-1.jpg",
+    "sku": "29366",
+    "inStock": true,
+    "id": 86
+  },
+  {
+    "name": "Motorni trimer za travu GTB2501R 0,75kW / 1,2KS (32827) ADK",
+    "brand": "Motorni",
+    "category": "Benzinski trimeri",
+    "categorySlug": "kosacice-i-trimeri/benzinski-trimeri",
+    "description": "Motorni trimer za travu GTB2501R 0,75kW / 1,2KS (32827) ADK",
+    "price": 11990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/03/32827-1.jpg",
+    "sku": "29361",
+    "inStock": true,
+    "id": 87
+  },
+  {
+    "name": "Univerzalni pojas za motorni trimer RAIDER",
+    "brand": "RAIDER",
+    "category": "Benzinski trimeri",
+    "categorySlug": "kosacice-i-trimeri/benzinski-trimeri",
+    "description": "Univerzalni pojas za motorni trimer RAIDER",
+    "price": 1790,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/02/Raider-pojas.jpg",
+    "inStock": true,
+    "id": 88
+  },
+  {
+    "name": "Elektri─ìna kosa─ìica za travu 54962 1400W Dolomite",
+    "brand": "DOLOMITE",
+    "category": "Elektri─ìne kosa─ìice",
+    "categorySlug": "kosacice-i-trimeri/elektricne-kosacice",
+    "description": "Elektri─ìna kosa─ìica za travu 54962 1400W Dolomite",
+    "price": 16990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/03/54962-.jpg",
+    "sku": "17441",
+    "inStock": true,
+    "id": 89
+  },
+  {
+    "name": "Elektri─ìna kosa─ìica za travu 54963 1600W Dolomite",
+    "brand": "DOLOMITE",
+    "category": "Elektri─ìne kosa─ìice",
+    "categorySlug": "kosacice-i-trimeri/elektricne-kosacice",
+    "description": "Elektri─ìna kosa─ìica za travu 54963 1600W Dolomite",
+    "price": 17990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/03/1600W-Dolomite.jpg",
+    "sku": "17436",
+    "inStock": true,
+    "id": 90
+  },
+  {
+    "name": "Makita ELM4121 Elektri─ìna kosilica",
+    "brand": "MAKITA",
+    "category": "Elektri─ìne kosa─ìice",
+    "categorySlug": "kosacice-i-trimeri/elektricne-kosacice",
+    "description": "Makita ELM4121 Elektri─ìna kosilica",
+    "price": 44390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2022/06/ELM4121.png",
+    "inStock": false,
+    "id": 91
+  },
+  {
+    "name": "Elekticna kosacica za travu HCB.C3202 1200W; Hyundai",
+    "brand": "HYUNDAI",
+    "category": "Elektri─ìne kosa─ìice",
+    "categorySlug": "kosacice-i-trimeri/elektricne-kosacice",
+    "description": "Elekticna kosacica za travu HCB.C3202 1200W; Hyundai",
+    "price": 13100,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2022/05/HCB.C3202-0.png",
+    "inStock": true,
+    "id": 92
+  },
+  {
+    "name": "Traktorski tresa─ì vo─ça HARVEST",
+    "brand": "Traktorski",
+    "category": "Poljoprivredni alati i oprema",
+    "categorySlug": "poljoprivredni-alati-i-oprema",
+    "description": "Traktorski tresa─ì vo─ça HARVEST",
+    "price": 77990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/Traktorski-tresac-voca-HARVEST-1.jpg",
+    "sku": "33766",
+    "inStock": true,
+    "id": 93
+  },
+  {
+    "name": "Benzinski tresa─ì vo─ça H1 Professional 2,3KS HARVEST",
+    "brand": "Benzinski",
+    "category": "Poljoprivredni alati i oprema",
+    "categorySlug": "poljoprivredni-alati-i-oprema",
+    "description": "Benzinski tresa─ì vo─ça H1 Professional 2,3KS HARVEST",
+    "price": 125990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/Tresac-grana-H1-1.jpg",
+    "sku": "33760",
+    "inStock": true,
+    "id": 94
+  },
+  {
+    "name": "Benzinska seckalica-drobilica za grane AU-GS6505 6.5KS 100mm ST-GARDEN",
+    "brand": "Benzinska",
+    "category": "Motorna Drobilica za grane",
+    "categorySlug": "poljoprivredni-alati-i-oprema",
+    "description": "Benzinska seckalica-drobilica za grane AU-GS6505 6.5KS 100mm ST-GARDEN",
+    "price": 115990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/AU-GS6505-1.jpg",
+    "sku": "33754",
+    "inStock": true,
+    "id": 95
+  },
+  {
+    "name": "Motorna drobilica za grane CEDRB01C 50mm 5,5KS CEDRUS",
+    "brand": "CEDRUS",
+    "category": "Motorna Drobilica za grane",
+    "categorySlug": "poljoprivredni-alati-i-oprema",
+    "description": "Motorna drobilica za grane CEDRB01C 50mm 5,5KS CEDRUS",
+    "price": 69890,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/CEDRB01C-1.jpg",
+    "sku": "33312",
+    "inStock": true,
+    "id": 96
+  },
+  {
+    "name": "Potapaju─ça pumpa za ne─ìistu sa senzorima GE-DP 6935 A Einhell",
+    "brand": "EINHELL",
+    "category": "Elekti─ìne pumpe",
+    "categorySlug": "pumpe-za-vodu",
+    "description": "Potapaju─ça pumpa za ne─ìistu sa senzorima GE-DP 6935 A Einhell",
+    "price": 13990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/GE-DP-6935-A-1.jpg",
+    "sku": "33738",
+    "inStock": true,
+    "id": 97
+  },
+  {
+    "name": "Potopna pumpa za ─ìistu vodu RD-WP33 280W (070140)",
+    "brand": "Potopna",
+    "category": "Potapaju─çe pumpe",
+    "categorySlug": "pumpe-za-vodu",
+    "description": "Potopna pumpa za ─ìistu vodu RD-WP33 280W (070140)",
+    "price": 3990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/RD-WP33-1.jpg",
+    "sku": "33731",
+    "inStock": true,
+    "id": 98
+  },
+  {
+    "name": "Ba┼ítenska pumpa za vodu RD-2DK20 1500W RAIDER",
+    "brand": "RAIDER",
+    "category": "Elekti─ìne pumpe",
+    "categorySlug": "pumpe-za-vodu",
+    "description": "Ba┼ítenska pumpa za vodu RD-2DK20 1500W RAIDER",
+    "price": 17790,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/RD-2DK20-1.jpg",
+    "sku": "33554",
+    "inStock": true,
+    "id": 99
+  },
+  {
+    "name": "Benzinska pumpa za prljavu vodu LC80WB30-4.5Q 5,6KS LONCIN",
+    "brand": "Benzinska",
+    "category": "Benzinske pumpe",
+    "categorySlug": "pumpe-za-vodu",
+    "description": "Benzinska pumpa za prljavu vodu LC80WB30-4.5Q 5,6KS LONCIN",
+    "price": 49990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/LC80WB30-4.5Q-1.jpg",
+    "sku": "33547",
+    "inStock": true,
+    "id": 100
+  },
+  {
+    "name": "Hidropak za vodu JGP11007D INOX 1100W (30418) KASSMAYER",
+    "brand": "Hidropak",
+    "category": "Hidrofori",
+    "categorySlug": "pumpe-za-vodu/hidrofori",
+    "description": "Hidropak za vodu JGP11007D INOX 1100W (30418) KASSMAYER",
+    "price": 25790,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/01/30418-1.jpg",
+    "sku": "28844",
+    "inStock": true,
+    "id": 101
+  },
+  {
+    "name": "Hidropak za vodu JGP80049C 800W (30417) KASSMAYER",
+    "brand": "Hidropak",
+    "category": "Hidrofori",
+    "categorySlug": "pumpe-za-vodu/hidrofori",
+    "description": "Hidropak za vodu JGP80049C 800W (30417) KASSMAYER",
+    "price": 20800,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/01/30417-1.jpg",
+    "sku": "28842",
+    "inStock": true,
+    "id": 102
+  },
+  {
+    "name": "Hidrofor vi┼íestepeni automatski BOOST 5-E-3 (4243583) Wilo-Isar",
+    "brand": "WILO",
+    "category": "Hidrofori",
+    "categorySlug": "pumpe-za-vodu/hidrofori",
+    "description": "Hidrofor vi┼íestepeni automatski BOOST 5-E-3 (4243583) Wilo-Isar",
+    "price": 97870,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/06/BOOST5-1-1.jpg",
+    "sku": "19359",
+    "inStock": true,
+    "id": 103
+  },
+  {
+    "name": "Hidrofor v┼íestepeni automatski BOOST 5-E-5 (4243584) Wilo-Isar",
+    "brand": "WILO",
+    "category": "Hidrofori",
+    "categorySlug": "pumpe-za-vodu/hidrofori",
+    "description": "Hidrofor v┼íestepeni automatski BOOST 5-E-5 (4243584) Wilo-Isar",
+    "price": 110550,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/06/BOOST5-1.jpg",
+    "sku": "19353",
+    "inStock": true,
+    "id": 104
+  },
+  {
+    "name": "Odelo za ki┼íu HRCTSKT031 L/XL SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Jakne",
+    "categorySlug": "htz-oprema",
+    "description": "Odelo za ki┼íu HRCTSKT031 L/XL SUPER INGCO",
+    "price": 1700,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HRCTSKT031-1.jpg",
+    "sku": "33927",
+    "inStock": true,
+    "id": 105
+  },
+  {
+    "name": "Bonsek HHF3188 300mm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ostalo",
+    "categorySlug": "htz-oprema",
+    "description": "Bonsek HHF3188 300mm SUPER INGCO",
+    "price": 1150,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/HHF3188-1.jpg",
+    "sku": "33698",
+    "inStock": true,
+    "id": 106
+  },
+  {
+    "name": "Magnetna libela Spirit HSL28100 100cm SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ostalo",
+    "categorySlug": "htz-oprema",
+    "description": "Magnetna libela Spirit HSL28100 100cm SUPER INGCO",
+    "price": 1450,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HSL28100-1.jpg",
+    "sku": "33673",
+    "inStock": true,
+    "id": 107
+  },
+  {
+    "name": "Papirna kesa AA051000031 za usisiva─ìe VC14122 i CVLI2005E SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ostalo",
+    "categorySlug": "htz-oprema",
+    "description": "Papirna kesa AA051000031 za usisiva─ìe VC14122 i CVLI2005E SUPER INGCO",
+    "price": 0,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/AA051000031-1.jpg",
+    "inStock": true,
+    "id": 108
+  },
+  {
+    "name": "Oja─ìane za┼ítitne rukavice HGMG02-XL mechanic SUPER INGCO",
+    "brand": "INGCO",
+    "category": "HTZ oprema",
+
+Total unique: 125
+    "categorySlug": "htz-oprema/radne-rukavice",
+    "description": "Oja─ìane za┼ítitne rukavice HGMG02-XL mechanic SUPER INGCO",
+    "price": 1250,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/HGMG02-XL-1.jpg",
+    "sku": "31500",
+    "inStock": true,
+    "id": 109
+  },
+  {
+    "name": "Za┼ítitne rukavice HGMG01-XL mechanic SUPER INGCO",
+    "brand": "INGCO",
+    "category": "HTZ oprema",
+    "categorySlug": "htz-oprema/radne-rukavice",
+    "description": "Za┼ítitne rukavice HGMG01-XL mechanic SUPER INGCO",
+    "price": 890,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/05/HGMG01-XL-1.jpg",
+    "sku": "30219",
+    "inStock": true,
+    "id": 110
+  },
+  {
+    "name": "Rotiraju─ça prskalica HPS13601 227-380m2 SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ba┼ítenski alat",
+    "categorySlug": "oprema-za-dvoriste",
+    "description": "Rotiraju─ça prskalica HPS13601 227-380m2 SUPER INGCO",
+    "price": 1450,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/05/HPS13601-1.jpg",
+    "sku": "33647",
+    "inStock": true,
+    "id": 111
+  },
+  {
+    "name": "Ba┼ítenska prskalica (trokraka) HPS23602 3/4&#8243; SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ba┼ítenski alat",
+    "categorySlug": "oprema-za-dvoriste",
+    "description": "Ba┼ítenska prskalica (trokraka) HPS23602 3/4&#8243; SUPER INGCO",
+    "price": 600,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/04/HPS23602-1.jpg",
+    "sku": "33237",
+    "inStock": true,
+    "id": 112
+  },
+  {
+    "name": "Ba┼ítenska ru─ìna tu┼í prskalica HWSG6091 sa 9 re┼╛ima rada SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ba┼ítenski alat",
+    "categorySlug": "oprema-za-dvoriste",
+    "description": "Ba┼ítenska ru─ìna tu┼í prskalica HWSG6091 sa 9 re┼╛ima rada SUPER INGCO",
+    "price": 950,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/03/HWSG6091-1.jpg",
+    "sku": "32972",
+    "inStock": true,
+    "id": 113
+  },
+  {
+    "name": "Ba┼ítenska ru─ìna tu┼í prskalica HWSG6031 sa 3 re┼╛ima rada SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Ba┼ítenski alat",
+    "categorySlug": "oprema-za-dvoriste",
+    "description": "Ba┼ítenska ru─ìna tu┼í prskalica HWSG6031 sa 3 re┼╛ima rada SUPER INGCO",
+    "price": 860,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/03/HWSG6031-1.jpg",
+    "sku": "32966",
+    "inStock": true,
+    "id": 114
+  },
+  {
+    "name": "Digitalna AC amper kle┼íta DCM62001 Ingco",
+    "brand": "INGCO",
+    "category": "Elektromaterijal i oprema",
+    "categorySlug": "elektromaterijal-i-oprema",
+    "description": "Digitalna AC amper kle┼íta DCM62001 Ingco",
+    "price": 2290,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/DCM62001-2.png",
+    "sku": "34023",
+    "inStock": true,
+    "id": 115
+  },
+  {
+    "name": "Digitalni multimer DM410003 1000V SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Elektromaterijal i oprema",
+    "categorySlug": "elektromaterijal-i-oprema",
+    "description": "Digitalni multimer DM410003 1000V SUPER INGCO",
+    "price": 5390,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/DM410003-1.jpg",
+    "sku": "33770",
+    "inStock": true,
+    "id": 116
+  },
+  {
+    "name": "Robot za ─ìi┼í─çenje solarnih panela ZK2503 profesional",
+    "brand": "Robot",
+    "category": "Automatika i kontrola",
+    "categorySlug": "elektromaterijal-i-oprema",
+    "description": "Robot za ─ìi┼í─çenje solarnih panela ZK2503 profesional",
+    "price": 711999,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/04/ZK2503.jpg",
+    "sku": "33170",
+    "inStock": true,
+    "id": 117
+  },
+  {
+    "name": "Digitalni multimer DM360011 600V SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Elektromaterijal i oprema",
+    "categorySlug": "elektromaterijal-i-oprema",
+    "description": "Digitalni multimer DM360011 600V SUPER INGCO",
+    "price": 1250,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/10/DM360011-1.jpg",
+    "sku": "31331",
+    "inStock": true,
+    "id": 118
+  },
+  {
+    "name": "Digitalni multimer DM310002 1000V SUPER INGCO",
+    "brand": "INGCO",
+    "category": "Elektromaterijal i oprema",
+    "categorySlug": "elektromaterijal-i-oprema/merni-instrumenti",
+    "description": "Digitalni multimer DM310002 1000V SUPER INGCO",
+    "price": 3400,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2025/09/DM310002-1.jpg",
+    "sku": "31054",
+    "inStock": true,
+    "id": 119
+  },
+  {
+    "name": "Lithium-ion LED reflektor CWLI20258 1x2Ah Super Ingco",
+    "brand": "INGCO",
+    "category": "LED reflektori",
+    "categorySlug": "rasveta",
+    "description": "Lithium-ion LED reflektor CWLI20258 1x2Ah Super Ingco",
+    "price": 7990,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2026/06/AIW1123-2-1.png",
+    "sku": "34055",
+    "inStock": true,
+    "id": 120
+  },
+  {
+    "name": "Ingco baterijska lampa Industrial HCFL1865051",
+    "brand": "INGCO",
+    "category": "Baterijske ru─ìne lampe",
+    "categorySlug": "rasveta",
+    "description": "Ingco baterijska lampa Industrial HCFL1865051",
+    "price": 3420,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/09/HCFL1865051-1.jpg",
+    "sku": "20684",
+    "inStock": true,
+    "id": 121
+  },
+  {
+    "name": "Solarni LED reflektor-lampa LRFS6110 sa PIR senzorom",
+    "brand": "Solarni",
+    "category": "LED reflektori",
+    "categorySlug": "rasveta",
+    "description": "Solarni LED reflektor-lampa LRFS6110 sa PIR senzorom",
+    "price": 1900,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2023/06/LRFS6110-1.jpg",
+    "sku": "19287",
+    "inStock": true,
+    "id": 122
+  },
+  {
+    "name": "Lithium-ion LED  reflektor CWLI2025 Ingco",
+    "brand": "INGCO",
+    "category": "LED reflektori",
+    "categorySlug": "rasveta",
+    "description": "Lithium-ion LED  reflektor CWLI2025 Ingco",
+    "price": 5150,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2022/10/CWLI2025.png",
+    "inStock": true,
+    "id": 123
+  },
+  {
+    "name": "Solarna svetiljka A03 60W 4000K IP65",
+    "brand": "Solarna",
+    "category": "Solarna rasveta",
+    "categorySlug": "rasveta/spoljna-rasveta",
+    "description": "Solarna svetiljka A03 60W 4000K IP65",
+    "price": 6900,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2022/08/SOLARNA-SVETILJKA-A03-60W-4000K-IP65.png",
+    "inStock": true,
+    "id": 124
+  },
+  {
+    "name": "Solarna LED lampa sa PIR senzorom LRFS3164",
+    "brand": "Solarna",
+    "category": "LED reflektori",
+    "categorySlug": "rasveta/led-reflektori",
+    "description": "Solarna LED lampa sa PIR senzorom LRFS3164",
+    "price": 1550,
+    "image": "https://koncarelektro.rs/wp-content/uploads/2022/04/LRFS3164.png",
+    "inStock": true,
+    "id": 125
+  }
+]

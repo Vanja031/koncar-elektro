@@ -32,7 +32,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Stavka | Stanje |
 |--------|--------|
 | **Aktivna nedelja** | Nedelja 2 |
-| **Sledeći korak** | 2.1 dizajn sistem → 2.2–2.6 ekrani (kategorija, proizvod, korpa, checkout, kontakt) → 2.7 routing mapa 1:1 |
+| **Sledeći korak** | 2.10–2.11 repo/CI + klijentski sign-off dizajna; nedelja 3 — WP headless API |
 | **Postojeći kod** | Inicijalni React dizajn u `koncar-elektro-store/` (Vite + React + shadcn/ui) — landing u `koncarelektro-landing.html` |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless — migracija sa trenutnog Vite setupa |
 
@@ -53,7 +53,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | P1 | Inicijalni React dizajn stranice postoji — faza dizajna se skraćuje na finalizaciju | `[x]` | — | `koncar-elektro-store/`, `koncarelektro-landing.html` |
 | P2 | Migracija sa postojeće WooCommerce prodavnice — podaci, kategorije, atributi, slug-ovi iz aktuelne baze | `[ ]` | | |
 | P3 | Klijent obezbeđuje WP admin pristup + hosting/DNS + Google Search Console + GA | `[x]` | 22.06.2026. | Pristup primljen |
-| P4 | Očuvanje SEO-a i svih putanja je prioritet #1 — URL adrese ostaju identične | `[ ]` | | Ugrađeno u svaku fazu |
+| P4 | Očuvanje SEO-a i svih putanja je prioritet #1 — URL adrese ostaju identične | `[~]` | 26.06.2026. | Routing mapa + WC putanje u staging app |
 
 ---
 
@@ -63,8 +63,8 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Strategija | Status | Datum | Napomena |
 |---|-----------|--------|-------|----------|
-| S1 | URL paritet 1:1 — Next.js routing prati sve postojeće putanje (proizvod, kategorija, statičke, blog) | `[ ]` | | Cilj: nula promenjenih adresa |
-| S2 | Snimak pre migracije — crawl svih URL-ova, meta tagova, H1, canonical, structured data, sitemap | `[x]` | 22.06.2026. | `old-site/crawl/seo-baseline.csv` — referentna tačka za poređenje |
+| S1 | URL paritet 1:1 — Next.js routing prati sve postojeće putanje (proizvod, kategorija, statičke, blog) | `[~]` | 26.06.2026. | Vite app migriran na WC putanje; vidi `docs/url-routing-map.md` |
+| S2 | Snimak pre migracije — crawl svih URL-ova, meta tagova, H1, canonical, structured data, sitemap | `[x]` | 22.06.2026. | `docs/crawl/seo-baseline.csv` — referentna tačka za poređenje |
 | S3 | Parity provera pre lansiranja — svaki stari URL i meta podaci upoređeni sa novom verzijom | `[ ]` | | Pre go-live |
 | S4 | 301 redirect-i samo po izuzetku — podrazumevano nijedan redirect | `[ ]` | | |
 | S5 | Post-launch monitoring — GSC index coverage, crawl greške, zadržavanje rangiranja | `[ ]` | | Prvi dani posle lansiranja |
@@ -88,17 +88,17 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 1.4 | Preuzimanje pristupa Google Search Console | `[x]` | 22.06.2026. | |
 | 1.5 | Preuzimanje pristupa Google Analytics | `[x]` | 22.06.2026. | |
 | 1.6 | Pokretanje papira sa bankom za kartično plaćanje (paralelno sa razvojem) | `[x]` | 25.06.2026. | Papiri pokrenuti |
-| 1.7 | Pun crawl postojeće prodavnice — izvoz svih URL-ova (proizvodi, kategorije, stranice, blog) | `[x]` | 22.06.2026. | 5.650 unique URL-ova; output: `old-site/crawl/seo-baseline.csv` |
-| 1.8 | Snimak trenutnog SEO stanja: meta tagovi, H1, canonical, structured data | `[x]` | 22.06.2026. | title, meta desc, H1, canonical za svih 5.650 URL-ova; 3.770 URL-ova sa SEO issues — vidi `seo-baseline-errors.csv` |
-| 1.9 | Snimak XML sitemap-a, robots.txt, postojećih redirect-a | `[x]` | 22.06.2026. | `old-site/robots.txt` sačuvan; sitemap radi u browseru (vidi `old-site/sitemap-status.md`); sitnica: http→https u Yoast |
-| 1.10 | Baseline organskog saobraćaja i rangiranja (GSC + GA) za kasnije poređenje | `[x]` | 22.06.2026. | GSC export: `koncarelektro.rs-Performance-on-Search-2026-06-22/` (Queries, Pages, Chart, Devices, Countries); GA4: `Traffic_acquisition_...csv` — organic: 7.666 ses/28d, 646k RSD prihod |
-| 1.11 | Analiza WooCommerce permalink strukture (npr. `/proizvod/`, `/kategorija-proizvoda/`) | `[x]` | 22.06.2026. | Dokumentovano u `old-site/permalink-structure.md` — proizvodi: `/prodavnica/%product_cat%/[slug]/`, kategorije: `/product-category/`, brendovi: `/brend/` |
+| 1.7 | Pun crawl postojeće prodavnice — izvoz svih URL-ova (proizvodi, kategorije, stranice, blog) | `[x]` | 22.06.2026. | 5.650 unique URL-ova; output: `docs/crawl/seo-baseline.csv` |
+| 1.8 | Snimak trenutnog SEO stanja: meta tagovi, H1, canonical, structured data | `[x]` | 22.06.2026. | title, meta desc, H1, canonical za svih 5.650 URL-ova; 3.770 URL-ova sa SEO issues — vidi `docs/crawl/seo-baseline-errors.csv` |
+| 1.9 | Snimak XML sitemap-a, robots.txt, postojećih redirect-a | `[x]` | 22.06.2026. | `docs/snapshots/robots.txt` sačuvan; sitemap radi u browseru (vidi `docs/sitemap-status.md`); sitnica: http→https u Yoast |
+| 1.10 | Baseline organskog saobraćaja i rangiranja (GSC + GA) za kasnije poređenje | `[x]` | 22.06.2026. | GSC export: `docs/gsc-export-2026-06-22/` (Queries, Pages, Chart, Devices, Countries); GA4: `docs/ga4/` — organic: 7.666 ses/28d, 646k RSD prihod |
+| 1.11 | Analiza WooCommerce permalink strukture (npr. `/proizvod/`, `/kategorija-proizvoda/`) | `[x]` | 22.06.2026. | Dokumentovano u `docs/permalink-structure.md` — proizvodi: `/prodavnica/%product_cat%/[slug]/`, kategorije: `/product-category/`, brendovi: `/brend/` |
 
 **Milestone (kraj Nedelje 1):** URL inventar + SEO baseline izveštaj predati klijentu na uvid.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
-| URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Crawl + baseline u `old-site/crawl/` |
+| URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Crawl + baseline u `docs/crawl/` |
 | Slanje izveštaja klijentu | `[—]` | | Odloženo — ne šalje se još |
 
 ---
@@ -108,14 +108,14 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
 | 2.1 | Finalizacija postojećeg React dizajna — dizajn sistem (boje, tipografija, komponente) | `[~]` | | Delimično postoji u `koncar-elektro-store/` |
-| 2.2 | Dizajn preostalih ekrana: kategorija | `[ ]` | | |
-| 2.3 | Dizajn preostalih ekrana: proizvod | `[ ]` | | |
-| 2.4 | Dizajn preostalih ekrana: korpa | `[ ]` | | |
-| 2.5 | Dizajn preostalih ekrana: checkout | `[ ]` | | |
-| 2.6 | Dizajn preostalih ekrana: kontakt | `[ ]` | | |
-| 2.7 | Definisanje Next.js routing mape koja 1:1 prati postojeće putanje | `[ ]` | | |
-| 2.8 | Plan očuvanja meta podataka i canonical-a (meta parity plan) | `[ ]` | | |
-| 2.9 | Postavka staging okruženja | `[ ]` | | |
+| 2.2 | Dizajn preostalih ekrana: kategorija | `[x]` | 26.06.2026. | CategoryPage, listing, parent hub |
+| 2.3 | Dizajn preostalih ekrana: proizvod | `[x]` | 26.06.2026. | ProductPage kompletan |
+| 2.4 | Dizajn preostalih ekrana: korpa | `[x]` | 26.06.2026. | CartPage |
+| 2.5 | Dizajn preostalih ekrana: checkout | `[x]` | 26.06.2026. | CheckoutPage + potvrda |
+| 2.6 | Dizajn preostalih ekrana: kontakt | `[x]` | 26.06.2026. | ContactPage, O nama, FAQ |
+| 2.7 | Definisanje Next.js routing mape koja 1:1 prati postojeće putanje | `[x]` | 26.06.2026. | `docs/url-routing-map.md` + implementacija u App |
+| 2.8 | Plan očuvanja meta podataka i canonical-a (meta parity plan) | `[x]` | 26.06.2026. | `docs/meta-parity-plan.md` |
+| 2.9 | Postavka staging okruženja | `[x]` | | Vercel staging (klijent) |
 | 2.10 | Postavka repozitorijuma | `[ ]` | | |
 | 2.11 | Postavka CI/CD skeleta | `[ ]` | | |
 
@@ -324,7 +324,7 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 22.06.2026. | — | robots.txt sačuvan; sitemap_index.xml = 500 greška — potreban fix u WP (Yoast) | Blokira sitemap submission u N8; crawl nije blokiran |
 | 22.06.2026. | — | Permalink struktura dokumentovana: posts=`/{slug}/`, kategorije=`/product-category/`, brendovi=`/brend/`, proizvodi=`/prodavnica/%product_cat%/[slug]/` | Ključno za Next.js routing u N2 |
 | 22.06.2026. | — | GSC + GA4 baseline sačuvan (1.10) — organic dominira: 82% sesija, 646k RSD/28d; top brand: "koncar elektro"; ⚠️ spam upiti (lunatogel, bandar80) — filtrirati | Referentna tačka za post-launch monitoring |
-| 22.06.2026. | — | Crawl završen (1.7+1.8): 5.650 URL-ova, 3.770 sa SEO issues; `old-site/crawl/seo-baseline.csv` + `seo-baseline-errors.csv` | Referentni snimak sačuvan |
+| 22.06.2026. | — | Crawl završen (1.7+1.8): 5.650 URL-ova, 3.770 sa SEO issues; `docs/crawl/seo-baseline.csv` + `docs/crawl/seo-baseline-errors.csv` | Referentni snimak sačuvan |
 | 25.06.2026. | — | Nedelja 1 zatvorena: papiri sa bankom pokrenuti (1.6); interni SEO baseline kompletan | Prelazak na Nedelju 2 |
 | 25.06.2026. | — | Slanje SEO izveštaja klijentu odloženo po odluci tima | Milestone klijentskog odobrenja preskočen za sada |
 
@@ -346,7 +346,7 @@ Evidentiraj značajne događaje, odluke i blokade.
 5. Kontakt
 
 **Prioritet 3 — Arhitektura (2.7–2.8)**
-- Definiši Next.js routing mapu 1:1 na osnovu `old-site/permalink-structure.md`
+- Definiši Next.js routing mapu 1:1 na osnovu `docs/permalink-structure.md`
 - Napiši meta parity plan (title, description, canonical po tipu stranice)
 
 **Prioritet 4 — Infrastruktura (2.9–2.11)**

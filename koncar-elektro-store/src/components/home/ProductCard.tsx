@@ -1,16 +1,19 @@
 import { Star, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { formatPrice, type Product } from '@/data/homepage';
+import { getProductUrl } from '@/data/productDetail';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 
 type Props = {
   product: Product;
   rank?: number;
-  onAdd?: () => void;
 };
 
-export const ProductCard = ({ product, rank, onAdd }: Props) => {
+export const ProductCard = ({ product, rank }: Props) => {
   const discount = product.oldPrice
     ? Math.round(100 - (product.price / product.oldPrice) * 100)
     : 0;
+  const productUrl = getProductUrl(product.id);
 
   return (
     <div className="product-card-home h-full">
@@ -19,11 +22,13 @@ export const ProductCard = ({ product, rank, onAdd }: Props) => {
       ) : product.oldPrice ? (
         <span className="badge-discount">-{discount}%</span>
       ) : null}
-      <div className="aspect-square p-4 flex items-center justify-center bg-white">
+      <Link to={productUrl} className="aspect-square p-4 flex items-center justify-center bg-white block">
         <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain" loading="lazy" />
-      </div>
+      </Link>
       <div className="p-3 flex flex-col gap-1.5 flex-1 border-t border-border">
-        <p className="text-sm font-semibold text-foreground leading-tight line-clamp-1">{product.name}</p>
+        <Link to={productUrl}>
+          <p className="text-sm font-semibold text-foreground leading-tight line-clamp-1 hover:text-primary transition-colors">{product.name}</p>
+        </Link>
         <p className="text-xs text-muted-foreground line-clamp-1">{product.description}</p>
         <div className="flex items-center gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -41,14 +46,7 @@ export const ProductCard = ({ product, rank, onAdd }: Props) => {
             )}
             <span className="font-display font-bold text-lg text-foreground">{formatPrice(product.price)}</span>
           </div>
-          <button
-            type="button"
-            onClick={onAdd}
-            className="w-9 h-9 bg-accent rounded flex items-center justify-center hover:brightness-105 transition-all shrink-0"
-            aria-label="Dodaj u korpu"
-          >
-            <ShoppingCart className="w-4 h-4 text-accent-foreground" />
-          </button>
+          <AddToCartButton productId={product.id} variant="icon" />
         </div>
       </div>
     </div>

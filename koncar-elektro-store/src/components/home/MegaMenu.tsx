@@ -8,13 +8,15 @@ import {
   getCategoryById,
   type MegaMenuMode,
 } from '@/data/navigation';
+import {
+  getMegaMenuCategoryUrl,
+  getMegaMenuSubcategoryUrl,
+} from '@/lib/catalogUrls';
 
 type Props = {
   mode: MegaMenuMode;
   onClose?: () => void;
 };
-
-const PRODUCTS_LISTING_URL = '/kategorija/alati/elektricni-alat/busilice-i-odvijaci';
 
 export const MegaMenu = ({ mode, onClose }: Props) => {
   const [activeId, setActiveId] = useState(defaultCategoryByMode[mode]);
@@ -25,27 +27,10 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
 
   const active = getCategoryById(activeId) ?? alatiMenuCategories[0];
 
-  const subcategoryHref = (label: string) => {
-    const slug = label
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '');
-    if (activeId === 'elektricni-alati') {
-      return `/kategorija/alati/elektricni-alat/busilice-i-odvijaci`;
-    }
-    if (otherProgramCategories.some((c) => c.id === activeId)) {
-      return `/kategorija/${activeId}`;
-    }
-    return `/kategorija/alati/${slug}`;
-  };
-
   return (
     <div className="mega-menu-panel absolute left-0 right-0 top-full z-40 pointer-events-none">
       <div data-mega-menu className="container mb-6 pointer-events-auto -mt-1 pt-1">
         <div className="mega-menu-inner flex">
-          {/* Left sidebar */}
           <aside className="mega-menu-sidebar koncar-scrollbar w-[17.5rem] shrink-0 py-5 pr-0 overflow-y-auto">
             <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               Alati i oprema
@@ -56,16 +41,17 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
                 const isActive = activeId === cat.id;
                 return (
                   <li key={cat.id}>
-                    <button
-                      type="button"
+                    <Link
+                      to={getMegaMenuCategoryUrl(cat.id)}
                       onMouseEnter={() => setActiveId(cat.id)}
                       onFocus={() => setActiveId(cat.id)}
+                      onClick={onClose}
                       className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
                     >
                       <Icon className="w-4 h-4 shrink-0 opacity-80" strokeWidth={1.75} />
                       <span className="flex-1 text-left leading-snug">{cat.label}</span>
                       <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
@@ -80,33 +66,37 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
                 const isActive = activeId === cat.id;
                 return (
                   <li key={cat.id}>
-                    <button
-                      type="button"
+                    <Link
+                      to={getMegaMenuCategoryUrl(cat.id)}
                       onMouseEnter={() => setActiveId(cat.id)}
                       onFocus={() => setActiveId(cat.id)}
+                      onClick={onClose}
                       className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
                     >
                       <Icon className="w-4 h-4 shrink-0 opacity-80" strokeWidth={1.75} />
                       <span className="flex-1 text-left leading-snug">{cat.label}</span>
                       <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
             </ul>
           </aside>
 
-          {/* Right content */}
           <div className="mega-menu-content flex-1 flex flex-col min-w-0 min-h-0 bg-white">
-            <h3 className="title-accent-line font-display font-bold text-primary uppercase text-base tracking-wide mb-3 shrink-0 px-6 pt-5">
+            <Link
+              to={getMegaMenuCategoryUrl(active.id)}
+              onClick={onClose}
+              className="title-accent-line font-display font-bold text-primary uppercase text-base tracking-wide mb-3 shrink-0 px-6 pt-5 hover:text-primary/80 transition-colors"
+            >
               {active.label}
-            </h3>
+            </Link>
 
             <div className="mega-menu-grid grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 px-6 content-start">
               {active.subcategories.map((sub) => (
                 <Link
                   key={sub.label}
-                  to={subcategoryHref(sub.label)}
+                  to={getMegaMenuSubcategoryUrl(active.id, sub.label)}
                   onClick={onClose}
                   className="mega-menu-card group"
                 >
@@ -132,7 +122,11 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
             </div>
 
             <div className="mega-menu-footer shrink-0 px-6 pb-3 pt-2">
-              <Link to={PRODUCTS_LISTING_URL} onClick={onClose} className="mega-menu-view-all">
+              <Link
+                to={getMegaMenuCategoryUrl(active.id)}
+                onClick={onClose}
+                className="mega-menu-view-all"
+              >
                 {active.viewAllLabel}
                 <ArrowRight className="w-4 h-4" />
               </Link>
