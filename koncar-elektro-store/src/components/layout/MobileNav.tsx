@@ -47,7 +47,7 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
       >
         <SheetHeader className="px-4 py-4 border-b border-border bg-secondary/30 text-left space-y-2">
           <SheetTitle className="text-left p-0">
-            <BrandLogo height="xs" className="max-w-[7.5rem]" />
+            <BrandLogo height="sm" className="max-w-[10rem]" />
           </SheetTitle>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
             Katalog i kategorije

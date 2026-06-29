@@ -13,7 +13,7 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useCart } from '@/context/CartContext';
 import type { MegaMenuMode } from '@/data/navigation';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
-import { companyInfo, contactChannels } from '@/data/staticPages';
+import { contactChannels } from '@/data/staticPages';
 
 type NavItem = {
   label: string;
@@ -145,10 +145,7 @@ export const SiteHeader = () => {
           </button>
 
           <Link to="/" className="min-w-0 flex-1 sm:flex-none overflow-hidden">
-            <BrandLogo className="h-6 max-w-[6.5rem] min-[380px]:h-7 min-[380px]:max-w-[7.25rem] sm:h-12 sm:max-w-none lg:h-14" />
-            <div className="hidden sm:block text-[10px] text-destructive font-semibold tracking-wider uppercase mt-0.5 truncate">
-              {companyInfo.tagline}
-            </div>
+            <BrandLogo className="h-10 max-w-[9.5rem] min-[380px]:h-11 min-[380px]:max-w-[10.5rem] sm:h-12 sm:max-w-none lg:h-14" />
           </Link>
 
           <div className="flex-1 hidden md:flex items-stretch h-11 border border-border rounded overflow-hidden max-w-xl lg:max-w-2xl mx-auto">
