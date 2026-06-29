@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import { SocialIcon } from './SocialIcon';
 import type { HeroSlide } from '@/data/homeHero';
+import { contactChannels } from '@/data/staticPages';
 
 type Props = {
   slides: HeroSlide[];
@@ -47,8 +48,8 @@ export const HeroCarousel = ({ slides }: Props) => {
         <p className="text-white/75 text-xs md:text-sm mb-4 line-clamp-2">{slide.desc}</p>
         {slide.cta === 'expert' ? (
           <div className="flex flex-wrap gap-2">
-            <a href="tel:0111234567" className="btn-yellow text-[11px] flex items-center gap-1.5 py-2 px-3">
-              <Phone className="w-3.5 h-3.5" /> 011 123 4567
+            <a href={contactChannels.primaryPhoneHref} className="btn-yellow text-[11px] flex items-center gap-1.5 py-2 px-3">
+              <Phone className="w-3.5 h-3.5" /> {contactChannels.primaryPhone}
             </a>
             <a href="#" className="bg-viber text-white font-display font-semibold uppercase text-[11px] px-3 py-2 rounded flex items-center gap-1.5 hover:brightness-110 transition-all">
               <SocialIcon name="viber" className="w-5 h-5" alt="" />

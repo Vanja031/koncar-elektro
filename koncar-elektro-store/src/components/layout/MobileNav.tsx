@@ -21,6 +21,8 @@ import {
   ROUTES,
 } from '@/lib/catalogUrls';
 import { useCart } from '@/context/CartContext';
+import { BrandLogo } from '@/components/brand/BrandLogo';
+import { contactChannels } from '@/data/staticPages';
 
 type Props = {
   open: boolean;
@@ -43,9 +45,9 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
         side="left"
         className="w-[min(100vw,22rem)] sm:max-w-sm p-0 flex flex-col gap-0 border-r border-border [&>button]:top-3.5 [&>button]:right-3.5"
       >
-        <SheetHeader className="px-4 py-4 border-b border-border bg-secondary/30 text-left space-y-1">
-          <SheetTitle className="font-display font-bold text-primary text-left">
-            KONČAR <span className="text-accent">ALATI</span>
+        <SheetHeader className="px-4 py-4 border-b border-border bg-secondary/30 text-left space-y-2">
+          <SheetTitle className="text-left p-0">
+            <BrandLogo height="xs" className="max-w-[7.5rem]" />
           </SheetTitle>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
             Katalog i kategorije
@@ -221,11 +223,11 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
 
         <div className="shrink-0 border-t border-border p-4 bg-secondary/20">
           <a
-            href="tel:0111234567"
+            href={contactChannels.primaryPhoneHref}
             className="flex items-center gap-3 btn-yellow w-full justify-center text-xs py-3"
           >
             <Phone className="w-4 h-4" />
-            Pozovite 011 123 4567
+            Pozovite {contactChannels.primaryPhone}
           </a>
         </div>
       </SheetContent>

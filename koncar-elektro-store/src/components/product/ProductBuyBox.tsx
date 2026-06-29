@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Star, ShoppingCart, Heart, Minus, Plus, Truck, Shield, CreditCard, Phone } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
+import { contactChannels } from '@/data/staticPages';
 
 type Props = {
   product: ProductDetail;
@@ -46,7 +47,7 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
         </span>
       </button>
 
-      <p className="text-sm text-foreground/80 leading-relaxed mt-4">{product.subtitle}</p>
+      <p className="text-sm text-foreground/80 leading-relaxed mt-4">{product.description}</p>
 
       <div className="flex flex-wrap gap-2 mt-4">
         {product.specs.map((spec) => (
@@ -135,8 +136,8 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
         </div>
         <div className="product-buy-trust-item">
           <Phone className="w-4 h-4 text-primary shrink-0" />
-          <a href="tel:0111234567" className="hover:text-primary transition-colors">
-            Stručna podrška: <strong>011 123 4567</strong>
+          <a href={contactChannels.primaryPhoneHref} className="hover:text-primary transition-colors">
+            Stručna podrška: <strong>{contactChannels.primaryPhone}</strong>
           </a>
         </div>
       </div>

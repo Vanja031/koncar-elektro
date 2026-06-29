@@ -11,6 +11,7 @@ import {
   type PaymentMethod,
 } from '@/lib/order';
 import { ROUTES } from '@/lib/catalogUrls';
+import { companyInfo } from '@/data/staticPages';
 
 type FormState = {
   email: string;
@@ -60,7 +61,7 @@ export const CheckoutForm = () => {
     const orderId = createOrderId();
     savePlacedOrder({
       id: orderId,
-      email: form.email.trim() || 'demo@koncar.rs',
+      email: form.email.trim() || companyInfo.email,
       phone: form.phone.trim() || '0600000000',
       customerName: `${firstName} ${lastName}`,
       address: form.address.trim() || 'Demo adresa 1',

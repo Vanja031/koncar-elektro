@@ -1,6 +1,7 @@
 import { Star, Flame, ChevronRight, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { saleProducts, bestSellerProducts, featuredBrands, whyChooseItems, categoryBanners } from '@/data/homepage';
+import { brand } from '@/data/staticPages';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
 import { Carousel } from './Carousel';
 import { ProductCard } from './ProductCard';
@@ -17,11 +18,11 @@ const bannerUrls: Record<string, string> = {
 export const ProductSections = () => (
   <>
     <section className="container py-6">
-      <div className="flex items-center justify-between mb-4 gap-4">
+      <div className="section-header">
         <h2 className="section-heading flex items-center gap-2">
-          <Flame className="w-5 h-5 fill-accent text-accent" /> Proizvodi na akciji
+          <Flame className="w-5 h-5 fill-accent text-accent shrink-0" /> Proizvodi na akciji
         </h2>
-        <Link to="/akcija" className="section-link">Pogledajte sve akcije <ChevronRight className="w-4 h-4" /></Link>
+        <Link to="/akcija" className="section-link">Pogledajte sve akcije <ChevronRight className="w-4 h-4 shrink-0" /></Link>
       </div>
       <Carousel>
         {saleProducts.map((p) => (
@@ -31,11 +32,11 @@ export const ProductSections = () => (
     </section>
 
     <section className="container py-6">
-      <div className="flex items-center justify-between mb-4 gap-4">
+      <div className="section-header">
         <h2 className="section-heading flex items-center gap-2">
-          <Star className="w-5 h-5 fill-accent text-accent" /> Najprodavaniji proizvodi
+          <Star className="w-5 h-5 fill-accent text-accent shrink-0" /> Najprodavaniji proizvodi
         </h2>
-        <a href="#" className="section-link">Pogledajte sve najprodavanije <ChevronRight className="w-4 h-4" /></a>
+        <a href="#" className="section-link">Pogledajte sve najprodavanije <ChevronRight className="w-4 h-4 shrink-0" /></a>
       </div>
       <Carousel>
         {bestSellerProducts.map((p, i) => (
@@ -49,7 +50,7 @@ export const ProductSections = () => (
         <div className="trust-section-grid grid grid-cols-1 lg:grid-cols-3 lg:max-w-[75%] xl:max-w-[72%] lg:divide-x lg:divide-white/15">
           <div className="py-2 lg:py-0 lg:pr-8 border-b border-white/15 lg:border-b-0 pb-8 lg:pb-0 mb-8 lg:mb-0">
             <h3 className="section-heading-light">
-              Zašto kupci biraju Končar Alati?
+              {brand.whyChooseTitle}
             </h3>
             <ul className="space-y-3.5">
               {whyChooseItems.map((t) => (

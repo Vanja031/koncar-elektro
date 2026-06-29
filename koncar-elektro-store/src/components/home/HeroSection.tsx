@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { popularCategories } from '@/data/homepage';
 import { getPopularCategoryUrl, getTopCategoryUrl } from '@/lib/catalogUrls';
 import { leftCarouselSlides, rightCarouselSlides } from '@/data/homeHero';
+import { contactChannels } from '@/data/staticPages';
 import { FaIcon, trustIcons } from './FaIcon';
 import { HeroCarousel } from './HeroCarousel';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -47,9 +48,9 @@ export const HeroSection = () => (
 
     {/* Popular categories */}
     <section className="container py-6">
-      <div className="flex items-center justify-between mb-4 gap-4">
+      <div className="section-header">
         <h2 className="section-heading">Popularne kategorije</h2>
-        <Link to={getTopCategoryUrl('alati')} className="section-link">Pogledajte sve kategorije <ArrowRight className="w-4 h-4" /></Link>
+        <Link to={getTopCategoryUrl('alati')} className="section-link">Pogledajte sve kategorije <ArrowRight className="w-4 h-4 shrink-0" /></Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         {popularCategories.map((c) => (
@@ -84,8 +85,8 @@ export const HeroSection = () => (
               </li>
             ))}
           </ul>
-          <a href="tel:0111234567" className="btn-yellow w-fit text-xs flex items-center gap-2">
-            <Phone className="w-4 h-4" /> 011 123 4567
+          <a href={contactChannels.primaryPhoneHref} className="btn-yellow w-fit text-xs flex items-center gap-2">
+            <Phone className="w-4 h-4" /> {contactChannels.primaryPhone}
           </a>
         </div>
         <img

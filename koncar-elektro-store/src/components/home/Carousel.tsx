@@ -40,7 +40,7 @@ export const Carousel = ({ children, className = '', slideClassName = '' }: Caro
         type="button"
         onClick={scrollPrev}
         disabled={!canPrev}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-border shadow-md flex items-center justify-center text-primary disabled:opacity-30 hover:bg-secondary transition-colors -ml-3"
+        className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-border shadow-md items-center justify-center text-primary disabled:opacity-30 hover:bg-secondary transition-colors -ml-3"
         aria-label="Prethodno"
       >
         <ChevronLeft className="w-5 h-5" />
@@ -60,7 +60,7 @@ export const Carousel = ({ children, className = '', slideClassName = '' }: Caro
         type="button"
         onClick={scrollNext}
         disabled={!canNext}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-border shadow-md flex items-center justify-center text-primary disabled:opacity-30 hover:bg-secondary transition-colors -mr-3"
+        className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-border shadow-md items-center justify-center text-primary disabled:opacity-30 hover:bg-secondary transition-colors -mr-3"
         aria-label="Sledeće"
       >
         <ChevronRight className="w-5 h-5" />
