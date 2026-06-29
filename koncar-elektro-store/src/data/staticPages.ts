@@ -24,6 +24,23 @@ export const companyInfo = {
   mapQuery: 'Stanoja Glavaša 4, Leskovac, Srbija',
 };
 
+export const brand = {
+  whyChooseTitle: `Zašto kupci biraju ${companyInfo.name}?`,
+  aboutIntro: `${companyInfo.name} je specijalizovana prodavnica profesionalnih i hobi alata, elektromaterijala, rasvete i solarne opreme. U ponudi imamo proizvode vodećih svetskih proizvođača — od električnih i akumulatorskih alata do kompresora, kosačica i opreme za elektro instalacije.`,
+} as const;
+
+export const contactChannels = {
+  primaryPhone: companyInfo.phones[0],
+  secondaryPhone: companyInfo.phones[1],
+  primaryPhoneHref: `tel:${companyInfo.phones[0].replace(/\s/g, '')}`,
+  secondaryPhoneHref: `tel:${companyInfo.phones[1].replace(/\s/g, '')}`,
+  email: companyInfo.email,
+  emailHref: `mailto:${companyInfo.email}`,
+  addressShort: companyInfo.address.city,
+  addressFull: companyInfo.address.full,
+  hoursSummary: 'Pon–Pet: 08–20h, Sub: 08–16h',
+} as const;
+
 export const aboutContent = {
   breadcrumbs: [
     { label: 'Početna', href: '/' },

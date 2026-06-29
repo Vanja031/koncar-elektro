@@ -3,6 +3,7 @@ import { Check, ChevronRight, Plus, Minus, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GoogleReviews } from '@/components/home/GoogleReviews';
 import { ROUTES } from '@/lib/catalogUrls';
+import { brand, contactChannels } from '@/data/staticPages';
 import agentAvatar from '@/assets/agent-avatar.png';
 
 type FaqItem = { question: string; answer: string };
@@ -24,7 +25,7 @@ export const CatalogInfoSections = ({ variant, whyBuy, faq, whyTitle }: Props) =
         <div className={`grid grid-cols-1 gap-8 ${isCategory ? 'lg:grid-cols-3 lg:gap-10 lg:pr-[16rem] xl:pr-[20rem]' : 'lg:grid-cols-3'}`}>
           <div className={isCategory ? 'py-2' : undefined}>
             <h3 className="section-heading text-base md:text-base mb-5">
-              {whyTitle ?? (isCategory ? 'Zašto kupci biraju Končar Alati?' : 'Zašto kupiti kod nas?')}
+              {whyTitle ?? (isCategory ? brand.whyChooseTitle : 'Zašto kupiti kod nas?')}
             </h3>
             <ul className="space-y-3">
               {whyBuy.map((item) => (
@@ -99,8 +100,8 @@ export const CatalogInfoSections = ({ variant, whyBuy, faq, whyTitle }: Props) =
                 <p className="text-sm text-white/80 mb-4 relative z-10 max-w-[55%]">
                   Naš tim stručnjaka stoji vam na raspolaganju za savet pri izboru alata.
                 </p>
-                <a href="tel:0111234567" className="btn-yellow text-xs inline-flex items-center gap-2 relative z-10">
-                  <Phone className="w-4 h-4" /> 011 123 4567
+                <a href={contactChannels.primaryPhoneHref} className="btn-yellow text-xs inline-flex items-center gap-2 relative z-10">
+                  <Phone className="w-4 h-4" /> {contactChannels.primaryPhone}
                 </a>
                 <img
                   src={agentAvatar}

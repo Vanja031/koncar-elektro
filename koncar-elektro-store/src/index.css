@@ -61,7 +61,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
@@ -83,7 +83,13 @@
     @apply absolute left-0 bottom-0 block h-[3px] w-10 rounded-sm bg-accent;
   }
   .section-link {
-    @apply text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0;
+    @apply text-sm font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0;
+  }
+  .section-header {
+    @apply flex flex-col items-start gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4;
+  }
+  .section-header .section-heading {
+    @apply min-w-0;
   }
   .product-card-home {
     @apply relative bg-card border border-border rounded-md overflow-hidden flex flex-col;
@@ -143,7 +149,7 @@
   }
   .google-reviews-link {
     font-family: 'Roboto', Arial, sans-serif;
-    @apply inline-flex items-center gap-1 text-sm font-medium text-[#1a73e8] hover:underline;
+    @apply flex items-center gap-1 text-sm font-medium text-[#1a73e8] hover:underline w-fit;
   }
   .trust-section-grid {
     @apply lg:min-h-[19.5rem];

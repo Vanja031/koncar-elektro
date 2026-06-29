@@ -9,9 +9,11 @@ import { SocialLinks } from './SocialLinks';
 import { MegaMenu } from './MegaMenu';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { MobileSearch } from '@/components/layout/MobileSearch';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useCart } from '@/context/CartContext';
 import type { MegaMenuMode } from '@/data/navigation';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
+import { companyInfo, contactChannels } from '@/data/staticPages';
 
 type NavItem = {
   label: string;
@@ -132,7 +134,7 @@ export const SiteHeader = () => {
       </div>
 
       <header className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="container py-3 flex items-center gap-3 lg:gap-6">
+        <div className="container py-2 sm:py-3 flex items-center gap-2 sm:gap-3 lg:gap-6">
           <button
             type="button"
             onClick={() => setMobileNavOpen(true)}
@@ -142,12 +144,10 @@ export const SiteHeader = () => {
             <Menu className="w-5 h-5 text-primary" />
           </button>
 
-          <Link to="/" className="shrink-0 min-w-0">
-            <div className="font-display font-bold text-2xl leading-none text-primary tracking-tight">
-              KONČAR <span className="text-accent">ALATI</span>
-            </div>
-            <div className="text-[10px] text-destructive font-semibold tracking-wider uppercase mt-0.5">
-              Profesionalni alati i oprema
+          <Link to="/" className="min-w-0 flex-1 sm:flex-none overflow-hidden">
+            <BrandLogo className="h-6 max-w-[6.5rem] min-[380px]:h-7 min-[380px]:max-w-[7.25rem] sm:h-12 sm:max-w-none lg:h-14" />
+            <div className="hidden sm:block text-[10px] text-destructive font-semibold tracking-wider uppercase mt-0.5 truncate">
+              {companyInfo.tagline}
             </div>
           </Link>
 
@@ -163,13 +163,13 @@ export const SiteHeader = () => {
           </div>
 
           <div className="hidden xl:flex items-center gap-3 shrink-0">
-            <a href="tel:0111234567" className="flex items-center gap-2 bg-secondary rounded px-3 py-2 hover:bg-muted transition-colors">
+            <a href={contactChannels.primaryPhoneHref} className="flex items-center gap-2 bg-secondary rounded px-3 py-2 hover:bg-muted transition-colors">
               <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
                 <Phone className="w-4 h-4 text-accent-foreground" />
               </div>
               <div className="text-xs leading-tight">
                 <div className="font-semibold text-primary uppercase">Pozovite stručnjaka</div>
-                <div className="font-bold text-sm">011 123 4567</div>
+                <div className="font-bold text-sm">{contactChannels.primaryPhone}</div>
                 <div className="text-muted-foreground">08–20h radnim danima</div>
               </div>
             </a>
