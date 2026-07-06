@@ -17,7 +17,7 @@ export const SocialLinks = ({ variant = 'header', className = '' }: Props) => {
           className={
             isFooter
               ? 'flex items-center justify-center w-10 h-10 rounded-lg bg-white p-1.5 shadow-sm hover:scale-105 transition-transform'
-              : 'w-7 h-7 flex items-center justify-center hover:opacity-70 transition-opacity'
+              : 'header-social-link hover:opacity-90 transition-opacity'
           }
           aria-label={name}
         >

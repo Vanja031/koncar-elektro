@@ -28,7 +28,7 @@ const SalePage = () => {
         <div
           className={
             view === 'grid'
-              ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4'
+              ? 'grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 mt-4'
               : 'flex flex-col gap-3 mt-4'
           }
         >

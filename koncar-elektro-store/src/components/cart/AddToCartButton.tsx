@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
-type Variant = 'icon' | 'yellow' | 'outline';
+type Variant = 'icon' | 'yellow' | 'outline' | 'product';
 
 type Props = {
   productId: number;
@@ -38,6 +38,29 @@ export const AddToCartButton = ({
     setAdded(true);
     onAdded?.();
   };
+
+  if (variant === 'product') {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={disabled}
+        className={`add-to-cart-btn add-to-cart-btn--product ${added ? 'add-to-cart-btn--added' : ''} ${className}`}
+      >
+        {added ? (
+          <>
+            <Check className="w-5 h-5" strokeWidth={3} />
+            Dodato u korpu
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="w-5 h-5" />
+            Dodaj u korpu
+          </>
+        )}
+      </button>
+    );
+  }
 
   if (variant === 'icon') {
     return (

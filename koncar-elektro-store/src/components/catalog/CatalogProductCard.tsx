@@ -37,13 +37,13 @@ export const CatalogProductCard = ({ product, view = 'grid', showSaleBadge = fal
       </Link>
 
       <div className={isList ? 'catalog-product-card-body--list' : 'catalog-product-card-body'}>
-        <div className={isList ? 'catalog-product-card-main--list' : undefined}>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{product.brand}</p>
+        <div className={isList ? 'catalog-product-card-main--list' : 'catalog-product-card-main'}>
+          <p className="catalog-product-card-brand">{product.brand}</p>
           <Link to={productUrl}>
-            <h3 className="font-display font-bold text-sm text-foreground leading-tight line-clamp-2 hover:text-primary transition-colors">{product.name}</h3>
+            <h3 className="catalog-product-card-title">{product.name}</h3>
           </Link>
-          <p className="text-xs text-muted-foreground line-clamp-1">{product.subtitle}</p>
-          <div className="flex items-center gap-0.5">
+          <p className="catalog-product-card-subtitle">{product.subtitle}</p>
+          <div className="catalog-product-card-rating">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
@@ -52,7 +52,7 @@ export const CatalogProductCard = ({ product, view = 'grid', showSaleBadge = fal
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="catalog-product-card-specs">
             {product.specs.map((spec) => (
               <span key={spec} className="catalog-spec-chip">{spec}</span>
             ))}
@@ -60,23 +60,25 @@ export const CatalogProductCard = ({ product, view = 'grid', showSaleBadge = fal
         </div>
 
         <div className={isList ? 'catalog-product-card-actions--list' : 'catalog-product-card-actions'}>
-          <div>
-            {onSale && product.oldPrice && (
-              <p className="text-xs text-muted-foreground line-through">{formatPrice(product.oldPrice)}</p>
-            )}
-            <p className="font-display font-bold text-xl text-foreground">{formatPrice(product.price)}</p>
-            <p className={`text-xs mt-1 flex items-center gap-1.5 ${product.inStock ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${product.inStock ? 'bg-emerald-500' : 'bg-muted-foreground'}`} />
-              {product.inStock ? 'Na stanju' : 'Nije na stanju'}
-            </p>
+          <div className="catalog-product-card-actions-buy">
+            <div className="catalog-product-card-pricing">
+              {onSale && product.oldPrice && (
+                <p className="catalog-product-card-old-price">{formatPrice(product.oldPrice)}</p>
+              )}
+              <p className="catalog-product-card-price">{formatPrice(product.price)}</p>
+              <p className={`catalog-product-card-stock ${product.inStock ? 'catalog-product-card-stock--in' : ''}`}>
+                <span className={`catalog-product-card-stock-dot ${product.inStock ? 'catalog-product-card-stock-dot--in' : ''}`} />
+                {product.inStock ? 'Na stanju' : 'Nije na stanju'}
+              </p>
+            </div>
+            <AddToCartButton
+              productId={product.id}
+              variant="yellow"
+              disabled={!product.inStock}
+              className={isList ? 'min-w-[10.5rem] catalog-product-card-cart-btn' : 'catalog-product-card-cart-btn'}
+            />
           </div>
-          <AddToCartButton
-            productId={product.id}
-            variant="yellow"
-            disabled={!product.inStock}
-            className={isList ? 'min-w-[10.5rem]' : 'w-full'}
-          />
-          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+          <label className="catalog-product-card-compare">
             <input type="checkbox" className="rounded border-border" />
             Uporedi
           </label>

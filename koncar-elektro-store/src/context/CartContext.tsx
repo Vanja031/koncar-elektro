@@ -11,6 +11,7 @@ import { koncarProducts } from '@/data/koncarProducts';
 import { getProductWeightKg } from '@/lib/productWeight';
 import { calculateShipping } from '@/lib/shipping';
 import { formatPrice } from '@/data/homepage';
+import { AddToCartModal } from '@/components/cart/AddToCartModal';
 
 const STORAGE_KEY = 'koncar-cart-v1';
 
@@ -32,6 +33,13 @@ export type ResolvedCartLine = CartLine & {
   lineWeightKg: number;
 };
 
+export type AddedToCartSnapshot = {
+  productId: number;
+  quantityAdded: number;
+  cartQuantity: number;
+  addedAt: number;
+};
+
 type CartContextValue = {
   items: CartLine[];
   lines: ResolvedCartLine[];
@@ -40,10 +48,12 @@ type CartContextValue = {
   totalWeightKg: number;
   shipping: ReturnType<typeof calculateShipping>;
   total: number;
+  addedSnapshot: AddedToCartSnapshot | null;
   addItem: (productId: number, quantity?: number) => void;
   setQuantity: (productId: number, quantity: number) => void;
   removeItem: (productId: number) => void;
   clearCart: () => void;
+  closeAddedModal: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -63,15 +73,26 @@ const readStorage = (): CartLine[] => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartLine[]>(() => readStorage());
+  const [addedSnapshot, setAddedSnapshot] = useState<AddedToCartSnapshot | null>(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
+  const closeAddedModal = useCallback(() => setAddedSnapshot(null), []);
+
   const addItem = useCallback((productId: number, quantity = 1) => {
     if (!productById.has(productId) || quantity < 1) return;
     setItems((current) => {
       const existing = current.find((line) => line.productId === productId);
+      const cartQuantity = existing ? existing.quantity + quantity : quantity;
+      setAddedSnapshot({
+        productId,
+        quantityAdded: quantity,
+        cartQuantity,
+        addedAt: Date.now(),
+      });
+
       if (existing) {
         return current.map((line) =>
           line.productId === productId
@@ -135,14 +156,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       totalWeightKg,
       shipping,
       total,
+      addedSnapshot,
       addItem,
       setQuantity,
       removeItem,
       clearCart,
+      closeAddedModal,
     };
-  }, [items, addItem, setQuantity, removeItem, clearCart]);
+  }, [items, addedSnapshot, addItem, setQuantity, removeItem, clearCart, closeAddedModal]);
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider value={value}>
+      {children}
+      <AddToCartModal />
+    </CartContext.Provider>
+  );
 };
 
 export const useCart = () => {

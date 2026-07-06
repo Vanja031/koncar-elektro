@@ -249,7 +249,7 @@ export const SiteFooter = () => (
 export const FloatingChat = () => (
   <Link
     to="/kontakt"
-    className="fixed z-50 flex items-center justify-center gap-2 bg-primary text-white rounded-full shadow-lg hover:brightness-110 transition-all font-semibold bottom-4 right-3 min-[380px]:justify-start py-2.5 px-3 min-[380px]:pl-3 min-[380px]:pr-3.5 text-xs sm:bottom-6 sm:right-6 sm:gap-2.5 sm:pl-4 sm:pr-5 sm:py-3 sm:text-sm"
+    className="fixed z-50 flex items-center justify-center gap-2 bg-primary text-white rounded-full shadow-navy-soft hover:brightness-110 transition-all font-semibold bottom-4 right-3 min-[380px]:justify-start py-2.5 px-3 min-[380px]:pl-3 min-[380px]:pr-3.5 text-xs sm:bottom-6 sm:right-6 sm:gap-2.5 sm:pl-4 sm:pr-5 sm:py-3 sm:text-sm"
     aria-label="Pitaj stručnjaka"
   >
     <FaIcon icon={footerIcons.chat} className="text-base shrink-0" />

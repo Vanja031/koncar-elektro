@@ -1,4 +1,4 @@
-export const FREE_SHIPPING_THRESHOLD = 10_000;
+export const FREE_SHIPPING_THRESHOLD = 15_000;
 
 export type ShippingQuote = {
   cost: number;

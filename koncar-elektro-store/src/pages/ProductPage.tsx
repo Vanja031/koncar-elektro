@@ -8,14 +8,12 @@ import { ProductInfo } from '@/components/product/ProductInfo';
 import { ProductPurchaseCard } from '@/components/product/ProductPurchaseCard';
 import { ProductTabs } from '@/components/product/ProductTabs';
 import { ProductTrustStrip } from '@/components/product/ProductTrustStrip';
-import { ProductCompatibleProducts } from '@/components/product/ProductCompatibleProducts';
 import { ProductFaqSection } from '@/components/product/ProductFaqSection';
 import { Carousel } from '@/components/home/Carousel';
 import { ProductCard } from '@/components/home/ProductCard';
 import {
   getProductBySlug,
   getRelatedProducts,
-  getCompatibleProducts,
   productFaq,
 } from '@/data/productDetail';
 import { DEFAULT_BROWSE_URL, getTopCategoryUrl } from '@/lib/catalogUrls';
@@ -32,7 +30,6 @@ const ProductPage = () => {
   }
 
   const related = getRelatedProducts(product);
-  const compatible = getCompatibleProducts(product);
   const discount = product.oldPrice
     ? Math.round(100 - (product.price / product.oldPrice) * 100)
     : 0;
@@ -67,10 +64,6 @@ const ProductPage = () => {
         <ProductTabs product={product} />
       </section>
 
-      <div className="container">
-        <ProductCompatibleProducts products={compatible} />
-      </div>
-
       <ProductFaqSection items={productFaq} />
 
       {related.length > 0 && (
@@ -85,7 +78,7 @@ const ProductPage = () => {
                 Pogledajte sve <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-            <Carousel>
+            <Carousel edgeArrowsOnMobile>
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

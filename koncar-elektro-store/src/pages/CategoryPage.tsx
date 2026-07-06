@@ -50,7 +50,7 @@ const CategoryPage = ({ programSlug }: Props) => {
             Pogledajte sve proizvode <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
-        <Carousel>
+        <Carousel edgeArrowsOnMobile>
           {data.bestSellers.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

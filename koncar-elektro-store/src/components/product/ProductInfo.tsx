@@ -1,5 +1,6 @@
 import { Check, Star } from 'lucide-react';
 import type { ProductDetail } from '@/data/productDetail';
+import { ProductWarrantyExtension } from '@/components/product/ProductWarrantyExtension';
 
 type Props = {
   product: ProductDetail;
@@ -48,6 +49,8 @@ export const ProductInfo = ({ product, onReviewsClick }: Props) => {
           </li>
         ))}
       </ul>
+
+      <ProductWarrantyExtension brand={product.brand} />
     </div>
   );
 };

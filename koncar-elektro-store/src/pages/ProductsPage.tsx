@@ -69,7 +69,7 @@ const ProductsPage = ({
           <div>
             <ListingToolbar view={view} onViewChange={setView} />
 
-            <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4' : 'flex flex-col gap-3'}>
+            <div className={view === 'grid' ? 'grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3'}>
               {listingData.products.map((product) => (
                 <CatalogProductCard key={product.id} product={product} view={view} />
               ))}

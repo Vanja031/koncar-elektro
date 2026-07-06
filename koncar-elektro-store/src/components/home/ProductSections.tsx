@@ -1,12 +1,20 @@
 import { Star, Flame, ChevronRight, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { saleProducts, bestSellerProducts, featuredBrands, whyChooseItems, categoryBanners } from '@/data/homepage';
+import {
+  saleProducts,
+  bestSellerProducts,
+  featuredBrands,
+  whyChooseItems,
+  categoryBanners,
+} from '@/data/homepage';
 import { brand } from '@/data/staticPages';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
 import { Carousel } from './Carousel';
 import { ProductCard } from './ProductCard';
 import { GoogleReviews } from './GoogleReviews';
 import { FaqAccordion } from './FaqAccordion';
+import { PopularCategoriesSection } from './PopularCategoriesSection';
+import { TrustPromoBanners } from './TrustPromoBanners';
 import agentAvatar from '@/assets/agent-avatar.png';
 
 const bannerUrls: Record<string, string> = {
@@ -17,41 +25,70 @@ const bannerUrls: Record<string, string> = {
 
 export const ProductSections = () => (
   <>
+    {/* 1. Proizvodi na akciji */}
     <section className="container py-6">
       <div className="section-header">
         <h2 className="section-heading flex items-center gap-2">
           <Flame className="w-5 h-5 fill-accent text-accent shrink-0" /> Proizvodi na akciji
         </h2>
-        <Link to="/akcija" className="section-link">Pogledajte sve akcije <ChevronRight className="w-4 h-4 shrink-0" /></Link>
+        <Link to="/akcija" className="section-link">
+          Pogledajte sve akcije <ChevronRight className="w-4 h-4 shrink-0" />
+        </Link>
       </div>
-      <Carousel>
+      <Carousel autoplay edgeArrowsOnMobile>
         {saleProducts.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
       </Carousel>
     </section>
 
+    {/* 2. Kategorije */}
+    <PopularCategoriesSection />
+
+    {/* 3. Brendovi */}
+    <section className="container py-6">
+      <h2 className="section-heading mb-4">Istaknuti brendovi</h2>
+      <Carousel autoplay compactArrowsOnMobile slideClassName="!basis-1/3 sm:!basis-1/5 md:!basis-[12.5%]">
+        {featuredBrands.map((b) => (
+          <a
+            key={b}
+            href="#"
+            className="h-14 sm:h-16 border border-border rounded bg-white flex items-center justify-center px-2 sm:px-4 min-w-0 w-full overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
+          >
+            <span className="font-display font-bold text-[11px] sm:text-sm text-primary uppercase tracking-normal sm:tracking-wide text-center leading-tight line-clamp-2 break-words">
+              {b}
+            </span>
+          </a>
+        ))}
+      </Carousel>
+    </section>
+
+    {/* 4. Tri trust banera */}
+    <TrustPromoBanners />
+
+    {/* 5. Najprodavaniji proizvodi */}
     <section className="container py-6">
       <div className="section-header">
         <h2 className="section-heading flex items-center gap-2">
           <Star className="w-5 h-5 fill-accent text-accent shrink-0" /> Najprodavaniji proizvodi
         </h2>
-        <a href="#" className="section-link">Pogledajte sve najprodavanije <ChevronRight className="w-4 h-4 shrink-0" /></a>
+        <a href="#" className="section-link">
+          Pogledajte sve najprodavanije <ChevronRight className="w-4 h-4 shrink-0" />
+        </a>
       </div>
-      <Carousel>
+      <Carousel autoplay edgeArrowsOnMobile>
         {bestSellerProducts.map((p, i) => (
           <ProductCard key={p.id} product={p} rank={i + 1} />
         ))}
       </Carousel>
     </section>
 
+    {/* 6–8. Zašto kupci biraju / Google recenzije / FAQ — kombinovano */}
     <section className="bg-primary text-white py-10 lg:py-12 mt-4 relative overflow-hidden">
       <div className="container relative z-10">
         <div className="trust-section-grid grid grid-cols-1 lg:grid-cols-3 lg:max-w-[75%] xl:max-w-[72%] lg:divide-x lg:divide-white/15">
           <div className="py-2 lg:py-0 lg:pr-8 border-b border-white/15 lg:border-b-0 pb-8 lg:pb-0 mb-8 lg:mb-0">
-            <h3 className="section-heading-light">
-              {brand.whyChooseTitle}
-            </h3>
+            <h3 className="section-heading-light">{brand.whyChooseTitle}</h3>
             <ul className="space-y-3.5">
               {whyChooseItems.map((t) => (
                 <li key={t} className="flex items-start gap-3 text-sm text-white/90 leading-snug">
@@ -65,16 +102,12 @@ export const ProductSections = () => (
           </div>
 
           <div className="py-2 lg:py-0 lg:px-8 border-b border-white/15 lg:border-b-0 pb-8 lg:pb-0 mb-8 lg:mb-0">
-            <h3 className="section-heading-light">
-              Ocene kupaca
-            </h3>
+            <h3 className="section-heading-light">Ocene kupaca</h3>
             <GoogleReviews />
           </div>
 
           <div className="py-2 lg:py-0 lg:pl-8">
-            <h3 className="section-heading-light">
-              Često postavljana pitanja
-            </h3>
+            <h3 className="section-heading-light">Često postavljana pitanja</h3>
             <FaqAccordion />
           </div>
         </div>
@@ -87,6 +120,7 @@ export const ProductSections = () => (
       />
     </section>
 
+    {/* 9. Tri banera: elektromaterijal, rasveta, solarne */}
     <section className="container py-8 grid grid-cols-1 md:grid-cols-3 gap-4">
       {categoryBanners.map((b) => (
         <Link
@@ -111,21 +145,6 @@ export const ProductSections = () => (
           />
         </Link>
       ))}
-    </section>
-
-    <section className="container py-6">
-      <h2 className="section-heading mb-4">Istaknuti brendovi</h2>
-      <Carousel slideClassName="!basis-[calc(25%-12px)] sm:!basis-[calc(20%-13px)] md:!basis-[calc(12.5%-14px)]">
-        {featuredBrands.map((b) => (
-          <a
-            key={b}
-            href="#"
-            className="h-16 border border-border rounded bg-white flex items-center justify-center px-4 hover:border-primary/30 hover:shadow-card transition-all"
-          >
-            <span className="font-display font-bold text-sm text-primary uppercase tracking-wide text-center">{b}</span>
-          </a>
-        ))}
-      </Carousel>
     </section>
   </>
 );

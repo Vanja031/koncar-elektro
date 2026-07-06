@@ -53,7 +53,7 @@ const CartPage = () => {
               </div>
               <Link
                 to={browseUrl}
-                className="text-sm text-primary font-medium hover:underline inline-flex mt-4"
+                className="hidden md:inline-flex text-sm text-primary font-medium hover:underline mt-4"
               >
                 ← Nastavi kupovinu
               </Link>

@@ -114,17 +114,25 @@ export const ProductReviews = ({ product }: Props) => {
 
         {(canLoadMore || canShowLess || remainingTotal > 0) && (
           <div className="product-reviews-actions">
-            {canLoadMore && (
-              <button type="button" onClick={loadMore} className="product-reviews-action-btn">
-                <ChevronDown className="w-4 h-4" />
-                Prikaži još
-              </button>
-            )}
-            {canShowLess && (
-              <button type="button" onClick={showLess} className="product-reviews-action-btn product-reviews-action-btn--muted">
-                <ChevronUp className="w-4 h-4" />
-                Prikaži manje
-              </button>
+            {(canLoadMore || canShowLess) && (
+              <div
+                className={`product-reviews-actions-buttons ${
+                  canLoadMore && canShowLess ? '' : 'product-reviews-actions-buttons--solo'
+                }`}
+              >
+                {canLoadMore && (
+                  <button type="button" onClick={loadMore} className="product-reviews-action-btn">
+                    <ChevronDown className="w-4 h-4" />
+                    Prikaži još
+                  </button>
+                )}
+                {canShowLess && (
+                  <button type="button" onClick={showLess} className="product-reviews-action-btn product-reviews-action-btn--muted">
+                    <ChevronUp className="w-4 h-4" />
+                    Prikaži manje
+                  </button>
+                )}
+              </div>
             )}
             {!canLoadMore && remainingTotal > 0 && (
               <p className="product-reviews-note">

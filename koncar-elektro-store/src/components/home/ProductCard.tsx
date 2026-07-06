@@ -1,4 +1,4 @@
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPrice, type Product } from '@/data/homepage';
 import { getProductUrl } from '@/data/productDetail';
@@ -39,14 +39,15 @@ export const ProductCard = ({ product, rank }: Props) => {
           ))}
           <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
         </div>
-        <div className="flex items-end justify-between mt-auto pt-2">
+        <div className="mt-auto pt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {product.oldPrice && (
               <span className="text-xs text-muted-foreground line-through block">{formatPrice(product.oldPrice)}</span>
             )}
             <span className="font-display font-bold text-lg text-foreground">{formatPrice(product.price)}</span>
           </div>
-          <AddToCartButton productId={product.id} variant="icon" />
+          <AddToCartButton productId={product.id} variant="yellow" className="w-full sm:hidden product-card-home-cart-btn" />
+          <AddToCartButton productId={product.id} variant="icon" className="hidden sm:inline-flex shrink-0" />
         </div>
       </div>
     </div>

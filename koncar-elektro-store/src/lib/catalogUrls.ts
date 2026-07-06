@@ -19,6 +19,8 @@ export const ROUTES = {
   contact: '/kontakt',
   /** Nema zasebne FAQ stranice na starom sajtu — nova ruta za naš FAQ sadržaj. */
   faq: '/pitanja',
+  login: '/prijava',
+  register: '/registracija',
   productCategory: '/product-category',
   prodavnica: '/prodavnica',
 } as const;

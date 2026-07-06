@@ -16,10 +16,9 @@ export type ProductReview = {
   verified?: boolean;
 };
 
-export type ProductDocument = {
+export type ProductDeclarationRow = {
   label: string;
-  type: 'pdf' | 'manual';
-  size?: string;
+  value: string;
 };
 
 export type ProductDetail = KoncarCatalogProduct & {
@@ -28,12 +27,14 @@ export type ProductDetail = KoncarCatalogProduct & {
   longDescription: string;
   features: string[];
   specifications: ProductSpec[];
-  documents: ProductDocument[];
+  declaration: ProductDeclarationRow[];
   reviewsList: ProductReview[];
   relatedIds: number[];
   breadcrumbs: BreadcrumbItem[];
   deliveryDays: string;
   warrantyMonths: number;
+  saleStart?: string;
+  saleEnd?: string;
 };
 
 const slugify = (name: string) =>
@@ -81,6 +82,32 @@ const buildSpecifications = (product: KoncarCatalogProduct): ProductSpec[] => [
   { label: 'Kategorija', value: product.category },
   { label: 'Garancija', value: product.price > 50000 ? '36 meseci' : '24 meseca' },
   ...product.specs.map((s, i) => ({ label: i === 0 ? 'Ključna specifikacija' : 'Specifikacija', value: s })),
+];
+
+const ORIGIN_BY_BRAND: Record<string, string> = {
+  MAKITA: 'Japan',
+  BOSCH: 'Nemačka',
+  METABO: 'Nemačka',
+  EINHELL: 'Nemačka',
+  HYUNDAI: 'Južna Koreja',
+  Scheppach: 'Nemačka',
+  Villager: 'Srbija',
+};
+
+const buildManufacturer = (product: KoncarCatalogProduct): string => {
+  if (product.brand === 'INGCO' && product.name.toUpperCase().includes('SUPER INGCO')) {
+    return 'INGCO – SUPER INGCO';
+  }
+  return product.brand;
+};
+
+const buildDeclaration = (product: KoncarCatalogProduct): ProductDeclarationRow[] => [
+  { label: 'Proizvodjač', value: buildManufacturer(product) },
+  { label: 'Uvoznik', value: 'NA DEKLARACIJI PROIZVODA' },
+  {
+    label: 'Zemlja porekla',
+    value: ORIGIN_BY_BRAND[product.brand] ?? 'Kina',
+  },
 ];
 
 const buildReviews = (product: KoncarCatalogProduct): ProductReview[] => {
@@ -216,10 +243,7 @@ const buildProductDetail = (product: KoncarCatalogProduct): ProductDetail => {
     longDescription: `${product.name} je ${product.category.toLowerCase()} brenda ${product.brand}. ${product.description} Proizvod je dostupan u Končar Elektro ponudi sa garancijom, fiskalnim računom i stručnom podrškom.`,
     features: buildFeatures(product),
     specifications: buildSpecifications(product),
-    documents: [
-      { label: 'Uputstvo za upotrebu', type: 'manual', size: '1,8 MB' },
-      { label: 'Tehnički list', type: 'pdf', size: '650 KB' },
-    ],
+    declaration: buildDeclaration(product),
     reviewsList: buildReviews(product),
     relatedIds: buildRelatedIds(product),
     breadcrumbs: [
@@ -229,6 +253,9 @@ const buildProductDetail = (product: KoncarCatalogProduct): ProductDetail => {
     ],
     deliveryDays: product.inStock ? '1–2 radna dana' : '3–5 radnih dana',
     warrantyMonths: product.price > 50000 ? 36 : 24,
+    ...(product.oldPrice && product.oldPrice > product.price
+      ? { saleStart: '01.07.2026.', saleEnd: '31.07.2026.' }
+      : {}),
   };
 };
 

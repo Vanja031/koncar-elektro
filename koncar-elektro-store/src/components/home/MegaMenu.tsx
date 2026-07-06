@@ -31,56 +31,62 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
     <div className="mega-menu-panel absolute left-0 right-0 top-full z-40 pointer-events-none">
       <div data-mega-menu className="container mb-6 pointer-events-auto -mt-1 pt-1">
         <div className="mega-menu-inner flex">
-          <aside className="mega-menu-sidebar koncar-scrollbar w-[17.5rem] shrink-0 py-5 pr-0 overflow-y-auto">
-            <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Alati i oprema
-            </p>
-            <ul className="mb-5">
-              {alatiMenuCategories.map((cat) => {
-                const Icon = cat.icon;
-                const isActive = activeId === cat.id;
-                return (
-                  <li key={cat.id}>
-                    <Link
-                      to={getMegaMenuCategoryUrl(cat.id)}
-                      onMouseEnter={() => setActiveId(cat.id)}
-                      onFocus={() => setActiveId(cat.id)}
-                      onClick={onClose}
-                      className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0 opacity-80" strokeWidth={1.75} />
-                      <span className="flex-1 text-left leading-snug">{cat.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+          <aside className="mega-menu-sidebar koncar-scrollbar w-[17.5rem] shrink-0 flex flex-col overflow-y-auto">
+            <div className="mega-menu-sidebar-alati py-5 pr-0">
+              <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Alati i oprema
+              </p>
+              <ul>
+                {alatiMenuCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  const isActive = activeId === cat.id;
+                  return (
+                    <li key={cat.id}>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onMouseEnter={() => setActiveId(cat.id)}
+                        onFocus={() => setActiveId(cat.id)}
+                        onClick={onClose}
+                        className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
+                      >
+                        <Icon className="mega-menu-nav-icon shrink-0" strokeWidth={1.85} />
+                        <span className="flex-1 text-left leading-snug">{cat.label}</span>
+                        <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
-            <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Ostali programi
-            </p>
-            <ul>
-              {otherProgramCategories.map((cat) => {
-                const Icon = cat.icon;
-                const isActive = activeId === cat.id;
-                return (
-                  <li key={cat.id}>
-                    <Link
-                      to={getMegaMenuCategoryUrl(cat.id)}
-                      onMouseEnter={() => setActiveId(cat.id)}
-                      onFocus={() => setActiveId(cat.id)}
-                      onClick={onClose}
-                      className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0 opacity-80" strokeWidth={1.75} />
-                      <span className="flex-1 text-left leading-snug">{cat.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="mega-menu-sidebar-programs py-4 pr-0 mt-auto">
+              <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-primary/70">
+                Ostali programi
+              </p>
+              <ul>
+                {otherProgramCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  const isActive = activeId === cat.id;
+                  return (
+                    <li key={cat.id}>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onMouseEnter={() => setActiveId(cat.id)}
+                        onFocus={() => setActiveId(cat.id)}
+                        onClick={onClose}
+                        className={`mega-menu-nav-item mega-menu-nav-item--program w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
+                      >
+                        <Icon className="mega-menu-nav-icon shrink-0" strokeWidth={1.85} />
+                        <span className="flex-1 text-left leading-snug uppercase text-[13px] font-semibold tracking-wide">
+                          {cat.label}
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </aside>
 
           <div className="mega-menu-content flex-1 flex flex-col min-w-0 min-h-0 bg-white">

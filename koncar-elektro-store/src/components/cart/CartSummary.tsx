@@ -40,13 +40,14 @@ export const CartSummary = () => {
       </div>
       <p className="text-xs text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      <Link to={ROUTES.checkout} className="btn-yellow w-full py-3.5 mt-4 flex items-center justify-center">
-        Nastavi na plaćanje
-      </Link>
-
-      <Link to={browseUrl} className="cart-summary-continue">
-        Nastavi kupovinu
-      </Link>
+      <div className="cart-summary-actions">
+        <Link to={ROUTES.checkout} className="btn-yellow w-full py-3.5 flex items-center justify-center">
+          Nastavi na plaćanje
+        </Link>
+        <Link to={browseUrl} className="cart-summary-continue-btn">
+          Nastavi kupovinu
+        </Link>
+      </div>
 
       <div className="cart-summary-payments">
         <PaymentCardIcons size="sm" />

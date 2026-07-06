@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 
 type Props = {
   images: string[];
@@ -8,11 +9,28 @@ type Props = {
 };
 
 export const ProductGallery = ({ images, name, discount }: Props) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: images.length > 1, align: 'start' });
   const [activeIndex, setActiveIndex] = useState(0);
   const hasVideo = images.length > 0;
 
-  const goPrev = () => setActiveIndex((i) => (i === 0 ? images.length - 1 : i - 1));
-  const goNext = () => setActiveIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setActiveIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const goPrev = () => emblaApi?.scrollPrev();
+  const goNext = () => emblaApi?.scrollNext();
 
   return (
     <div className="product-gallery">
@@ -32,12 +50,20 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
           </>
         )}
 
-        <div className="product-gallery-image-wrap">
-          <img src={images[activeIndex]} alt={name} className="product-gallery-image" />
+        <div className="product-gallery-viewport" ref={emblaRef}>
+          <div className="product-gallery-track">
+            {images.map((img, i) => (
+              <div key={`${img}-${i}`} className="product-gallery-slide">
+                <div className="product-gallery-image-wrap">
+                  <img src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="product-gallery-thumbs koncar-scrollbar" role="tablist" aria-label="Slike proizvoda">
+      <div className="product-gallery-thumbs" role="tablist" aria-label="Slike proizvoda">
         {images.map((img, i) => (
           <button
             key={`${img}-${i}`}
@@ -45,7 +71,7 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
             role="tab"
             aria-selected={i === activeIndex}
             aria-label={`Slika ${i + 1}`}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => emblaApi?.scrollTo(i)}
             className={`product-gallery-thumb ${i === activeIndex ? 'product-gallery-thumb--active' : ''}`}
           >
             <img src={img} alt="" className="max-h-full max-w-full object-contain" />

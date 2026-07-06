@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  ChevronRight, Phone, ShoppingCart, Flame, Home, Info, Mail,
+  ChevronRight, Phone, ShoppingCart, Flame, Home, Info, Mail, UserPlus,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -55,6 +55,21 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
         </SheetHeader>
 
         <nav className="flex-1 overflow-y-auto koncar-scrollbar py-2">
+          <ul className="px-2 space-y-0.5">
+            <li>
+              <Link
+                to={ROUTES.login}
+                onClick={close}
+                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+              >
+                <UserPlus className="w-4 h-4 text-primary shrink-0" />
+                Prijava / Registracija
+              </Link>
+            </li>
+          </ul>
+
+          <div className="my-3 border-t border-border" />
+
           <ul className="px-2 space-y-0.5">
             <li>
               <Link
