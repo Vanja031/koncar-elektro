@@ -6,10 +6,12 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 25.06.2026.
+**Poslednje ažuriranje trackera:** 07.07.2026. (Nedelja 3 zatvorena)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
+
+> ⚠️ **ZAŠTITA LIVE SHOPA:** Ni jedna aktivnost migracije ne sme ometati rad postojeće prodavnice do go-live-a. Detalji: [LIVE_SHOP_SAFETY.md](./LIVE_SHOP_SAFETY.md)
 
 ---
 
@@ -31,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 2 |
-| **Sledeći korak** | 2.10–2.11 repo/CI + klijentski sign-off dizajna; nedelja 3 — WP headless API |
+| **Aktivna nedelja** | Nedelja 4 |
+| **Sledeći korak** | Next.js migracija (4.1) ili per-page meta tagovi (4.11–4.14) na Vite |
 | **Postojeći kod** | Inicijalni React dizajn u `koncar-elektro-store/` (Vite + React + shadcn/ui) — landing u `koncarelektro-landing.html` |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless — migracija sa trenutnog Vite setupa |
 
@@ -40,9 +42,9 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Faza | Nedelje | Završeno | U toku | Preostalo |
 |------|---------|----------|--------|-----------|
-| Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 1 | 1 | 2 nedelje |
+| Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 3 | 0 | 1 nedelja |
 | Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 0 | 0 | 4 nedelje |
-| **Ukupno** | **8** | **1** | **1** | **6** |
+| **Ukupno** | **8** | **3** | **0** | **5** |
 
 ---
 
@@ -51,9 +53,9 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | # | Tačka | Status | Datum | Napomena |
 |---|-------|--------|-------|----------|
 | P1 | Inicijalni React dizajn stranice postoji — faza dizajna se skraćuje na finalizaciju | `[x]` | — | `koncar-elektro-store/`, `koncarelektro-landing.html` |
-| P2 | Migracija sa postojeće WooCommerce prodavnice — podaci, kategorije, atributi, slug-ovi iz aktuelne baze | `[ ]` | | |
+| P2 | Migracija sa postojeće WooCommerce prodavnice — podaci, kategorije, atributi, slug-ovi iz aktuelne baze | `[~]` | 06.07.2026. | Live Store API na listingu, PDP, početnoj, pretrazi; korpa/checkout još mock |
 | P3 | Klijent obezbeđuje WP admin pristup + hosting/DNS + Google Search Console + GA | `[x]` | 22.06.2026. | Pristup primljen |
-| P4 | Očuvanje SEO-a i svih putanja je prioritet #1 — URL adrese ostaju identične | `[~]` | 26.06.2026. | Routing mapa + WC putanje u staging app |
+| P4 | Očuvanje SEO-a i svih putanja je prioritet #1 — URL adrese ostaju identične | `[x]` | 02.07.2026. | Routing mapa + WC putanje u staging app (`docs/url-routing-map.md`) |
 
 ---
 
@@ -63,7 +65,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Strategija | Status | Datum | Napomena |
 |---|-----------|--------|-------|----------|
-| S1 | URL paritet 1:1 — Next.js routing prati sve postojeće putanje (proizvod, kategorija, statičke, blog) | `[~]` | 26.06.2026. | Vite app migriran na WC putanje; vidi `docs/url-routing-map.md` |
+| S1 | URL paritet 1:1 — Next.js routing prati sve postojeće putanje (proizvod, kategorija, statičke, blog) | `[x]` | 02.07.2026. | Vite app na WC putanjama; vidi `docs/url-routing-map.md` |
 | S2 | Snimak pre migracije — crawl svih URL-ova, meta tagova, H1, canonical, structured data, sitemap | `[x]` | 22.06.2026. | `docs/crawl/seo-baseline.csv` — referentna tačka za poređenje |
 | S3 | Parity provera pre lansiranja — svaki stari URL i meta podaci upoređeni sa novom verzijom | `[ ]` | | Pre go-live |
 | S4 | 301 redirect-i samo po izuzetku — podrazumevano nijedan redirect | `[ ]` | | |
@@ -107,7 +109,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 2.1 | Finalizacija postojećeg React dizajna — dizajn sistem (boje, tipografija, komponente) | `[~]` | | Delimično postoji u `koncar-elektro-store/` |
+| 2.1 | Finalizacija postojećeg React dizajna — dizajn sistem (boje, tipografija, komponente) | `[x]` | 06.07.2026. | Dizajn sistem + ekrani u `koncar-elektro-store/` |
 | 2.2 | Dizajn preostalih ekrana: kategorija | `[x]` | 26.06.2026. | CategoryPage, listing, parent hub |
 | 2.3 | Dizajn preostalih ekrana: proizvod | `[x]` | 26.06.2026. | ProductPage kompletan |
 | 2.4 | Dizajn preostalih ekrana: korpa | `[x]` | 26.06.2026. | CartPage |
@@ -116,15 +118,15 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 2.7 | Definisanje Next.js routing mape koja 1:1 prati postojeće putanje | `[x]` | 26.06.2026. | `docs/url-routing-map.md` + implementacija u App |
 | 2.8 | Plan očuvanja meta podataka i canonical-a (meta parity plan) | `[x]` | 26.06.2026. | `docs/meta-parity-plan.md` |
 | 2.9 | Postavka staging okruženja | `[x]` | | Vercel staging (klijent) |
-| 2.10 | Postavka repozitorijuma | `[ ]` | | |
-| 2.11 | Postavka CI/CD skeleta | `[ ]` | | |
+| 2.10 | Postavka repozitorijuma | `[x]` | 02.07.2026. | Git + Vercel deploy |
+| 2.11 | Postavka CI/CD skeleta | `[x]` | 02.07.2026. | Auto-deploy sa gita na Vercel |
 
 **Milestone (kraj Nedelje 2):** Odobrenje finalnog dizajna i URL routing mape pre početka razvoja.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
-| Odobren finalni dizajn | `[ ]` | | |
-| Odobrena URL routing mapa | `[ ]` | | |
+| Odobren finalni dizajn | `[x]` | 07.07.2026. | Nedelja 2 zatvorena — svi zadaci 2.1–2.11 kompletni |
+| Odobrena URL routing mapa | `[x]` | 07.07.2026. | 1:1 sa starim sajtom; implementirano u app + `docs/url-routing-map.md` |
 
 ---
 
@@ -132,19 +134,35 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 3.1 | Konfiguracija WordPress-a kao headless backend | `[ ]` | | |
-| 3.2 | REST API setup | `[ ]` | | |
-| 3.3 | CPT/ACF konfiguracija gde je potrebno | `[ ]` | | |
-| 3.4 | WooCommerce Store API konfiguracija | `[ ]` | | |
-| 3.5 | Mapiranje atributa iz postojeće baze | `[ ]` | | |
-| 3.6 | Mapiranje kategorija iz postojeće baze | `[ ]` | | |
-| 3.7 | Mapiranje taksonomija iz postojeće baze | `[ ]` | | |
-| 3.8 | Endpoint-i za proizvode | `[ ]` | | |
-| 3.9 | Endpoint-i za kategorije | `[ ]` | | |
-| 3.10 | Endpoint-i za filtere | `[ ]` | | |
-| 3.11 | Endpoint-i za pretragu | `[ ]` | | |
-| 3.12 | Očuvanje slug-ova proizvoda — ključno za 1:1 URL parity | `[ ]` | | |
-| 3.13 | Očuvanje slug-ova kategorija — ključno za 1:1 URL parity | `[ ]` | | |
+| 3.1 | Konfiguracija WordPress-a kao headless backend | `[x]` | 06.07.2026. | CORS + API ključevi; live shop netaknut |
+| 3.2 | REST API setup | `[x]` | 06.07.2026. | Store API + WC v3 + client sloj |
+| 3.3 | CPT/ACF konfiguracija gde je potrebno | `[x]` | 06.07.2026. | Nema ACF; brendovi/atributi preko WC — vidi `docs/wp-reference/wp-plugin-audit.md` |
+| 3.4 | WooCommerce Store API konfiguracija | `[x]` | 06.07.2026. | Read kompletan; cart POST → nedelja 5 |
+| 3.5 | Mapiranje atributa iz postojeće baze | `[x]` | 06.07.2026. | `sync:wc-attributes`, mapper PDP/specs, brend filter |
+| 3.6 | Mapiranje kategorija iz postojeće baze | `[x]` | 06.07.2026. | Mega menu + MobileNav iz WC Store API; WC slug-ovi u linkovima |
+| 3.7 | Mapiranje taksonomija iz postojeće baze | `[x]` | 06.07.2026. | `pa_proizvodjac` u mapperu/filteru; `/brend/` listing → posle 3.12 |
+| 3.8 | Endpoint-i za proizvode | `[x]` | 06.07.2026. | PDP, listing, početna, akcija+paginacija, related; vidi napomenu* |
+| 3.9 | Endpoint-i za kategorije | `[x]` | 06.07.2026. | Listing po WC slug-u + paginacija (`X-WP-TotalPages`) |
+| 3.10 | Endpoint-i za filtere | `[x]` | 06.07.2026. | Brend (`pa_proizvodjac`, checkbox multi-select), cena, dostupnost (`in_stock`); mobilni drawer sa desne (`MobileFiltersSheet`) |
+| 3.11 | Endpoint-i za pretragu | `[x]` | 06.07.2026. | Header + mobilna pretraga → Store API `search` |
+| 3.12 | Očuvanje slug-ova proizvoda — ključno za 1:1 URL parity | `[x]` | 07.07.2026. | `audit:wc-slugs` + `audit:seo-baseline` (565 uzoraka); 540 OK, 4 uklonjena, 1 WC path warn |
+| 3.13 | Očuvanje slug-ova kategorija — ključno za 1:1 URL parity | `[x]` | 07.07.2026. | 186 WC category paths; sve u sample auditu OK |
+
+\* **3.8 otvoreno za kasnije (ne blokira 3.12):** varijabilni proizvodi (izbor varijante), pun tekst recenzija (Store API nema `/reviews`), korpa iz API-ja (nedelja 5), `/brend/` archive stranice.
+
+**Dodatno urađeno u Nedelji 3 (UX / live podaci, 06.07.2026.):**
+
+| Tema | Status | Napomena |
+|------|--------|----------|
+| Stranica `/najprodavanije` | `[x]` | `BestSellersPage`, paginacija, link sa početne |
+| Početna — carousel najprodavanije | `[x]` | Iste kartice kao akcija (`ProductCard`), badge + bg; kompaktan badge samo na početnoj |
+| Početna + akcija — live proizvodi | `[x]` | `useLiveSaleProducts`, `useLiveBestSellers` |
+| Hub `/proizvodi` + programi — live kategorije | `[x]` | `useCategoryPageLive`, slike: proizvod → statički asset (`subcategoryImages.ts`) |
+| Parent listing (`/product-category/…`) — chipovi | `[x]` | Live podkategorije + slike proizvoda po WC slug-u |
+| Sortiranje na listingu | `[x]` | `listingSort.ts` → Store API `orderby` |
+| Mobilna pretraga | `[x]` | Full-screen modal, Enter → `/pretraga` |
+| Mobilni filteri | `[x]` | Dugme „Filteri“ → panel sa desne, X zatvaranje, badge broja aktivnih |
+| Recenzije / brend stranice / korpa | `[—]` | Ostaju za kasnije po dogovoru (N5) |
 
 ---
 
@@ -157,10 +175,10 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 4.3 | Header | `[ ]` | | |
 | 4.4 | Footer | `[ ]` | | |
 | 4.5 | Navigacija | `[ ]` | | |
-| 4.6 | Početna stranica | `[~]` | | Postoji `Index.tsx` — potrebna adaptacija za Next.js |
-| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[ ]` | | |
-| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[ ]` | | |
-| 4.9 | Povezivanje sa REST API-jem | `[ ]` | | |
+| 4.6 | Početna stranica | `[~]` | 06.07.2026. | `Index.tsx` + live sekcije akcija/najprodavanije; Next.js migracija ostaje |
+| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[~]` | 06.07.2026. | `ProductCategoryRoute`, `/proizvodi`, live hub + listing na Vite |
+| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[~]` | 06.07.2026. | `/prodavnica/*` + live PDP |
+| 4.9 | Povezivanje sa REST API-jem | `[~]` | 06.07.2026. | `VITE_USE_LIVE_API=true`, Store API client, React Query |
 | 4.10 | ISR za 5.000+ proizvoda | `[ ]` | | |
 | 4.11 | Per-page meta tagovi: title | `[ ]` | | Mapirani iz postojećih |
 | 4.12 | Per-page meta tagovi: description | `[ ]` | | |
@@ -171,10 +189,10 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | Deliverable | Status | Datum | Napomena |
 |-------------|--------|-------|----------|
-| Odobren dizajn | `[ ]` | | |
-| URL routing mapa (1:1) | `[ ]` | | |
-| Funkcionalan REST API sa pravim podacima | `[ ]` | | |
-| Jezgro sajta na stagingu (početna, kategorije, proizvodi) | `[ ]` | | |
+| Odobren dizajn | `[x]` | 07.07.2026. | Nedelja 2 zatvorena |
+| URL routing mapa (1:1) | `[x]` | 07.07.2026. | `docs/url-routing-map.md` + Vite rute |
+| Funkcionalan REST API sa pravim podacima | `[~]` | 06.07.2026. | Read path kompletan; write (korpa/checkout) nedelja 5 |
+| Jezgro sajta na stagingu (početna, kategorije, proizvodi) | `[~]` | 06.07.2026. | Radi lokalno + Vercel sa live API; Next.js/ISR još ne |
 
 ---
 
@@ -189,11 +207,10 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 5.1 | Napredni filteri — brend | `[ ]` | | |
-| 5.2 | Napredni filteri — cena | `[ ]` | | |
-| 5.3 | Napredni filteri — atributi | `[ ]` | | |
-| 5.4 | Napredni filteri — performanse | `[ ]` | | |
-| 5.5 | Live pretraga | `[ ]` | | |
+| 5.1 | Napredni filteri — brend | `[~]` | 06.07.2026. | Osnovni brend filter na listingu/pretrazi (checkbox); napredni atributi → 5.3 |
+| 5.2 | Napredni filteri — cena | `[x]` | 06.07.2026. | `min_price` / `max_price` na listingu i pretrazi |
+| 5.3 | Napredni filteri — atributi | `[ ]` | | Dostupnost (`in_stock`) urađena u N3; ostali atributi kasnije |
+| 5.5 | Live pretraga | `[x]` | 06.07.2026. | Header desktop + mobilni modal, `/pretraga` |
 | 5.6 | Korpa | `[ ]` | | |
 | 5.7 | Kompletan checkout flow | `[ ]` | | |
 | 5.8 | Sticky kontakti | `[ ]` | | |
@@ -292,7 +309,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | Kada | Šta | Status | Datum | Odobrio |
 |------|-----|--------|-------|---------|
 | Kraj Nedelje 1 | URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Slanje klijentu odloženo |
-| Kraj Nedelje 2 | Finalni dizajn + URL routing mapa | `[ ]` | | |
+| Kraj Nedelje 2 | Finalni dizajn + URL routing mapa | `[x]` | 07.07.2026. | Nedelja 2 kompletno zatvorena |
 | Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[ ]` | | |
 | Kraj Nedelje 7 | Potvrđen 1:1 SEO i URL parity na stagingu | `[ ]` | | |
 | Nedelja 8 | Uplata 50%, lansiranje, predaja koda | `[ ]` | | |
@@ -308,6 +325,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | Revizije | Svaka faza uključuje do 2 revizije, u skladu sa ponudom | Sve faze |
 | URL izmene | Ako klijent zatraži promenu putanja, pravi se 301 mapa; podrazumevano se sve putanje zadržavaju | S4, 6.11 |
 | Staging | Razvoj teče na staging serveru bez uticaja na live sajt do lansiranja | 2.9 |
+| **Live shop** | **Zabranjene izmene koje utiču na kupce do go-live-a** — vidi `LIVE_SHOP_SAFETY.md` | Sve faze |
 
 ---
 
@@ -327,34 +345,36 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 22.06.2026. | — | Crawl završen (1.7+1.8): 5.650 URL-ova, 3.770 sa SEO issues; `docs/crawl/seo-baseline.csv` + `docs/crawl/seo-baseline-errors.csv` | Referentni snimak sačuvan |
 | 25.06.2026. | — | Nedelja 1 zatvorena: papiri sa bankom pokrenuti (1.6); interni SEO baseline kompletan | Prelazak na Nedelju 2 |
 | 25.06.2026. | — | Slanje SEO izveštaja klijentu odloženo po odluci tima | Milestone klijentskog odobrenja preskočen za sada |
+| 02.07.2026. | — | Nedelja 2 zatvorena (dev): repo + CI/CD, URL mapa 1:1 implementirana | Prelazak na nedelju 3 |
+| 02.07.2026. | — | URL routing mapa — milestone označen N/A (nema klijentskog odobrenja) | Putanje preuzete sa live sajta |
+| 06.07.2026. | — | Nedelja 2 zatvorena: dizajn sistem (2.1) + svi ekrani kompletni | Prelazak na Nedelju 3 — WP headless |
+| 06.07.2026. | — | Nedelja 3 start: API probe, `wp-headless-setup.md`, API client, Vite proxy | Store API radi; WC v3 + CORS na klijentu |
+| 06.07.2026. | — | Listing sort/filteri, pretraga, live hub/program stranice, početna/akcija | `audit:wc-slugs`; 3.10–3.11 zatvoreno |
+| 06.07.2026. | — | 3.4–3.8 zatvoreno (read API); bestseller kartice, akcija paginacija | Sledeće: 3.12/3.13 slug QA |
+| 06.07.2026. | — | Listing UX: sort, filteri (brend/cena/dostupnost), mobilni filter drawer, live hub/listing slike | `MobileFiltersSheet`, `subcategoryImages.ts` |
+| 06.07.2026. | — | `/najprodavanije`, početna carousel usklađen sa akcijom, kompaktan badge | `BestSellersPage`, `ProductCard` bestseller variant |
+| 07.07.2026. | — | Nedelja 3 zatvorena: `audit:wc-slugs` (186 kat, 8/8 remap) + `audit:seo-baseline` (565 uzoraka, 0 fail) | Prelazak na Nedelju 4 |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 2, dizajn i arhitektura
+### Sada — Nedelja 4
 
-**Prioritet 1 — Dizajn sistem (2.1)**
-- Finalizuj boje, tipografiju i shared komponente u `koncar-elektro-store/`
-- Uskladi postojeći `Index.tsx` sa dizajn sistemom
+**Prioritet 1 — Frontend jezgro / SEO**
+- Next.js 14 migracija (4.1) **ili** nastavak na Vite sa per-page meta (4.11–4.14)
+- ISR plan za 5.000+ proizvoda (4.10)
 
-**Prioritet 2 — Ekrani (2.2–2.6)**
-1. Kategorija — listing, filteri, paginacija
-2. Proizvod — galerija, atributi, CTA
-3. Korpa
-4. Checkout
-5. Kontakt
+**Odloženo po dogovoru**
+- Recenzije (mock ostaje)
+- `/brend/` archive stranice
+- Korpa + checkout iz Store API POST (Nedelja 5) — klijentska korpa sa snapshot-om radi
 
-**Prioritet 3 — Arhitektura (2.7–2.8)**
-- Definiši Next.js routing mapu 1:1 na osnovu `docs/permalink-structure.md`
-- Napiši meta parity plan (title, description, canonical po tipu stranice)
-
-**Prioritet 4 — Infrastruktura (2.9–2.11)**
-- Staging okruženje
-- Repo setup
-- CI/CD skeleton
-
-**Milestone kraj Nedelje 2:** odobren finalni dizajn + URL routing mapa
+**QA alati (Nedelja 3, završeno)**
+```bash
+npm run audit:wc-slugs
+npm run audit:seo-baseline   # svaki 10. URL iz seo-baseline.csv
+```
 
 ---
 

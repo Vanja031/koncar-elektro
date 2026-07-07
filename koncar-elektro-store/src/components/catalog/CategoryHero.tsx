@@ -39,9 +39,10 @@ export const SubcategoryGrid = ({ title, items, categorySlug }: SubcategoryGridP
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {items.map((item) => {
         const href =
-          categorySlug === 'alati'
+          item.href ??
+          (categorySlug === 'alati'
             ? getAlatiSubcategoryUrl(item.slug)
-            : getProductCategoryUrl(categorySlug, item.slug);
+            : getProductCategoryUrl(categorySlug, item.slug));
 
         return (
         <Link
@@ -49,13 +50,17 @@ export const SubcategoryGrid = ({ title, items, categorySlug }: SubcategoryGridP
           to={href}
           className="group flex items-stretch bg-white border border-border rounded-lg overflow-hidden hover:border-primary/25 hover:shadow-card transition-all min-h-[6.75rem]"
         >
-          <div className="w-[7.5rem] shrink-0 flex items-center justify-center p-3 border-r border-border/60 bg-secondary/20">
-            <img
-              src={item.image}
-              alt=""
-              className="max-h-[4.75rem] max-w-full object-contain group-hover:scale-105 transition-transform"
-              loading="lazy"
-            />
+          <div className="catalog-subcategory-image-wrap">
+            {item.image ? (
+              <img
+                src={item.image}
+                alt=""
+                className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
+                loading="lazy"
+              />
+            ) : (
+              <div className="catalog-subcategory-image-empty" aria-hidden />
+            )}
           </div>
           <div className="flex flex-1 flex-col justify-center py-3.5 px-4 min-w-0 text-left">
             <h3 className="font-display font-bold text-primary text-sm uppercase leading-snug line-clamp-2 mb-2">

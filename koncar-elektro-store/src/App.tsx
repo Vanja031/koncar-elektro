@@ -14,9 +14,13 @@ import CartPage from "./pages/CartPage.tsx";
 import CheckoutPage from "./pages/CheckoutPage.tsx";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage.tsx";
 import SalePage from "./pages/SalePage.tsx";
+import BestSellersPage from "./pages/BestSellersPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import FaqPage from "./pages/FaqPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import RegisterPage from "./pages/RegisterPage.tsx";
+import SearchPage from "./pages/SearchPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ROUTES } from "@/lib/catalogUrls";
 
@@ -24,18 +28,22 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <CartProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <CartProvider>
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/akcija" element={<SalePage />} />
+            <Route path={ROUTES.bestsellers} element={<BestSellersPage />} />
+            <Route path={ROUTES.search} element={<SearchPage />} />
             <Route path="/o-nama" element={<AboutPage />} />
             <Route path="/kontakt" element={<ContactPage />} />
             <Route path={ROUTES.faq} element={<FaqPage />} />
+            <Route path={ROUTES.login} element={<LoginPage />} />
+            <Route path={ROUTES.register} element={<RegisterPage />} />
             <Route path={ROUTES.cart} element={<CartPage />} />
             <Route path={ROUTES.checkout} element={<CheckoutPage />} />
             <Route path={`${ROUTES.checkoutThanks}/*`} element={<OrderConfirmationPage />} />
@@ -52,9 +60,9 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </CartProvider>
+        </CartProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

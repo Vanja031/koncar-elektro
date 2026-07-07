@@ -1,16 +1,37 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { ListingHero } from '@/components/catalog/ListingHero';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import { ProductFilters } from '@/components/catalog/ProductFilters';
+import { MobileFiltersSheet } from '@/components/catalog/MobileFiltersSheet';
 import { SubcategoryChips } from '@/components/catalog/SubcategoryChips';
-import { ListingToolbar } from '@/components/catalog/ListingToolbar';
+import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { ParentHubBestSellers } from '@/components/catalog/ParentHubBestSellers';
-import { getParentHubBestSellers, getParentListing, getProductListing, getProgramListing } from '@/data/catalogListing';
-import { getTopCategoryUrl, isLeafProgramListingRoute, isParentListingRoute } from '@/lib/catalogUrls';
+import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
+import { getParentListing, getProductListing, getProgramListing } from '@/data/catalogListing';
+import { useLiveApi } from '@/lib/api/config';
+import { useLiveProductsByCategory, resolveListingCategorySlug } from '@/hooks/api/useLiveCatalog';
+import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
+import {
+  isLeafProgramListingRoute,
+  isParentListingRoute,
+  resolveMegaMenuSubcategoryUrl,
+} from '@/lib/catalogUrls';
+import { findMenuIdByParentSlug } from '@/lib/navigation/buildNavigationMenu';
+import { slugify } from '@/lib/slugify';
+import type { ListingSort } from '@/lib/listingSort';
+import {
+  emptyListingFilters,
+  getBrandFilterOptions,
+  type ListingFilters,
+} from '@/lib/listingFilters';
+import { toWcParentSlug, programToWcSlug } from '@/lib/wcSlugs';
+import { markTopBestsellers } from '@/lib/catalogCardHelpers';
+import { buildListingHighlightChips } from '@/lib/listingHighlightChips';
+import { useSubcategoryProductImages } from '@/hooks/api/useSubcategoryProductImages';
+import { useLiveSaleCount } from '@/hooks/api/useLiveCatalog';
 
 type Props = {
   categorySlug?: string;
@@ -24,10 +45,74 @@ const ProductsPage = ({
   listingSlug,
 }: Props) => {
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState<ListingPerPage>(24);
+  const [sort, setSort] = useState<ListingSort>('bestsellers');
+  const [filters, setFilters] = useState<ListingFilters>(emptyListingFilters());
+  const { getCategoryById, isLive: navLive } = useNavigationMenu();
+  const brandOptions = useMemo(() => getBrandFilterOptions(), []);
+
+  const scrollListingToTop = useCallback(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, []);
+
+  const goToPage = useCallback(
+    (nextPage: number) => {
+      setPage(nextPage);
+      scrollListingToTop();
+    },
+    [scrollListingToTop],
+  );
+
+  const handlePerPageChange = useCallback(
+    (value: ListingPerPage) => {
+      setPerPage(value);
+      setPage(1);
+      scrollListingToTop();
+    },
+    [scrollListingToTop],
+  );
+
+  const handleSortChange = useCallback(
+    (value: ListingSort) => {
+      setSort(value);
+      setPage(1);
+      scrollListingToTop();
+    },
+    [scrollListingToTop],
+  );
+
+  const handleFiltersChange = useCallback(
+    (next: ListingFilters) => {
+      setFilters(next);
+      setPage(1);
+      scrollListingToTop();
+    },
+    [scrollListingToTop],
+  );
+
+  const handleFiltersClear = useCallback(() => {
+    setFilters(emptyListingFilters());
+    setPage(1);
+    scrollListingToTop();
+  }, [scrollListingToTop]);
 
   const parentData = isParentListingRoute(categorySlug, parentSlug, listingSlug)
     ? getParentListing(categorySlug, parentSlug)
     : undefined;
+
+  const isParentRoute = Boolean(parentData);
+  const parentMenuId = parentData ? findMenuIdByParentSlug(parentSlug) : undefined;
+  const parentLiveMenu = parentMenuId ? getCategoryById(parentMenuId) : undefined;
+
+  const parentChipSources = useMemo(() => {
+    if (!isParentRoute || !navLive || !parentLiveMenu?.subcategories.length) return [];
+    return parentLiveMenu.subcategories
+      .filter((sub) => sub.slug)
+      .map((sub) => ({ label: sub.label, slug: sub.slug! }));
+  }, [isParentRoute, navLive, parentLiveMenu]);
+
+  const parentChipImages = useSubcategoryProductImages(parentChipSources);
 
   const listingData = listingSlug
     ? getProductListing(categorySlug, parentSlug, listingSlug)
@@ -35,67 +120,296 @@ const ProductsPage = ({
       ? getProgramListing(categorySlug, parentSlug)
       : undefined;
 
+  const wcCategorySlug =
+    !parentData && listingData ? resolveListingCategorySlug(parentSlug, listingSlug) : undefined;
+
+  const parentWcSlug = parentData ? toWcParentSlug(parentSlug) : undefined;
+
+  useEffect(() => {
+    setPage(1);
+    setPerPage(24);
+    setSort('bestsellers');
+    setFilters(emptyListingFilters());
+  }, [wcCategorySlug]);
+
+  const liveProducts = useLiveProductsByCategory(useLiveApi ? wcCategorySlug : undefined, {
+    page,
+    perPage,
+    sort,
+    filters,
+  });
+
+  const parentBestSellers = useLiveProductsByCategory(useLiveApi ? parentWcSlug : undefined, {
+    perPage: 8,
+    sort: 'bestsellers',
+  });
+
+  const liveListingChips = useMemo(() => {
+    if (!navLive || !listingData) return undefined;
+    const menuId = findMenuIdByParentSlug(parentSlug);
+    const liveMenu = menuId ? getCategoryById(menuId) : undefined;
+    if (!liveMenu?.subcategories.length) return undefined;
+
+    return liveMenu.subcategories.map((sub) => ({
+      slug: sub.slug ?? slugify(sub.label),
+      label: sub.label,
+      count: sub.count ?? 0,
+      image: sub.image,
+      href: resolveMegaMenuSubcategoryUrl(menuId!, sub),
+    }));
+  }, [navLive, listingData, parentSlug, getCategoryById]);
+
+  const listingParentWcSlug =
+    categorySlug === 'alati' ? toWcParentSlug(parentSlug) : programToWcSlug(parentSlug);
+
+  const saleCountQuery = useLiveSaleCount(useLiveApi ? listingParentWcSlug : undefined);
+
+  const subcategoryImageSources = useMemo(() => {
+    const siblings = liveListingChips ?? listingData?.chips ?? [];
+    return siblings
+      .filter((c) => c.slug)
+      .map((c) => ({
+        label: c.label,
+        slug: c.slug,
+        image: c.image,
+      }));
+  }, [liveListingChips, listingData?.chips]);
+
+  const subcategoryImages = useSubcategoryProductImages(subcategoryImageSources);
+
+  const highlightChips = useMemo(() => {
+    const siblings = liveListingChips ?? listingData?.chips ?? [];
+    if (!siblings.length) return [];
+
+    const imageMap = subcategoryImages.data ?? {};
+    const withImages = siblings.map((c) => ({
+      ...c,
+      image: (c.slug && imageMap[c.slug]) || c.image,
+    }));
+
+    return buildListingHighlightChips(
+      withImages,
+      listingParentWcSlug,
+      saleCountQuery.data,
+    );
+  }, [
+    liveListingChips,
+    listingData?.chips,
+    listingParentWcSlug,
+    saleCountQuery.data,
+    subcategoryImages.data,
+  ]);
+
   if (parentData) {
-    const bestSellers = getParentHubBestSellers(parentSlug);
-    const firstChipHref = parentData.chips[0]?.href;
+    const isLiveChips =
+      navLive && Boolean(parentLiveMenu) && (parentLiveMenu?.subcategories.length ?? 0) > 0;
+    const chips = isLiveChips
+      ? parentLiveMenu!.subcategories.map((sub) => ({
+          slug: sub.slug ?? slugify(sub.label),
+          label: sub.label,
+          count: sub.count ?? 0,
+          image: sub.slug ? parentChipImages.data?.[sub.slug] : undefined,
+          href: resolveMegaMenuSubcategoryUrl(parentMenuId!, sub),
+        }))
+      : parentData.chips;
+
+    const bestSellers = useLiveApi ? (parentBestSellers.data?.products ?? []) : [];
+    const firstChipHref = chips[0]?.href;
 
     return (
       <ShopLayout>
         <ListingHero breadcrumbs={parentData.breadcrumbs} title={parentData.title} />
-        <SubcategoryChips chips={parentData.chips} description={parentData.description} />
-        <ParentHubBestSellers
-          title={`Najprodavaniji u kategoriji ${parentData.title.toLowerCase()}`}
-          products={bestSellers}
-          viewAllHref={firstChipHref}
-        />
+        {chips.length > 0 ? (
+          <SubcategoryChips
+            chips={chips}
+            description=""
+            imagesLoading={isLiveChips && (parentChipImages.isPending || parentChipImages.isFetching)}
+          />
+        ) : (
+          <div className="container py-6">
+            <CatalogStateMessage
+              variant="empty"
+              title="Nema podkategorija"
+              description="Za ovu kategoriju trenutno nema dostupnih podkategorija u prodavnici."
+            />
+          </div>
+        )}
+        {useLiveApi ? (
+          parentBestSellers.isLoading ? (
+            <div className="container py-8">
+              <CatalogStateMessage variant="loading" />
+            </div>
+          ) : parentBestSellers.isError ? (
+            <div className="container py-8">
+              <CatalogStateMessage variant="error" onRetry={() => parentBestSellers.refetch()} />
+            </div>
+          ) : (
+            <ParentHubBestSellers
+              title={`Najprodavaniji u kategoriji ${parentData.title.toLowerCase()}`}
+              products={bestSellers}
+              viewAllHref={firstChipHref}
+            />
+          )
+        ) : (
+          <div className="container py-8">
+            <CatalogStateMessage variant="unavailable" />
+          </div>
+        )}
       </ShopLayout>
     );
   }
 
   if (!listingData) {
-    return <Navigate to={getTopCategoryUrl('alati')} replace />;
+    return (
+      <ShopLayout>
+        <CatalogStateMessage variant="not-found" className="min-h-[50vh]" />
+      </ShopLayout>
+    );
   }
+
+  if (!useLiveApi) {
+    return (
+      <ShopLayout>
+        <ListingHero breadcrumbs={listingData.breadcrumbs} title={listingData.title} />
+        <div className="container py-12">
+          <CatalogStateMessage variant="unavailable" />
+        </div>
+      </ShopLayout>
+    );
+  }
+
+  const rawProducts = liveProducts.data?.products ?? [];
+  const products =
+    sort === 'bestsellers' ? markTopBestsellers(rawProducts) : rawProducts;
+  const totalCount = liveProducts.data?.total ?? 0;
+  const totalPages = liveProducts.data?.totalPages ?? 0;
+  const currentPage = page;
+  const chips = highlightChips;
+
+  const pageNumbers = (() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages = new Set([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
+    return [...pages].filter((p) => p >= 1 && p <= totalPages).sort((a, b) => a - b);
+  })();
+
+  const listingBody = () => {
+    if (liveProducts.isLoading) {
+      return <CatalogStateMessage variant="loading" />;
+    }
+    if (liveProducts.isError) {
+      return (
+        <CatalogStateMessage
+          variant="error"
+          onRetry={() => liveProducts.refetch()}
+        />
+      );
+    }
+    if (products.length === 0) {
+      return <CatalogStateMessage variant="empty" />;
+    }
+    return (
+      <>
+        <div className={view === 'grid' ? 'grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3'}>
+          {products.map((product) => (
+            <CatalogProductCard key={product.id} product={product} view={view} />
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <nav className="flex items-center justify-center gap-2 mt-10 flex-wrap" aria-label="Paginacija">
+            <button
+              type="button"
+              disabled={currentPage <= 1 || liveProducts.isFetching}
+              onClick={() => goToPage(Math.max(1, currentPage - 1))}
+              className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:pointer-events-none"
+              aria-label="Prethodna strana"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {pageNumbers.map((pageNum, index) => {
+              const prev = pageNumbers[index - 1];
+              const showEllipsis = prev != null && pageNum - prev > 1;
+              return (
+                <span key={pageNum} className="flex items-center gap-2">
+                  {showEllipsis && <span className="px-1 text-muted-foreground">…</span>}
+                  <button
+                    type="button"
+                    disabled={liveProducts.isFetching}
+                    onClick={() => goToPage(pageNum)}
+                    className={`w-9 h-9 border rounded text-sm font-medium ${
+                      pageNum === currentPage
+                        ? 'bg-primary text-white border-primary'
+                        : 'border-border hover:bg-secondary'
+                    }`}
+                    aria-current={pageNum === currentPage ? 'page' : undefined}
+                  >
+                    {pageNum}
+                  </button>
+                </span>
+              );
+            })}
+            <button
+              type="button"
+              disabled={currentPage >= totalPages || liveProducts.isFetching}
+              onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+              className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:pointer-events-none"
+              aria-label="Sledeća strana"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </nav>
+        )}
+      </>
+    );
+  };
 
   return (
     <ShopLayout>
       <ListingHero breadcrumbs={listingData.breadcrumbs} title={listingData.title} />
 
-      <SubcategoryChips chips={listingData.chips} description={listingData.description} />
+      {chips.length > 0 && (
+        <SubcategoryChips
+          chips={chips}
+          description={listingData.description}
+          hideOnMobile
+        />
+      )}
 
       <section className="container py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
-          <ProductFilters filters={listingData.filters} />
+          <div className="hidden lg:block">
+            <ProductFilters
+              brandOptions={brandOptions}
+              filters={filters}
+              onChange={handleFiltersChange}
+              onClear={handleFiltersClear}
+            />
+          </div>
 
           <div>
-            <ListingToolbar view={view} onViewChange={setView} />
-
-            <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4' : 'flex flex-col gap-3'}>
-              {listingData.products.map((product) => (
-                <CatalogProductCard key={product.id} product={product} view={view} />
-              ))}
+            <div className="catalog-mobile-actions lg:hidden">
+              <MobileFiltersSheet
+                brandOptions={brandOptions}
+                filters={filters}
+                onChange={handleFiltersChange}
+                onClear={handleFiltersClear}
+              />
             </div>
 
-            <nav className="flex items-center justify-center gap-2 mt-10" aria-label="Paginacija">
-              <button type="button" className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {[1, 2, 3, 4, 5].map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  className={`w-9 h-9 border rounded text-sm font-medium ${
-                    page === 1 ? 'bg-primary text-white border-primary' : 'border-border hover:bg-secondary'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <span className="px-2 text-muted-foreground">…</span>
-              <button type="button" className="w-9 h-9 border border-border rounded text-sm hover:bg-secondary">15</button>
-              <button type="button" className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </nav>
+            {!liveProducts.isLoading && !liveProducts.isError && (
+              <ListingToolbar
+                view={view}
+                onViewChange={setView}
+                productCount={products.length > 0 ? totalCount : undefined}
+                perPage={perPage}
+                onPerPageChange={handlePerPageChange}
+                sort={sort}
+                onSortChange={handleSortChange}
+              />
+            )}
+
+            {listingBody()}
           </div>
         </div>
       </section>

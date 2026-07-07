@@ -5,10 +5,10 @@ import catRucni from '@/assets/rucni-alat.png';
 import catKompresor from '@/assets/kompresor.png';
 import catAgregat from '@/assets/agregat.webp';
 import catKosacica from '@/assets/kosacica.png';
-import catHtz from '@/assets/htz-oprema.jpg';
+import catHtz from '@/assets/htz-oprema.png';
 import catTraktor from '@/assets/traktor.png';
-import catVarenje from '@/assets/aparat-za-varenje.webp';
-import catDvorishte from '@/assets/oprema-za-dvoriste.jpg';
+import catVarenje from '@/assets/aparat-za-varenje.png';
+import catDvorishte from '@/assets/oprema-za-dvoriste.png';
 import imgElektromaterijal from '@/assets/elektromaterijal.png';
 import imgRasveta from '@/assets/rasveta.png';
 import imgSolarne from '@/assets/solarne.png';
@@ -23,6 +23,10 @@ export type SubcategoryItem = {
   name: string;
   image: string;
   productCount: number;
+  /** WooCommerce parent slug — for live product thumbnail fetch */
+  wcSlug?: string;
+  /** Explicit listing URL (leaf categories carry their full WC path). */
+  href?: string;
 };
 
 export type CategoryPageData = {

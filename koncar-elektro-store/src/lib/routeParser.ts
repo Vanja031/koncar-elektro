@@ -1,5 +1,6 @@
 import { alatiSubcategories } from '@/data/categoryPages';
 import {
+  isKnownWcAlatiParent,
   PROGRAM_WC_SLUGS,
   toInternalParentSlug,
   wcToProgramSlug,
@@ -35,7 +36,7 @@ export const parseProductCategoryPath = (segments: string[]): ListingRouteParams
   }
 
   const parentSlug = toInternalParentSlug(wcFirst);
-  if (!alatiParentSlugs.has(parentSlug)) return null;
+  if (!alatiParentSlugs.has(parentSlug) && !isKnownWcAlatiParent(wcFirst)) return null;
 
   if (segments.length === 1) {
     return { categorySlug: 'alati', parentSlug };

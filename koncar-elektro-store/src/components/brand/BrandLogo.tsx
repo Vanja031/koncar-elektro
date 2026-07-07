@@ -1,4 +1,4 @@
-import koncarLogo from '@/assets/koncar-logo.svg';
+import koncarLogo from '@/assets/koncar.jpg';
 import { cn } from '@/lib/utils';
 
 const heightClass = {

@@ -10,7 +10,12 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "probe:wp-api": "node scripts/probe-wp-api.mjs",
+    "audit:wc-menu": "node scripts/audit-wc-menu.mjs",
+    "audit:wc-slugs": "node scripts/audit-wc-slugs.mjs",
+    "audit:seo-baseline": "node scripts/audit-seo-baseline-sample.mjs",
+    "sync:wc-attributes": "node scripts/sync-wc-attributes.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -49,6 +54,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.462.0",

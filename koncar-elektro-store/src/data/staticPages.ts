@@ -14,7 +14,7 @@ export const companyInfo = {
     country: 'Srbija',
     full: 'Stanoja Glavaša br. 4, 16000 Leskovac, Srbija',
   },
-  phones: ['+381 61 65 444 90', '+381 61 152 00 71'],
+  phones: ['+381 61 65 444 90', '060 676 72 50'],
   email: 'kontakt@koncarelektro.com',
   supportHours: [
     { day: 'Ponedeljak – Petak', hours: '08:00 – 20:00' },

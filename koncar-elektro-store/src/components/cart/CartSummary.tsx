@@ -9,8 +9,9 @@ import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
 const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
 
 export const CartSummary = () => {
-  const { subtotal, shipping, total, itemCount } = useCart();
+  const { subtotal, subtotalRegular, savings, shipping, total, itemCount } = useCart();
   const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const hasSavings = savings > 0;
 
   return (
     <aside className="cart-summary">
@@ -19,7 +20,12 @@ export const CartSummary = () => {
       <dl className="cart-summary-rows">
         <div className="cart-summary-row">
           <dt>Proizvodi ({itemCount})</dt>
-          <dd>{formatPrice(subtotal)}</dd>
+          <dd>
+            {hasSavings && (
+              <span className="cart-summary-old-value">{formatPrice(subtotalRegular)}</span>
+            )}
+            {formatPrice(subtotal)}
+          </dd>
         </div>
         <div className="cart-summary-row">
           <dt>{shipping.label}</dt>
@@ -38,15 +44,22 @@ export const CartSummary = () => {
         <span>Ukupno</span>
         <strong>{formatPrice(total)}</strong>
       </div>
-      <p className="text-xs text-muted-foreground">Cene su sa uračunatim PDV-om</p>
+      <p className="text-[10px] text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      <Link to={ROUTES.checkout} className="btn-yellow w-full py-3.5 mt-4 flex items-center justify-center">
-        Nastavi na plaćanje
-      </Link>
+      {hasSavings && (
+        <p className="cart-summary-savings-badge">
+          Uštedeli ste <strong>{formatPrice(savings)}</strong> na ovoj porudžbini
+        </p>
+      )}
 
-      <Link to={browseUrl} className="cart-summary-continue">
-        Nastavi kupovinu
-      </Link>
+      <div className="cart-summary-actions">
+        <Link to={ROUTES.checkout} className="btn-yellow w-full py-3.5 flex items-center justify-center">
+          Nastavi na plaćanje
+        </Link>
+        <Link to={browseUrl} className="cart-summary-continue-btn">
+          Nastavi kupovinu
+        </Link>
+      </div>
 
       <div className="cart-summary-payments">
         <PaymentCardIcons size="sm" />

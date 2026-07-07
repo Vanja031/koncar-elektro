@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/catalog/Breadcrumbs';
 import { formatPrice } from '@/data/homepage';
 import { getPlacedOrder, paymentMethodLabel } from '@/lib/order';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
-import { getProductListingUrl } from '@/lib/catalogUrls';
+import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
 
 const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
 
@@ -21,6 +21,8 @@ const OrderConfirmationPage = () => {
       <Breadcrumbs
         items={[
           { label: 'Početna', href: '/' },
+          { label: 'Korpa', href: ROUTES.cart },
+          { label: 'Plaćanje / Odjava', href: ROUTES.checkout },
           { label: 'Porudžbina potvrđena' },
         ]}
         variant="bar"
@@ -33,8 +35,7 @@ const OrderConfirmationPage = () => {
           </div>
           <h1 className="section-heading text-xl md:text-2xl text-center mb-3">Hvala na porudžbini!</h1>
           <p className="checkout-confirmation-lead text-center">
-            Porudžbina <strong>#{order.id}</strong> je uspešno primljena. Potvrdu šaljemo na{' '}
-            <strong>{order.email}</strong>.
+            Porudžbina <strong>#{order.id}</strong> je uspešno primljena.
           </p>
 
           <div className="checkout-confirmation-card">
@@ -69,9 +70,6 @@ const OrderConfirmationPage = () => {
           <div className="checkout-confirmation-actions">
             <Link to={browseUrl} className="btn-yellow px-8 py-3">
               Nastavi kupovinu
-            </Link>
-            <Link to="/" className="text-sm text-primary font-medium hover:underline">
-              Nazad na početnu
             </Link>
           </div>
         </div>
