@@ -3,12 +3,15 @@ import { Truck, Lock } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
-import { ROUTES } from '@/lib/catalogUrls';
+import { getProductListingUrl } from '@/lib/catalogUrls';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 
+const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
+
 export const CheckoutSummary = () => {
-  const { lines, subtotal, shipping, total } = useCart();
+  const { lines, subtotal, subtotalRegular, savings, shipping, total } = useCart();
   const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const hasSavings = savings > 0;
 
   return (
     <aside className="cart-summary lg:sticky lg:top-28">
@@ -32,7 +35,12 @@ export const CheckoutSummary = () => {
       <dl className="cart-summary-rows">
         <div className="cart-summary-row">
           <dt>Suma</dt>
-          <dd>{formatPrice(subtotal)}</dd>
+          <dd>
+            {hasSavings && (
+              <span className="cart-summary-old-value">{formatPrice(subtotalRegular)}</span>
+            )}
+            {formatPrice(subtotal)}
+          </dd>
         </div>
         <div className="cart-summary-row">
           <dt>Dostava</dt>
@@ -51,10 +59,16 @@ export const CheckoutSummary = () => {
         <span>Ukupno</span>
         <strong>{formatPrice(total)}</strong>
       </div>
-      <p className="text-xs text-muted-foreground">Cene su sa uračunatim PDV-om</p>
+      <p className="text-[10px] text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      <Link to={ROUTES.cart} className="cart-summary-continue mt-4">
-        ← Nazad u korpu
+      {hasSavings && (
+        <p className="cart-summary-savings-badge">
+          Uštedeli ste <strong>{formatPrice(savings)}</strong> na ovoj porudžbini
+        </p>
+      )}
+
+      <Link to={browseUrl} className="cart-summary-continue-btn mt-4">
+        Nastavi kupovinu
       </Link>
 
       <div className="cart-summary-payments">

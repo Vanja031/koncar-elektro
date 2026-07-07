@@ -14,7 +14,10 @@ import { parentSlugToCatalogPrefix } from '@/lib/parentCatalogSlugs';
 import catAku from '@/assets/aku-alat.png';
 import catElektricni from '@/assets/elektricni-alat.png';
 
-export type CatalogProduct = KoncarCatalogProduct;
+export type CatalogProduct = KoncarCatalogProduct & {
+  bestseller?: boolean;
+  subtitle?: string;
+};
 
 export type FilterGroup = {
   id: string;
@@ -264,9 +267,10 @@ export const getProductListing = (
     alatiSubcategories.find((s) => s.slug === parentSlug)?.name ??
     parentSlug;
 
+  const leafSlug = slug.split('/').filter(Boolean).pop() ?? slug;
   const subLabel =
-    menuCategory?.subcategories.find((s) => slugify(s.label) === slug)?.label ??
-    slug.replace(/-/g, ' ');
+    menuCategory?.subcategories.find((s) => slugify(s.label) === leafSlug)?.label ??
+    leafSlug.replace(/-/g, ' ');
 
   return buildListing(categorySlug, parentSlug, slug, subLabel, parentLabel);
 };

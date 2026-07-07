@@ -10,14 +10,11 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  alatiMenuCategories,
-  otherProgramCategories,
-} from '@/data/navigation';
+import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
 import {
   getMegaMenuCategoryUrl,
-  getMegaMenuSubcategoryUrl,
   getTopCategoryUrl,
+  resolveMegaMenuSubcategoryUrl,
   ROUTES,
 } from '@/lib/catalogUrls';
 import { useCart } from '@/context/CartContext';
@@ -31,9 +28,13 @@ type Props = {
 
 export const MobileNav = ({ open, onOpenChange }: Props) => {
   const { itemCount } = useCart();
+  const { alatiMenuCategories, otherProgramCategories, isLoading, isError } = useNavigationMenu();
   const [openSection, setOpenSection] = useState<string | null>('alati');
 
   const close = () => onOpenChange(false);
+
+  const subcategoryUrl = (menuId: string, sub: Parameters<typeof resolveMegaMenuSubcategoryUrl>[1]) =>
+    resolveMegaMenuSubcategoryUrl(menuId, sub);
 
   const toggleSection = (id: string) => {
     setOpenSection((prev) => (prev === id ? null : id));
@@ -123,6 +124,12 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
             <ChevronRight className="w-4 h-4 text-accent" />
           </Link>
 
+          {isLoading ? (
+            <p className="px-4 py-2 text-xs text-muted-foreground">Učitavanje kategorija…</p>
+          ) : isError ? (
+            <p className="px-4 py-2 text-xs text-destructive">Kategorije nisu učitane. Pokušajte ponovo.</p>
+          ) : null}
+
           <ul className="px-2 space-y-0.5">
             {alatiMenuCategories.map((cat) => {
               const Icon = cat.icon;
@@ -145,9 +152,9 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                       </Link>
                       <ul className="space-y-0.5 max-h-[12rem] overflow-y-auto koncar-scrollbar">
                         {cat.subcategories.map((sub) => (
-                          <li key={sub.label}>
+                          <li key={sub.slug ?? sub.label}>
                             <Link
-                              to={getMegaMenuSubcategoryUrl(cat.id, sub.label)}
+                              to={subcategoryUrl(cat.id, sub)}
                               onClick={close}
                               className="block px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-primary hover:bg-secondary/60 transition-colors line-clamp-2"
                             >
@@ -194,7 +201,7 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                         {cat.subcategories.map((sub) => (
                           <li key={sub.label}>
                             <Link
-                              to={getMegaMenuSubcategoryUrl(cat.id, sub.label)}
+                              to={subcategoryUrl(cat.id, sub)}
                               onClick={close}
                               className="block px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-primary hover:bg-secondary/60 transition-colors line-clamp-2"
                             >

@@ -23,6 +23,10 @@ export type SubcategoryItem = {
   name: string;
   image: string;
   productCount: number;
+  /** WooCommerce parent slug — for live product thumbnail fetch */
+  wcSlug?: string;
+  /** Explicit listing URL (leaf categories carry their full WC path). */
+  href?: string;
 };
 
 export type CategoryPageData = {

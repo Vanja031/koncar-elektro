@@ -18,14 +18,14 @@ export const ProductCompatibleProducts = ({ products }: Props) => {
         {products.map((p) => (
           <article key={p.id} className="product-compatible-card">
             <Link to={getProductUrl(p.id)} className="product-compatible-media">
-              <img src={p.image} alt={p.name} className="max-h-full max-w-full object-contain" />
+              <img src={p.image} alt={p.name} loading="lazy" />
             </Link>
             <div className="product-compatible-body">
               <Link to={getProductUrl(p.id)} className="product-compatible-name">
                 {p.name}
               </Link>
               <p className="product-compatible-price">{formatPrice(p.price)}</p>
-              <AddToCartButton productId={p.id} variant="outline" />
+              <AddToCartButton product={p} variant="outline" />
             </div>
           </article>
         ))}

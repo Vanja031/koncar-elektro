@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
+
+/** Product video thumb — enable when WC/video URL is wired */
+const SHOW_PRODUCT_VIDEO_THUMB = false;
 
 type Props = {
   images: string[];
@@ -11,7 +14,6 @@ type Props = {
 export const ProductGallery = ({ images, name, discount }: Props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: images.length > 1, align: 'start' });
   const [activeIndex, setActiveIndex] = useState(0);
-  const hasVideo = images.length > 0;
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -77,10 +79,9 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
             <img src={img} alt="" className="max-h-full max-w-full object-contain" />
           </button>
         ))}
-        {hasVideo && (
+        {SHOW_PRODUCT_VIDEO_THUMB && (
           <button type="button" className="product-gallery-thumb product-gallery-thumb--video" aria-label="Video proizvoda">
-            <Play className="w-5 h-5 text-primary" />
-            <span className="text-[10px] font-semibold text-primary mt-0.5">Video</span>
+            <span className="text-[10px] font-semibold text-primary">Video</span>
           </button>
         )}
       </div>

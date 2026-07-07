@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { Breadcrumbs } from '@/components/catalog/Breadcrumbs';
+import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfo } from '@/components/product/ProductInfo';
 import { ProductPurchaseCard } from '@/components/product/ProductPurchaseCard';
@@ -11,25 +12,64 @@ import { ProductTrustStrip } from '@/components/product/ProductTrustStrip';
 import { ProductFaqSection } from '@/components/product/ProductFaqSection';
 import { Carousel } from '@/components/home/Carousel';
 import { ProductCard } from '@/components/home/ProductCard';
-import {
-  getProductBySlug,
-  getRelatedProducts,
-  productFaq,
-} from '@/data/productDetail';
-import { DEFAULT_BROWSE_URL, getTopCategoryUrl } from '@/lib/catalogUrls';
+import { useLiveApi } from '@/lib/api/config';
+import { productFaq } from '@/data/productDetail';
+import { useLiveProduct, useLiveRelatedProducts } from '@/hooks/api/useLiveCatalog';
+import { getTopCategoryUrl } from '@/lib/catalogUrls';
 
 const ProductPage = () => {
   const { '*': splat = '' } = useParams();
   const segments = splat.split('/').filter(Boolean);
   const slug = segments[segments.length - 1] ?? '';
-  const product = getProductBySlug(slug);
   const [cartBump, setCartBump] = useState(false);
 
-  if (!product) {
-    return <Navigate to={DEFAULT_BROWSE_URL} replace />;
+  const live = useLiveProduct(useLiveApi ? slug : undefined);
+  const product = live.data ?? undefined;
+
+  const categorySlug = product?.categorySlug;
+  const liveRelated = useLiveRelatedProducts(
+    useLiveApi ? categorySlug : undefined,
+    product?.id,
+  );
+
+  if (!useLiveApi) {
+    return (
+      <ShopLayout>
+        <CatalogStateMessage variant="unavailable" className="min-h-[50vh]" />
+      </ShopLayout>
+    );
   }
 
-  const related = getRelatedProducts(product);
+  if (live.isLoading) {
+    return (
+      <ShopLayout>
+        <CatalogStateMessage variant="loading" className="min-h-[50vh]" />
+      </ShopLayout>
+    );
+  }
+
+  if (live.isError) {
+    return (
+      <ShopLayout>
+        <CatalogStateMessage
+          variant="error"
+          onRetry={() => live.refetch()}
+          className="min-h-[50vh]"
+        />
+      </ShopLayout>
+    );
+  }
+
+  if (!product) {
+    return (
+      <ShopLayout>
+        <CatalogStateMessage variant="not-found" className="min-h-[50vh]" />
+      </ShopLayout>
+    );
+  }
+
+  const related = liveRelated.data ?? [];
+
   const discount = product.oldPrice
     ? Math.round(100 - (product.price / product.oldPrice) * 100)
     : 0;

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Minus, Plus, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
-import { getProductUrl } from '@/data/productDetail';
 import type { ResolvedCartLine } from '@/context/CartContext';
 
 type Props = {
@@ -14,7 +13,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
   <article className="cart-line">
     {/* Desktop */}
     <div className="cart-line-desktop hidden md:flex">
-      <Link to={getProductUrl(line.productId)} className="cart-line-media">
+      <Link to={line.url} className="cart-line-media">
         <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
       </Link>
 
@@ -22,7 +21,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
         <div className="cart-line-top">
           <div className="min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{line.brand}</p>
-            <Link to={getProductUrl(line.productId)} className="cart-line-title">
+            <Link to={line.url} className="cart-line-title">
               {line.name}
             </Link>
             <p className="text-xs text-muted-foreground mt-1">
@@ -71,7 +70,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
     {/* Mobile — compact card */}
     <div className="cart-line-mobile md:hidden">
       <div className="cart-line-mobile-head">
-        <Link to={getProductUrl(line.productId)} className="cart-line-mobile-media">
+        <Link to={line.url} className="cart-line-mobile-media">
           <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
         </Link>
 
@@ -82,7 +81,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
-          <Link to={getProductUrl(line.productId)} className="cart-line-mobile-title">
+          <Link to={line.url} className="cart-line-mobile-title">
             {line.name}
           </Link>
           <p className="cart-line-mobile-unit">{formatPrice(line.price)} / kom</p>

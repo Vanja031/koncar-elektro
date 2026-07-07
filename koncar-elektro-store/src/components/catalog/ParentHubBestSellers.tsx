@@ -25,7 +25,7 @@ export const ParentHubBestSellers = ({ title, products, viewAllHref }: Props) =>
       </div>
       <Carousel edgeArrowsOnMobile slideClassName="!basis-1/2 sm:!basis-[45%] md:!basis-[32%] lg:!basis-[24%]">
         {products.map((product) => (
-          <CatalogProductCard key={product.id} product={product} />
+          <CatalogProductCard key={product.id} product={product} bestsellerBadge />
         ))}
       </Carousel>
     </section>

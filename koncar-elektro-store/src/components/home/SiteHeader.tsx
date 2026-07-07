@@ -8,6 +8,7 @@ import { SocialLinks } from './SocialLinks';
 import { MegaMenu } from './MegaMenu';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { MobileSearch } from '@/components/layout/MobileSearch';
+import { DesktopProductSearch } from '@/components/search/DesktopProductSearch';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useCart } from '@/context/CartContext';
 import type { MegaMenuMode } from '@/data/navigation';
@@ -156,16 +157,7 @@ export const SiteHeader = () => {
             <BrandLogo className="h-9 w-auto max-w-full max-h-10 object-contain" />
           </Link>
 
-          <div className="flex-1 hidden md:flex items-stretch h-11 border border-border rounded overflow-hidden max-w-xl lg:max-w-2xl mx-auto">
-            <input
-              type="search"
-              placeholder="Pretražite proizvode, kategorije ili brendove..."
-              className="flex-1 px-4 text-sm outline-none bg-white placeholder:text-muted-foreground"
-            />
-            <button type="button" className="px-4 bg-primary text-white hover:brightness-110 transition-all">
-              <Search className="w-5 h-5" />
-            </button>
-          </div>
+          <DesktopProductSearch />
 
           <a
             href={contactChannels.primaryPhoneHref}

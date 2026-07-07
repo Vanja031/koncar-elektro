@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import {
-  alatiMenuCategories,
-  otherProgramCategories,
-  defaultCategoryByMode,
-  getCategoryById,
-  type MegaMenuMode,
-} from '@/data/navigation';
+import type { MegaMenuMode, MegaMenuSubcategory } from '@/data/navigation';
+import { defaultCategoryByMode } from '@/data/navigation';
+import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
+import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
+import { useSubcategoryProductImages } from '@/hooks/api/useSubcategoryProductImages';
 import {
   getMegaMenuCategoryUrl,
-  getMegaMenuSubcategoryUrl,
+  resolveMegaMenuSubcategoryUrl,
 } from '@/lib/catalogUrls';
 
 type Props = {
@@ -18,7 +16,46 @@ type Props = {
   onClose?: () => void;
 };
 
+const MegaMenuSubcategoryMedia = ({
+  sub,
+  productSrc,
+  imagesLoading,
+}: {
+  sub: MegaMenuSubcategory;
+  productSrc?: string;
+  imagesLoading: boolean;
+}) => {
+  if (productSrc) {
+    return (
+      <img
+        src={productSrc}
+        alt=""
+        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
+      />
+    );
+  }
+
+  if (imagesLoading && sub.slug) {
+    return (
+      <div className="mega-menu-card-image-skeleton" aria-hidden>
+        <Loader2 className="w-5 h-5 text-muted-foreground/50 animate-spin" />
+      </div>
+    );
+  }
+
+  return <div className="mega-menu-card-image-empty" aria-hidden />;
+};
+
 export const MegaMenu = ({ mode, onClose }: Props) => {
+  const {
+    alatiMenuCategories,
+    otherProgramCategories,
+    getCategoryById,
+    isLoading,
+    isError,
+    refetch,
+  } = useNavigationMenu();
+
   const [activeId, setActiveId] = useState(defaultCategoryByMode[mode]);
 
   useEffect(() => {
@@ -26,6 +63,15 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
   }, [mode]);
 
   const active = getCategoryById(activeId) ?? alatiMenuCategories[0];
+  const {
+    data: productImages,
+    isFetching: imagesFetching,
+    isPending: imagesPending,
+  } = useSubcategoryProductImages(active.subcategories);
+  const imagesLoading = imagesPending || imagesFetching;
+
+  const subcategoryUrl = (menuId: string, sub: Parameters<typeof resolveMegaMenuSubcategoryUrl>[1]) =>
+    resolveMegaMenuSubcategoryUrl(menuId, sub);
 
   return (
     <div className="mega-menu-panel absolute left-0 right-0 top-full z-40 pointer-events-none">
@@ -98,34 +144,45 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
               {active.label}
             </Link>
 
-            <div className="mega-menu-grid grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 px-6 content-start">
-              {active.subcategories.map((sub) => (
-                <Link
-                  key={sub.label}
-                  to={getMegaMenuSubcategoryUrl(active.id, sub.label)}
-                  onClick={onClose}
-                  className="mega-menu-card group"
-                >
-                  <div className="mega-menu-card-image">
-                    <img
-                      src={sub.image}
-                      alt=""
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="mega-menu-card-body">
-                    <p className="font-display font-bold text-primary text-[11px] leading-tight pr-5 line-clamp-2">
-                      {sub.label}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {sub.count} proizvoda
-                    </p>
-                    <ArrowRight className="absolute right-2 bottom-2.5 w-3.5 h-3.5 text-primary/40 group-hover:text-primary transition-colors" />
-                  </div>
-                </Link>
-              ))}
-            </div>
+            {isLoading ? (
+              <p className="px-6 text-sm text-muted-foreground">Učitavanje kategorija…</p>
+            ) : isError ? (
+              <div className="px-6 pb-4">
+                <CatalogStateMessage variant="error" onRetry={() => refetch()} className="py-6" />
+              </div>
+            ) : active.subcategories.length === 0 ? (
+              <p className="px-6 text-sm text-muted-foreground">
+                Trenutno nema podkategorija za ovaj program.
+              </p>
+            ) : (
+              <div className="mega-menu-grid grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 px-6 content-start">
+                {active.subcategories.map((sub) => (
+                  <Link
+                    key={sub.slug ?? sub.label}
+                    to={subcategoryUrl(active.id, sub)}
+                    onClick={onClose}
+                    className="mega-menu-card group"
+                  >
+                    <div className="mega-menu-card-image">
+                      <MegaMenuSubcategoryMedia
+                        sub={sub}
+                        productSrc={sub.slug ? productImages?.[sub.slug] : undefined}
+                        imagesLoading={imagesLoading}
+                      />
+                    </div>
+                    <div className="mega-menu-card-body">
+                      <p className="font-display font-bold text-primary text-[11px] leading-tight pr-5 line-clamp-2">
+                        {sub.label}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {sub.count} proizvoda
+                      </p>
+                      <ArrowRight className="absolute right-2 bottom-2.5 w-3.5 h-3.5 text-primary/40 group-hover:text-primary transition-colors" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="mega-menu-footer shrink-0 px-6 pb-3 pt-2">
               <Link

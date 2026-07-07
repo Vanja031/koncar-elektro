@@ -10,7 +10,12 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "probe:wp-api": "node scripts/probe-wp-api.mjs",
+    "audit:wc-menu": "node scripts/audit-wc-menu.mjs",
+    "audit:wc-slugs": "node scripts/audit-wc-slugs.mjs",
+    "audit:seo-baseline": "node scripts/audit-seo-baseline-sample.mjs",
+    "sync:wc-attributes": "node scripts/sync-wc-attributes.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

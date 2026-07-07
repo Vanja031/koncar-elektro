@@ -1,6 +1,6 @@
 import {
-  Zap, BatteryCharging, Wrench, Wind, Ruler, HardHat, Cog, Package,
-  Sprout, Settings, Plug, Lightbulb, Sun, type LucideIcon,
+  Zap, BatteryFull, Wrench, Wind, Ruler, HardHat, Cog, Package,
+  Sprout, Plug, Lightbulb, Sun, type LucideIcon,
 } from 'lucide-react';
 import imgElektricni from '@/assets/elektricni-alat.png';
 import imgAku from '@/assets/aku-alat.png';
@@ -13,6 +13,10 @@ import productGeneric from '@/assets/product-generic.jpg';
 
 export type MegaMenuSubcategory = {
   label: string;
+  /** WooCommerce category slug — used for URLs when present */
+  slug?: string;
+  /** WooCommerce parent slug when subcategory lives under a different branch */
+  parentWcSlug?: string;
   count: number;
   image: string;
 };
@@ -51,7 +55,7 @@ export const alatiMenuCategories: MegaMenuCategory[] = [
   {
     id: 'aku-alati',
     label: 'Aku alati i baterije',
-    icon: BatteryCharging,
+    icon: BatteryFull,
     viewAllLabel: 'Pogledajte sve aku alate',
     subcategories: [
       { label: 'Aku bušilice', count: 96, image: imgAku },
@@ -162,18 +166,6 @@ export const alatiMenuCategories: MegaMenuCategory[] = [
       { label: 'Prskalice', count: 51, image: productGeneric },
       { label: 'Baštenski alati', count: 67, image: productGeneric },
       { label: 'Cevi i prskalice', count: 39, image: productGeneric },
-    ],
-  },
-  {
-    id: 'servis-delovi',
-    label: 'Servis i rezervni delovi',
-    icon: Settings,
-    viewAllLabel: 'Pogledajte servis i delove',
-    subcategories: [
-      { label: 'Rezervni delovi', count: 234, image: productGeneric },
-      { label: 'Servis alata', count: 18, image: productGeneric },
-      { label: 'Garantni servis', count: 12, image: productGeneric },
-      { label: 'Usluge održavanja', count: 8, image: productGeneric },
     ],
   },
 ];

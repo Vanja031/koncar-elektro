@@ -2,9 +2,9 @@
 export const parentSlugToCatalogPrefix: Record<string, string> = {
   'elektricni-alat': 'elektricni-alat',
   'aku-alat': 'akumulatorski-alat',
-  'rucni-alat': 'rucni-alat',
+  'rucni-alat': 'rucni-alat-i-pribor',
   'aparati-za-varenje': 'aparati-za-varenje',
-  kompresori: 'kompresori',
+  kompresori: 'kompresori-i-pneumatski-alati',
   agregati: 'agregati',
   'kosacice-i-trimeri': 'kosacice',
   'htz-oprema': 'htz',
@@ -12,5 +12,4 @@ export const parentSlugToCatalogPrefix: Record<string, string> = {
   'oprema-za-dvoriste': 'bastenski',
   'merna-oprema': 'elektromaterijal-i-oprema',
   'potrosni-materijal': 'ponuda',
-  'servis-delovi': 'ponuda',
 };

@@ -107,9 +107,17 @@ export const ProductReviews = ({ product }: Props) => {
         </div>
 
         <ul className="product-reviews-list">
-          {visibleReviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
+          {visibleReviews.length > 0 ? (
+            visibleReviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
+          ) : (
+            <li className="product-review-card text-sm text-muted-foreground">
+              {product.reviews > 0
+                ? 'Prosečna ocena je zasnovana na ocenama kupaca. Tekstualne recenzije trenutno nisu dostupne u prodavnici.'
+                : 'Još nema recenzija za ovaj proizvod. Budite prvi koji će ostaviti ocenu nakon kupovine.'}
+            </li>
+          )}
         </ul>
 
         {(canLoadMore || canShowLess || remainingTotal > 0) && (

@@ -74,10 +74,9 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
         </div>
 
         <AddToCartButton
-          productId={product.id}
+          product={product}
           quantity={quantity}
           variant="product"
-          disabled={!product.inStock}
           onAdded={onAdded}
         />
       </div>
