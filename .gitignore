@@ -2,6 +2,9 @@
 node_modules/
 dist/
 dist-ssr/
+.next/
+out/
+.vercel/
 
 # Logs
 *.log

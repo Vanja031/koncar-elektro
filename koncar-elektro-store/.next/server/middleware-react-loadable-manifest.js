@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"src\\\\lib\\\\api\\\\wc-store\\\\categories.ts -> @/lib/api/client\":{\"id\":\"src\\\\lib\\\\api\\\\wc-store\\\\categories.ts -> @/lib/api/client\",\"files\":[]}}"
