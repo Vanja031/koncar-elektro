@@ -23,6 +23,7 @@ export type ProductDeclarationRow = {
 
 export type ProductDetail = KoncarCatalogProduct & {
   slug: string;
+  subtitle?: string;
   gallery: string[];
   longDescription: string;
   features: string[];

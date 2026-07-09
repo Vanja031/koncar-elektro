@@ -203,7 +203,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const lines: ResolvedCartLine[] = items
-      .map((line) => {
+      .map((line): ResolvedCartLine | null => {
         const product = resolve(line.productId);
         if (!product) return null;
         const weightKg = estimateWeight(product);

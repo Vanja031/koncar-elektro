@@ -1,13 +1,13 @@
 import { Star, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { formatPrice } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { getDiscountPercent } from '@/data/koncarProducts';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
-import type { CatalogProduct } from '@/data/catalogListing';
+import type { CatalogProductCardProduct } from '@/data/catalogListing';
 
 type Props = {
-  product: CatalogProduct;
+  product: CatalogProductCardProduct;
   view?: 'grid' | 'list';
   /** Bestseller sekcije (npr. /najprodavanije): najprodavanije ima prioritet nad popustom. */
   bestsellerBadge?: boolean;
@@ -65,7 +65,7 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
             <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
           </div>
           <div className="catalog-product-card-specs">
-            {product.specs.map((spec) => (
+            {(product.specs ?? []).map((spec) => (
               <span key={spec} className="catalog-spec-chip">{spec}</span>
             ))}
           </div>

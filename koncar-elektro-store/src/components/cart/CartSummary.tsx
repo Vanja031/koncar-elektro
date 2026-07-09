@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Lock, Truck } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';

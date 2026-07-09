@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "@/lib/router-compat";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { CartProvider } from "@/context/CartContext";
 import { Toaster as Sonner } from "@/components/ui/sonner";

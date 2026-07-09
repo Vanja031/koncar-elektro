@@ -60,3 +60,15 @@ export const programToWcSlug = (programId: string): string =>
 
 export const wcToProgramSlug = (wcSlug: string): string | undefined =>
   WC_TO_PROGRAM[wcSlug];
+
+/** WC category slug for Store API `category` filter from route segments. */
+export function resolveListingCategorySlug(
+  parentSlug: string,
+  listingSlug?: string,
+): string {
+  if (listingSlug) {
+    const segments = listingSlug.split('/').filter(Boolean);
+    return segments[segments.length - 1] ?? listingSlug;
+  }
+  return toWcParentSlug(parentSlug);
+}

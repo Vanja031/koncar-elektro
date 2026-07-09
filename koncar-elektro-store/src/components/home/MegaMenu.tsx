@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import type { MegaMenuMode, MegaMenuSubcategory } from '@/data/navigation';
 import { defaultCategoryByMode } from '@/data/navigation';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';

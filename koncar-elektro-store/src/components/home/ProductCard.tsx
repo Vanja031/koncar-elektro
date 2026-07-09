@@ -1,5 +1,5 @@
 import { Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { formatPrice, type Product } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';

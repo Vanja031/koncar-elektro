@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Breadcrumbs } from './Breadcrumbs';
 import type { CategoryPageData } from '@/data/categoryPages';
 import { getAlatiSubcategoryUrl, getProductCategoryUrl } from '@/lib/catalogUrls';

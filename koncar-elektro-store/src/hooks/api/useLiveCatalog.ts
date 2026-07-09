@@ -6,13 +6,18 @@ import { getStoreCategories } from '@/lib/api/wc-store/categories';
 import { useLiveApi } from '@/lib/api/config';
 import type { WcStoreProductsQuery } from '@/lib/api/types/wc-store';
 import type { WcStoreCategory } from '@/lib/api/types/wc-store';
-import { toWcParentSlug } from '@/lib/wcSlugs';
 import type { ListingFilters } from '@/lib/listingFilters';
 import { listingFiltersToSearchParams } from '@/lib/listingFilters';
 import type { ListingSort } from '@/lib/listingSort';
 import { listingSortToStoreQuery } from '@/lib/listingSort';
+import type { ProductDetail } from '@/data/productDetail';
+import type { CatalogProduct } from '@/data/catalogListing';
 
-export function useLiveProduct(slug: string | undefined) {
+export { resolveListingCategorySlug } from '@/lib/wcSlugs';
+export function useLiveProduct(
+  slug: string | undefined,
+  initialData?: ProductDetail | null,
+) {
   return useQuery({
     queryKey: ['live-product', slug],
     queryFn: async () => {
@@ -21,6 +26,7 @@ export function useLiveProduct(slug: string | undefined) {
       return product ? mapStoreProductToDetail(product) : null;
     },
     enabled: useLiveApi && Boolean(slug),
+    initialData: initialData ?? undefined,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
@@ -54,9 +60,17 @@ function buildProductsQuery(
   };
 }
 
+export type LiveProductsResult = {
+  products: CatalogProduct[];
+  total: number;
+  totalPages: number;
+  page: number;
+};
+
 export function useLiveProductsByCategory(
   categorySlug: string | undefined,
   options: LiveProductsOptions = {},
+  initialData?: LiveProductsResult,
 ) {
   const { page = 1, perPage = 24, sort = 'bestsellers', filters = {} } = options;
 
@@ -75,12 +89,17 @@ export function useLiveProductsByCategory(
       };
     },
     enabled: useLiveApi && Boolean(categorySlug),
+    initialData,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 }
 
-export function useLiveRelatedProducts(categorySlug: string | undefined, excludeId?: number) {
+export function useLiveRelatedProducts(
+  categorySlug: string | undefined,
+  excludeId?: number,
+  initialData?: CatalogProduct[],
+) {
   return useQuery({
     queryKey: ['live-related', categorySlug, excludeId],
     queryFn: async () => {
@@ -96,11 +115,15 @@ export function useLiveRelatedProducts(categorySlug: string | undefined, exclude
         .map(mapStoreProductToCatalog);
     },
     enabled: useLiveApi && Boolean(categorySlug),
+    initialData,
     staleTime: 5 * 60 * 1000,
   });
 }
 
-export function useLiveSaleProducts(options: { page?: number; perPage?: number } = {}) {
+export function useLiveSaleProducts(
+  options: { page?: number; perPage?: number } = {},
+  initialData?: LiveProductsResult,
+) {
   const { page = 1, perPage = 48 } = options;
 
   return useQuery({
@@ -120,6 +143,7 @@ export function useLiveSaleProducts(options: { page?: number; perPage?: number }
       };
     },
     enabled: useLiveApi,
+    initialData,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
@@ -228,20 +252,6 @@ export function useWcCategories(parent?: number) {
     enabled: useLiveApi,
     staleTime: 30 * 60 * 1000,
   });
-}
-
-/** WC category slug for Store API `category` filter from route segments. */
-export function resolveListingCategorySlug(
-  parentSlug: string,
-  listingSlug?: string,
-): string {
-  // Leaf categories can be nested (e.g. `mid/leaf`); the Store API filters by the
-  // deepest slug, so always use the last path segment.
-  if (listingSlug) {
-    const segments = listingSlug.split('/').filter(Boolean);
-    return segments[segments.length - 1] ?? listingSlug;
-  }
-  return toWcParentSlug(parentSlug);
 }
 
 export type { WcStoreCategory };

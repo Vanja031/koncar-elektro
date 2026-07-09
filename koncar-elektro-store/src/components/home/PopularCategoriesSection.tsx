@@ -1,5 +1,5 @@
 import { ChevronRight as ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { popularCategories } from '@/data/homepage';
 import { getPopularCategoryUrl, getTopCategoryUrl } from '@/lib/catalogUrls';
 

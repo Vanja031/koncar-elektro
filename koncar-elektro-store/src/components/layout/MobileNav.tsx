@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   ChevronRight, Phone, ShoppingCart, Flame, Home, Info, Mail, UserPlus,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import {
   Sheet,
   SheetContent,

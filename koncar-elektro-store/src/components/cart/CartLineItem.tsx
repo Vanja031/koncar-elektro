@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Minus, Plus, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import type { ResolvedCartLine } from '@/context/CartContext';

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
 import { getProductUrl } from '@/data/productDetail';

@@ -1,5 +1,5 @@
 import { AlertCircle, PackageOpen, RefreshCw, WifiOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/lib/catalogUrls';
 

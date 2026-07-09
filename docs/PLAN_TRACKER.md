@@ -34,9 +34,9 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Stavka | Stanje |
 |--------|--------|
 | **Aktivna nedelja** | Nedelja 4 |
-| **Sledeći korak** | Next.js migracija (4.1) ili per-page meta tagovi (4.11–4.14) na Vite |
-| **Postojeći kod** | Inicijalni React dizajn u `koncar-elektro-store/` (Vite + React + shadcn/ui) — landing u `koncarelektro-landing.html` |
-| **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless — migracija sa trenutnog Vite setupa |
+| **Sledeći korak** | ISR za proizvode (4.10) + JSON-LD schema (6.3–6.5) |
+| **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
+| **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
 ### Brzi pregled napretka
 
@@ -170,20 +170,20 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 4.1 | Postavka Next.js 14 (App Router, SSR/SSG) | `[ ]` | | Trenutno: Vite + React — potrebna migracija |
-| 4.2 | Globalni layout | `[ ]` | | |
-| 4.3 | Header | `[ ]` | | |
-| 4.4 | Footer | `[ ]` | | |
-| 4.5 | Navigacija | `[ ]` | | |
-| 4.6 | Početna stranica | `[~]` | 06.07.2026. | `Index.tsx` + live sekcije akcija/najprodavanije; Next.js migracija ostaje |
-| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[~]` | 06.07.2026. | `ProductCategoryRoute`, `/proizvodi`, live hub + listing na Vite |
-| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[~]` | 06.07.2026. | `/prodavnica/*` + live PDP |
-| 4.9 | Povezivanje sa REST API-jem | `[~]` | 06.07.2026. | `VITE_USE_LIVE_API=true`, Store API client, React Query |
+| 4.1 | Postavka Next.js 14 (App Router, SSR/SSG) | `[x]` | 07.07.2026. | `app/` rute 1:1, `src/views/`, router-compat, `npm run dev` → Next |
+| 4.2 | Globalni layout | `[~]` | 07.07.2026. | `app/layout.tsx` + `Providers` (Query, Cart, Toaster) |
+| 4.3 | Header | `[~]` | 07.07.2026. | Postojeći `SiteHeader` u view komponentama |
+| 4.4 | Footer | `[~]` | 07.07.2026. | Postojeći `SiteFooter` |
+| 4.5 | Navigacija | `[~]` | 07.07.2026. | Mega menu + mobilna nav — portovano |
+| 4.6 | Početna stranica | `[~]` | 07.07.2026. | `app/page.tsx` → `Index.tsx` + live sekcije |
+| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[~]` | 07.07.2026. | `app/product-category/[[...slug]]` |
+| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[~]` | 07.07.2026. | `app/prodavnica/[...segments]` |
+| 4.9 | Povezivanje sa REST API-jem | `[~]` | 07.07.2026. | `NEXT_PUBLIC_USE_LIVE_API`, rewrite `/wp-json` |
 | 4.10 | ISR za 5.000+ proizvoda | `[ ]` | | |
-| 4.11 | Per-page meta tagovi: title | `[ ]` | | Mapirani iz postojećih |
-| 4.12 | Per-page meta tagovi: description | `[ ]` | | |
-| 4.13 | Per-page meta tagovi: canonical | `[ ]` | | |
-| 4.14 | Per-page meta tagovi: OG (Open Graph) | `[ ]` | | |
+| 4.11 | Per-page meta tagovi: title | `[x]` | 07.07.2026. | `generateMetadata` + `seo-baseline-index.json` (5.649 URL-ova) |
+| 4.12 | Per-page meta tagovi: description | `[x]` | 07.07.2026. | Baseline ili generisani opis gde nedostaje |
+| 4.13 | Per-page meta tagovi: canonical | `[x]` | 07.07.2026. | Uvek `https://koncarelektro.rs/...` (bez `?page_id=`) |
+| 4.14 | Per-page meta tagovi: OG (Open Graph) | `[x]` | 07.07.2026. | og:title, og:description, og:url, og:image |
 
 **Deliverable (kraj Meseca 1):**
 
@@ -353,7 +353,7 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 06.07.2026. | — | 3.4–3.8 zatvoreno (read API); bestseller kartice, akcija paginacija | Sledeće: 3.12/3.13 slug QA |
 | 06.07.2026. | — | Listing UX: sort, filteri (brend/cena/dostupnost), mobilni filter drawer, live hub/listing slike | `MobileFiltersSheet`, `subcategoryImages.ts` |
 | 06.07.2026. | — | `/najprodavanije`, početna carousel usklađen sa akcijom, kompaktan badge | `BestSellersPage`, `ProductCard` bestseller variant |
-| 07.07.2026. | — | Nedelja 3 zatvorena: `audit:wc-slugs` (186 kat, 8/8 remap) + `audit:seo-baseline` (565 uzoraka, 0 fail) | Prelazak na Nedelju 4 |
+| 07.07.2026. | — | Nedelja 4 start: Next.js 14 migracija (4.1) — App Router, sve rute 1:1, build prolazi | Vite zamenjen; `npm run dev:vite` za legacy |
 
 ---
 
@@ -361,9 +361,19 @@ Evidentiraj značajne događaje, odluke i blokade.
 
 ### Sada — Nedelja 4
 
-**Prioritet 1 — Frontend jezgro / SEO**
-- Next.js 14 migracija (4.1) **ili** nastavak na Vite sa per-page meta (4.11–4.14)
-- ISR plan za 5.000+ proizvoda (4.10)
+**Prioritet 1 — ISR + schema**
+- ISR plan i implementacija za 5.000+ proizvoda (4.10)
+- JSON-LD: Product, BreadcrumbList, Organization (6.3–6.5)
+
+**Završeno u 4.11–4.14 (07.07.2026.)**
+- `generateMetadata` na svim rutama
+- Izvor: `docs/crawl/seo-baseline.csv` → `src/data/seo-baseline-index.json`
+- Canonical uvek na `koncarelektro.rs`; korpa/checkout `noindex`
+
+**Završeno u 4.1 (07.07.2026.)**
+- Next.js 14 App Router (`app/`), `trailingSlash: true`, WP API rewrite
+- `src/views/` (bivši `src/pages/`), `src/lib/router-compat.tsx`
+- Env: `NEXT_PUBLIC_*` (vidi `.env.example`)
 
 **Odloženo po dogovoru**
 - Recenzije (mock ostaje)

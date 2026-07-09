@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';

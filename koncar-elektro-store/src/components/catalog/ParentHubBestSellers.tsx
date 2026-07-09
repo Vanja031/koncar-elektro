@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Carousel } from '@/components/home/Carousel';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import type { CatalogProduct } from '@/data/catalogListing';

@@ -2,7 +2,7 @@ import {
   Phone, Search, User, ShoppingCart, Menu, ChevronDown,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { FaIcon, footerIcons, trustIcons } from './FaIcon';
 import { SocialLinks } from './SocialLinks';
 import { MegaMenu } from './MegaMenu';

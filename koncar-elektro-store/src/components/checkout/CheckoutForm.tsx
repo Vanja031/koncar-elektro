@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router-compat';
 import { CreditCard, Coins, FileStack } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';

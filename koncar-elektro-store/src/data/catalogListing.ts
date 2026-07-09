@@ -14,9 +14,23 @@ import { parentSlugToCatalogPrefix } from '@/lib/parentCatalogSlugs';
 import catAku from '@/assets/aku-alat.png';
 import catElektricni from '@/assets/elektricni-alat.png';
 
+import type { Product } from '@/data/homepage';
+
 export type CatalogProduct = KoncarCatalogProduct & {
   bestseller?: boolean;
   subtitle?: string;
+};
+
+/** Minimal shape for product cards (mock + live API). */
+export type CatalogProductCardProduct = Product & {
+  bestseller?: boolean;
+  subtitle?: string;
+  categorySlug?: string;
+  slug?: string;
+  permalink?: string;
+  sku?: string;
+  inStock?: boolean;
+  specs?: string[];
 };
 
 export type FilterGroup = {

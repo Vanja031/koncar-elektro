@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check, ChevronRight, Plus, Minus, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { GoogleReviews } from '@/components/home/GoogleReviews';
 import { ROUTES } from '@/lib/catalogUrls';
 import { brand, contactChannels } from '@/data/staticPages';

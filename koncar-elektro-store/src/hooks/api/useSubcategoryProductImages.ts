@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import type { MegaMenuSubcategory } from '@/data/navigation';
 import { useLiveApi } from '@/lib/api/config';
 import { getFirstProductImageForCategory } from '@/lib/api/wc-store/products';
 
 /** First product thumbnail per subcategory slug — for mega menu cards. */
-export function useSubcategoryProductImages(subcategories: MegaMenuSubcategory[]) {
+export function useSubcategoryProductImages(subcategories: { slug?: string }[]) {
   const slugs = [...new Set(subcategories.map((s) => s.slug).filter((s): s is string => Boolean(s)))].sort();
 
   return useQuery({

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { ExternalLink } from 'lucide-react';
 import garancijaBadge from '@/assets/garancija-badge.png';
 import { getWarrantyExtensionOffer } from '@/lib/warrantyExtension';

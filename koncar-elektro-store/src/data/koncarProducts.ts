@@ -6,6 +6,7 @@ export type KoncarCatalogProduct = Product & {
   sku: string;
   inStock: boolean;
   specs: string[];
+  subtitle?: string;
   /** Težina u kg — obavezno za automatizovan obračun dostave (backend / ERP). */
   weightKg?: number;
 };
@@ -151,7 +152,7 @@ export const getSaleProductsFromKoncar = (): Product[] =>
   getSaleCatalogProducts().slice(0, 8).map(toBaseProduct);
 
 /** Proizvodi na akciji, sortirani po procentu popusta (najveći prvi). */
-export const getDiscountPercent = (p: KoncarCatalogProduct): number =>
+export const getDiscountPercent = (p: Pick<Product, 'price' | 'oldPrice'>): number =>
   p.oldPrice && p.oldPrice > p.price
     ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100)
     : 0;

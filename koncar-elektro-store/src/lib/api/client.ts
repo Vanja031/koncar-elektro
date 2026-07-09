@@ -10,7 +10,16 @@ export type FetchJsonOptions = RequestInit & {
 
 function buildUrl(base: string, path: string, searchParams?: FetchJsonOptions['searchParams']) {
   const normalized = `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
-  const url = new URL(normalized, import.meta.env.DEV ? window.location.origin : undefined);
+  const baseOrigin =
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const url = new URL(normalized, baseOrigin);
+  // Keep a trailing slash on the path so `trailingSlash: true` doesn't 308-redirect
+  // each API call (WP REST accepts both forms).
+  if (!url.pathname.endsWith('/')) {
+    url.pathname = `${url.pathname}/`;
+  }
   if (searchParams) {
     for (const [key, value] of Object.entries(searchParams)) {
       if (value !== undefined && value !== '') {
