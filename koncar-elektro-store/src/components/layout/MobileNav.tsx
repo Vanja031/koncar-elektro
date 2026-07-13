@@ -111,14 +111,7 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                       <ChevronRight className={`w-4 h-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 pr-1 pb-1">
-                      <Link
-                        to={getMegaMenuCategoryUrl(cat.id)}
-                        onClick={close}
-                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
-                      >
-                        Pogledajte sve →
-                      </Link>
-                      <ul className="space-y-0.5 max-h-[12rem] overflow-y-auto koncar-scrollbar">
+                      <ul className="space-y-0.5">
                         {cat.subcategories.map((sub) => (
                           <li key={sub.slug ?? sub.label}>
                             <Link
@@ -132,6 +125,13 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                           </li>
                         ))}
                       </ul>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onClick={close}
+                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
+                      >
+                        Pogledajte sve →
+                      </Link>
                     </CollapsibleContent>
                   </Collapsible>
                 </li>
@@ -158,13 +158,6 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                       <ChevronRight className={`w-4 h-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 pr-1 pb-1">
-                      <Link
-                        to={getMegaMenuCategoryUrl(cat.id)}
-                        onClick={close}
-                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
-                      >
-                        Pogledajte sve →
-                      </Link>
                       <ul className="space-y-0.5">
                         {cat.subcategories.map((sub) => (
                           <li key={sub.label}>
@@ -178,6 +171,13 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                           </li>
                         ))}
                       </ul>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onClick={close}
+                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
+                      >
+                        Pogledajte sve →
+                      </Link>
                     </CollapsibleContent>
                   </Collapsible>
                 </li>

@@ -169,7 +169,7 @@ export const SiteHeader = () => {
               <Phone className="w-4 h-4 text-accent-foreground" />
             </div>
             <div className="text-xs leading-tight min-w-0">
-              <div className="font-semibold text-primary uppercase text-[10px] tracking-wide">Pozovite stručnjaka</div>
+              <div className="font-semibold text-primary uppercase text-[10px] tracking-wide">Stručna pomoć</div>
               <div className="font-bold text-sm text-primary whitespace-nowrap">{contactChannels.primaryPhone}</div>
             </div>
           </a>
