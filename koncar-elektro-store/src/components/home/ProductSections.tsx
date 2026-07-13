@@ -9,6 +9,7 @@ import {
 } from '@/data/homepage';
 import { brand } from '@/data/staticPages';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
+import { getBrandLogoBySlug } from '@/lib/brandLogos';
 import { Carousel } from './Carousel';
 import { ProductCard } from './ProductCard';
 import { GoogleReviews } from './GoogleReviews';
@@ -64,17 +65,30 @@ export const ProductSections = () => {
       <section className="container py-6">
         <h2 className="section-heading mb-4">Istaknuti brendovi</h2>
         <Carousel autoplay compactArrowsOnMobile slideClassName="!basis-1/3 sm:!basis-1/5 md:!basis-[12.5%]">
-          {featuredBrands.map((b) => (
-            <a
-              key={b}
-              href="#"
-              className="h-14 sm:h-16 border border-border rounded bg-white flex items-center justify-center px-2 sm:px-4 min-w-0 w-full overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
-            >
-              <span className="font-display font-bold text-[11px] sm:text-sm text-primary uppercase tracking-normal sm:tracking-wide text-center leading-tight line-clamp-2 break-words">
-                {b}
-              </span>
-            </a>
-          ))}
+          {featuredBrands.map((b) => {
+            const logo = getBrandLogoBySlug(b.slug);
+            return (
+              <a
+                key={b.slug}
+                href="#"
+                className="h-14 sm:h-16 border border-border rounded bg-white flex items-center justify-center px-3 sm:px-4 min-w-0 w-full overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
+                aria-label={b.name}
+              >
+                {logo ? (
+                  <img
+                    src={logo}
+                    alt={b.name}
+                    loading="lazy"
+                    className="max-h-8 sm:max-h-10 w-auto max-w-[85%] object-contain"
+                  />
+                ) : (
+                  <span className="font-display font-bold text-[11px] sm:text-sm text-primary uppercase tracking-wide text-center">
+                    {b.name}
+                  </span>
+                )}
+              </a>
+            );
+          })}
         </Carousel>
       </section>
 

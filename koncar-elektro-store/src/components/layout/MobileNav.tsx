@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  ChevronRight, Phone, ShoppingCart, Flame, Home, Info, Mail, UserPlus,
+  ChevronRight, Phone, Flame, Info, Mail, UserPlus,
 } from 'lucide-react';
 import { Link } from '@/lib/router-compat';
 import {
@@ -17,7 +17,6 @@ import {
   resolveMegaMenuSubcategoryUrl,
   ROUTES,
 } from '@/lib/catalogUrls';
-import { useCart } from '@/context/CartContext';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { contactChannels } from '@/data/staticPages';
 
@@ -27,7 +26,6 @@ type Props = {
 };
 
 export const MobileNav = ({ open, onOpenChange }: Props) => {
-  const { itemCount } = useCart();
   const { alatiMenuCategories, otherProgramCategories, isLoading, isError } = useNavigationMenu();
   const [openSection, setOpenSection] = useState<string | null>('alati');
 
@@ -67,21 +65,6 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                 Prijava / Registracija
               </Link>
             </li>
-          </ul>
-
-          <div className="my-3 border-t border-border" />
-
-          <ul className="px-2 space-y-0.5">
-            <li>
-              <Link
-                to="/"
-                onClick={close}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-              >
-                <Home className="w-4 h-4 text-primary shrink-0" />
-                Početna
-              </Link>
-            </li>
             <li>
               <Link
                 to="/akcija"
@@ -90,21 +73,6 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
               >
                 <Flame className="w-4 h-4 shrink-0 fill-destructive/20" />
                 Akcija
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={ROUTES.cart}
-                onClick={close}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-              >
-                <ShoppingCart className="w-4 h-4 text-primary shrink-0" />
-                Korpa
-                {itemCount > 0 && (
-                  <span className="ml-auto bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {itemCount}
-                  </span>
-                )}
               </Link>
             </li>
           </ul>

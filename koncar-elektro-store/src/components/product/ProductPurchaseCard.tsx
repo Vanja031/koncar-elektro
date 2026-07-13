@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Minus, Plus, Check, Truck, Package, Phone } from 'lucide-react';
+import { Minus, Plus, Check, Truck, Package, Phone, RotateCcw } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { contactChannels } from '@/data/staticPages';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { SocialIcon } from '@/components/home/SocialIcon';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import type { ProductDetail } from '@/data/productDetail';
 
@@ -44,6 +45,10 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
             <Package className="w-4 h-4 text-primary shrink-0" />
             <span>Besplatna dostava preko <strong>{FREE_SHIPPING_THRESHOLD.toLocaleString('sr-RS')} din.</strong></span>
           </div>
+          <div className="product-purchase-shipping-row product-purchase-shipping-row--return">
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span><strong>Povraćaj novca 14 dana</strong></span>
+          </div>
           {onSale && product.saleStart && product.saleEnd && (
             <p className="product-purchase-sale-period">
               Akcija važi od <strong>{product.saleStart}</strong> do <strong>{product.saleEnd}</strong>
@@ -81,10 +86,20 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
         />
       </div>
 
-      <div className="product-purchase-contact">
-        <a href={contactChannels.primaryPhoneHref} className="product-purchase-contact-link">
-          <Phone className="w-4 h-4" />
-          {contactChannels.primaryPhone.replace('+381 ', '0')}
+      <div className="product-purchase-contact" aria-label="Kontakt za pomoć">
+        <a
+          href={contactChannels.viberHref}
+          className="product-purchase-contact-action product-purchase-contact-action--viber"
+        >
+          <SocialIcon name="viber" className="w-5 h-5" alt="" />
+          <span className="product-purchase-contact-label">Pošalji poruku</span>
+        </a>
+        <a
+          href={contactChannels.primaryPhoneHref}
+          className="product-purchase-contact-action product-purchase-contact-action--call"
+        >
+          <Phone className="w-5 h-5" strokeWidth={2} aria-hidden />
+          <span className="product-purchase-contact-label">Stručna pomoć</span>
         </a>
       </div>
     </aside>

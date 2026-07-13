@@ -1,4 +1,4 @@
-import { ChevronRight as ArrowRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Link } from '@/lib/router-compat';
 import { popularCategories } from '@/data/homepage';
 import { getPopularCategoryUrl, getTopCategoryUrl } from '@/lib/catalogUrls';
@@ -8,28 +8,28 @@ export const PopularCategoriesSection = () => (
     <div className="section-header">
       <h2 className="section-heading">Popularne kategorije</h2>
       <Link to={getTopCategoryUrl('alati')} className="section-link">
-        Pogledajte sve kategorije <ArrowRight className="w-4 h-4 shrink-0" />
+        Pogledajte sve kategorije <ChevronRight className="w-4 h-4 shrink-0" />
       </Link>
     </div>
-    <div className="popular-categories-grid">
+    <div className="hub-category-grid md:grid-cols-5">
       {popularCategories.map((c) => (
         <Link
           key={c.name}
           to={getPopularCategoryUrl(c.name)}
-          className="popular-category-card group"
+          className="hub-category-card group"
         >
-          <div className="popular-category-card-media">
+          <div className="hub-category-card-media">
             <img
               src={c.image}
               alt=""
-              className="popular-category-card-image"
+              className="hub-category-card-image"
               loading="lazy"
             />
           </div>
-          <div className="popular-category-card-footer">
-            <span className="popular-category-card-title">{c.name}</span>
-            <span className="popular-category-card-arrow" aria-hidden>
-              <ArrowRight />
+          <div className="hub-category-card-footer">
+            <span className="hub-category-card-title">{c.name}</span>
+            <span className="hub-category-card-arrow" aria-hidden>
+              <ChevronRight />
             </span>
           </div>
         </Link>

@@ -101,7 +101,8 @@ export const categoryPages: Record<string, CategoryPageData> = {
   alati: {
     slug: 'alati',
     title: 'ALATI',
-    subtitle: 'Profesionalni alati i oprema za svaki zadatak',
+    subtitle:
+      'Profesionalni alati i oprema za svaki zadatak. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
     description:
       'U ponudi imamo električne i akumulatorske alate, ručni alat, kompresore, agregate i opremu za radionicu, baštu i poljoprivredu. Birajte proverene brendove uz stručnu podršku.',
     heroImage: breadcrumbsHero,
@@ -126,26 +127,80 @@ export const categoryPages: Record<string, CategoryPageData> = {
   elektromaterijal: programPage(
     'elektromaterijal',
     'ELEKTROMATERIJAL',
-    'Kablovi, prekidači, osigurači i oprema za instalacije',
+    'Kablovi, prekidači, osigurači i oprema za instalacije. Izaberite kategoriju i pronađite što vam treba.',
     'Kompletna ponuda elektromaterijala za profesionalne i kućne instalacije — kablovi, osigurači, prekidači, razvodne table i prateća oprema.',
     imgElektromaterijal,
   ),
   rasveta: programPage(
     'rasveta',
     'RASVETA',
-    'Unutrašnja i spoljašnja rasveta za svaki prostor',
+    'Unutrašnja i spoljašnja rasveta za svaki prostor. Izaberite kategoriju i pronađite pravo rešenje.',
     'LED sijalice, paneli, reflektori, lusteri i industrijska rasveta — sve na jednom mestu uz stručnu podršku.',
     imgRasveta,
   ),
   solarne: programPage(
     'solarne',
     'SOLARNE ELEKTRANE',
-    'Kompletna oprema za solarnu energiju',
+    'Kompletna oprema za solarnu energiju. Izaberite kategoriju i pronađite rešenje za vaše potrebe.',
     'Solarni paneli, inverteri, baterije i kompleti za domaćinstva i privredu — ušteda energije i novca.',
     imgSolarne,
   ),
 };
 
 export const getCategoryPage = (slug: string) => categoryPages[slug];
+
+/**
+ * Section heading under the category hero (subcategory / chip grid).
+ * Keys: top-level program slugs + alati parent hub slugs.
+ */
+const categoryHubSectionTitles: Record<string, string> = {
+  alati: 'Kategorije alata',
+  'elektricni-alat': 'Kategorije električnih alata',
+  'aku-alat': 'Kategorije aku alata',
+  'rucni-alat': 'Kategorije ručnog alata',
+  'aparati-za-varenje': 'Kategorije aparata za varenje',
+  'htz-oprema': 'Kategorije HTZ opreme',
+  elektromaterijal: 'Kategorije elektromaterijala',
+  rasveta: 'Kategorije rasvete',
+  solarne: 'Kategorije solarne opreme',
+};
+
+/** Short copy under the hub hero title. */
+const categoryHubHeroDescriptions: Record<string, string> = {
+  'elektricni-alat':
+    'Profesionalni električni alati za svaki zadatak. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+  'aku-alat':
+    'Akumulatorski alati za rad bez kabla. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+  'rucni-alat':
+    'Ručni alati za precizan i pouzdan rad. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+  'aparati-za-varenje':
+    'Aparati i oprema za varenje za profesionalce i majstore. Izaberite kategoriju i pronađite pravo rešenje.',
+  'htz-oprema':
+    'HTZ oprema za bezbedan rad. Izaberite kategoriju i pronađite zaštitu koja vam treba.',
+  kompresori:
+    'Kompresori i pneumatska oprema za radionicu i teren. Izaberite kategoriju prema vašim potrebama.',
+  agregati:
+    'Agregati za pouzdano napajanje. Izaberite kategoriju koja odgovara vašim zahtevima.',
+  'kosacice-i-trimeri':
+    'Kosačice i trimeri za uređeno dvorište i teren. Izaberite kategoriju i pronađite pravi alat.',
+  'poljoprivredni-program':
+    'Poljoprivredna oprema za efikasan rad. Izaberite kategoriju i pronađite rešenje za vaše potrebe.',
+  'oprema-za-dvoriste':
+    'Oprema za dvorište i baštu. Izaberite kategoriju i pronađite idealan proizvod.',
+};
+
+export const getCategoryHubSectionTitle = (slug: string, fallbackLabel?: string) => {
+  if (categoryHubSectionTitles[slug]) return categoryHubSectionTitles[slug];
+  if (fallbackLabel) return `Kategorije — ${fallbackLabel}`;
+  return 'Kategorije';
+};
+
+export const getCategoryHubHeroDescription = (slug: string, fallbackLabel?: string) => {
+  if (categoryHubHeroDescriptions[slug]) return categoryHubHeroDescriptions[slug];
+  if (fallbackLabel) {
+    return `Pregledajte ponudu u kategoriji ${fallbackLabel.toLowerCase()}. Izaberite kategoriju koja vam odgovara.`;
+  }
+  return undefined;
+};
 
 export { slugify as getSubcategorySlug } from '@/lib/slugify';

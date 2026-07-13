@@ -1,12 +1,8 @@
-import { Link } from '@/lib/router-compat';
-import { Truck, Lock } from 'lucide-react';
+import { Lock, Truck } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
-import { getProductListingUrl } from '@/lib/catalogUrls';
-import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
-
-const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
+import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 
 export const CheckoutSummary = () => {
   const { lines, subtotal, subtotalRegular, savings, shipping, total } = useCart();
@@ -67,12 +63,11 @@ export const CheckoutSummary = () => {
         </p>
       )}
 
-      <Link to={browseUrl} className="cart-summary-continue-btn mt-4">
-        Nastavi kupovinu
-      </Link>
+      <button type="submit" form={CHECKOUT_FORM_ID} className="checkout-submit-btn mt-5 hidden lg:block">
+        Završi porudžbinu
+      </button>
 
       <div className="cart-summary-payments">
-        <PaymentCardIcons size="sm" />
         <p className="cart-summary-secure">
           <Lock className="w-3.5 h-3.5" />
           Sigurna kupovina

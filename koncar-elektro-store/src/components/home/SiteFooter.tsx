@@ -161,12 +161,11 @@ export const SiteFooter = () => (
               </li>
             ))}
           </ul>
-          <SocialLinks variant="footer" />
         </div>
 
         <div className="lg:col-span-2 lg:col-start-5">
-          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-5 tracking-wide">Korisnički servis</h4>
-          <ul className="space-y-0.5">
+          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-4 tracking-wide">Korisnički servis</h4>
+          <ul className="space-y-0">
             {footerServiceLinks.map((l) => (
               <li key={l}>
                 <FooterNavLink label={l} />
@@ -176,8 +175,8 @@ export const SiteFooter = () => (
         </div>
 
         <div className="lg:col-span-2">
-          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-5 tracking-wide">Informacije</h4>
-          <ul className="space-y-0.5">
+          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-4 tracking-wide">Informacije</h4>
+          <ul className="space-y-0">
             {footerInfoLinks.map((l) => (
               <li key={l}>
                 <FooterNavLink label={l} />
@@ -214,14 +213,17 @@ export const SiteFooter = () => (
               <ChevronRight className="w-4 h-4" />
             </button>
           </form>
+          <SocialLinks variant="footer" className="mt-5" />
         </div>
       </div>
     </div>
 
     <div className="border-t border-white/10 bg-[#0c1a33]">
-      <div className="container py-5">
-        <p className="title-accent-line text-[11px] text-white/45 uppercase tracking-widest mb-4 font-semibold">Načini plaćanja</p>
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="container py-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <p className="text-[11px] text-white/45 uppercase tracking-widest font-semibold shrink-0">
+            Načini plaćanja
+          </p>
           <PaymentCardIcons size="sm" className="footer-payment-cards" />
           <span className="hidden sm:inline w-px h-6 bg-white/20" aria-hidden />
           {paymentBanks.map((p) => (
@@ -250,9 +252,9 @@ export const FloatingChat = () => (
   <Link
     to="/kontakt"
     className="fixed z-50 flex items-center justify-center gap-2 bg-primary text-white rounded-full shadow-navy-soft hover:brightness-110 transition-all font-semibold bottom-4 right-3 min-[380px]:justify-start py-2.5 px-3 min-[380px]:pl-3 min-[380px]:pr-3.5 text-xs sm:bottom-6 sm:right-6 sm:gap-2.5 sm:pl-4 sm:pr-5 sm:py-3 sm:text-sm"
-    aria-label="Pitaj stručnjaka"
+    aria-label="Stručna pomoć"
   >
     <FaIcon icon={footerIcons.chat} className="text-base shrink-0" />
-    <span className="hidden min-[380px]:inline truncate">Pitaj stručnjaka</span>
+    <span className="hidden min-[380px]:inline truncate">Stručna pomoć</span>
   </Link>
 );

@@ -3,8 +3,9 @@
 import { Link } from '@/lib/router-compat';
 import { Target, Eye, Wrench, Phone, ChevronRight, Trophy, ShieldCheck, Package, Users } from 'lucide-react';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
-import { aboutContent, companyInfo } from '@/data/staticPages';
+import { aboutContent, contactChannels } from '@/data/staticPages';
 import { Carousel } from '@/components/home/Carousel';
+import { BrandMark } from '@/components/brand/BrandMark';
 import agentAvatar from '@/assets/agent-avatar.png';
 import heroExpert from '@/assets/hero-expert.png';
 
@@ -110,14 +111,18 @@ const AboutPage = () => {
         <section>
           <h2 className="section-heading text-xl md:text-2xl mb-6">Ovlašćeni distributeri</h2>
           <Carousel>
-            {authorizedBrands.map((brand) => (
+            {authorizedBrands.map((brandName) => (
               <div
-                key={brand}
+                key={brandName}
                 className="h-20 rounded-xl border border-border bg-white shadow-sm flex items-center justify-center px-4 hover:border-primary/30 hover:shadow-md transition-all"
+                title={brandName}
               >
-                <span className="font-display font-bold text-primary text-sm uppercase tracking-wide text-center">
-                  {brand}
-                </span>
+                <BrandMark
+                  brand={brandName}
+                  size="lg"
+                  imgClassName="max-h-12 max-w-[90%] object-center mx-auto"
+                  className="text-center"
+                />
               </div>
             ))}
           </Carousel>
@@ -162,11 +167,11 @@ const AboutPage = () => {
                   Kontaktirajte nas
                 </Link>
                 <a
-                  href={`tel:${companyInfo.phones[0].replace(/\s/g, '')}`}
+                  href={contactChannels.primaryPhoneHref}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
                 >
                   <Phone className="w-4 h-4 text-accent" />
-                  {companyInfo.phones[0]}
+                  {contactChannels.primaryPhone}
                 </a>
               </div>
             </div>

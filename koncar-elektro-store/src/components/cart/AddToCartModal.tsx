@@ -142,9 +142,9 @@ export const AddToCartModal = () => {
                   <ArrowRight className="w-4 h-4 shrink-0" />
                   Nastavi kupovinu
                 </button>
-                <Link to={ROUTES.cart} onClick={closeAddedModal} className="add-to-cart-modal-btn-primary">
+                <Link to={ROUTES.checkout} onClick={closeAddedModal} className="add-to-cart-modal-btn-primary">
                   <ShoppingCart className="w-4 h-4 shrink-0" />
-                  Pogledaj korpu
+                  Završi kupovinu
                 </Link>
               </div>
             )}

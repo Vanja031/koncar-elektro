@@ -2,6 +2,7 @@ import { Link } from '@/lib/router-compat';
 import { Minus, Plus, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import type { ResolvedCartLine } from '@/context/CartContext';
+import { BrandMark } from '@/components/brand/BrandMark';
 
 type Props = {
   line: ResolvedCartLine;
@@ -20,7 +21,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
       <div className="cart-line-body">
         <div className="cart-line-top">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{line.brand}</p>
+            <BrandMark brand={line.brand} size="xs" />
             <Link to={line.url} className="cart-line-title">
               {line.name}
             </Link>
@@ -76,7 +77,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
 
         <div className="cart-line-mobile-info">
           <div className="cart-line-mobile-meta">
-            <p className="cart-line-mobile-brand">{line.brand}</p>
+            <BrandMark brand={line.brand} size="xs" />
             <button type="button" onClick={onRemove} className="cart-line-mobile-remove" aria-label="Ukloni iz korpe">
               <X className="w-3.5 h-3.5" />
             </button>

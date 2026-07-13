@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import type { HeroSlide } from '@/data/homeHero';
 import { contactChannels } from '@/data/staticPages';
 
 const AUTOPLAY_MS = 6000;
+const SWIPE_THRESHOLD_PX = 40;
 
 type Props = {
   slides: HeroSlide[];
@@ -13,6 +14,7 @@ type Props = {
 export const HeroCarousel = ({ slides, layout = 'desktop' }: Props) => {
   const [index, setIndex] = useState(0);
   const [autoplayEpoch, setAutoplayEpoch] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const goTo = useCallback(
     (next: number) => setIndex((next + slides.length) % slides.length),
@@ -32,6 +34,23 @@ export const HeroCarousel = ({ slides, layout = 'desktop' }: Props) => {
     return () => clearInterval(id);
   }, [slides.length, autoplayEpoch]);
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (layout !== 'mobile') return;
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (layout !== 'mobile' || !touchStart.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (Math.abs(dx) < SWIPE_THRESHOLD_PX || Math.abs(dx) < Math.abs(dy)) return;
+    goToManual(index + (dx < 0 ? 1 : -1));
+  };
+
   const slide = slides[index];
   const isMobile = layout === 'mobile';
 
@@ -40,15 +59,18 @@ export const HeroCarousel = ({ slides, layout = 'desktop' }: Props) => {
       className={`relative overflow-hidden group ${
         isMobile
           ? 'w-full min-h-[300px] aspect-[1.28/1] max-h-[380px] rounded-none sm:rounded'
-          : 'aspect-[2.35/1] w-full rounded'
+          : 'aspect-[2.14/1] w-full rounded'
       }`}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {slides.map((s, i) => (
         <img
           key={s.image}
           src={s.image}
           alt=""
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+          draggable={false}
+          className={`absolute inset-0 w-full h-full object-cover select-none transition-opacity duration-700 ${
             i === index ? 'opacity-100' : 'opacity-0'
           }`}
         />

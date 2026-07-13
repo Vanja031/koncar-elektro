@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -10,18 +10,26 @@ import {
 import { ProductFilters } from '@/components/catalog/ProductFilters';
 import {
   countActiveFilters,
-  type BrandFilterOption,
+  type AttributeFilterGroup,
+  type CategoryFilterOption,
   type ListingFilters,
 } from '@/lib/listingFilters';
 
 type Props = {
-  brandOptions: BrandFilterOption[];
+  attributeGroups: AttributeFilterGroup[];
   filters: ListingFilters;
   onChange: (filters: ListingFilters) => void;
   onClear: () => void;
+  categoryOptions?: CategoryFilterOption[];
 };
 
-export const MobileFiltersSheet = ({ brandOptions, filters, onChange, onClear }: Props) => {
+export const MobileFiltersSheet = ({
+  attributeGroups = [],
+  filters,
+  onChange,
+  onClear,
+  categoryOptions,
+}: Props) => {
   const [open, setOpen] = useState(false);
   const activeCount = countActiveFilters(filters);
 
@@ -48,9 +56,21 @@ export const MobileFiltersSheet = ({ brandOptions, filters, onChange, onClear }:
           className="catalog-filters-sheet w-full max-w-[min(100vw,24rem)] p-0 flex flex-col gap-0 border-l border-border"
         >
           <SheetHeader className="catalog-filters-sheet-header shrink-0 px-5 py-4 pr-12 border-b border-border text-left space-y-0">
-            <SheetTitle className="font-display font-bold text-primary uppercase tracking-wide text-base">
-              Filteri
-            </SheetTitle>
+            <div className="flex items-center justify-between gap-3">
+              <SheetTitle className="font-display font-bold text-primary uppercase tracking-wide text-base">
+                Filteri
+              </SheetTitle>
+              {activeCount > 0 && (
+                <button
+                  type="button"
+                  onClick={onClear}
+                  className="catalog-filters-clear shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden />
+                  Očisti
+                </button>
+              )}
+            </div>
             {activeCount > 0 && (
               <p className="text-xs text-muted-foreground mt-1">
                 {activeCount} {activeCount === 1 ? 'aktivan filter' : 'aktivna filtera'}
@@ -61,7 +81,8 @@ export const MobileFiltersSheet = ({ brandOptions, filters, onChange, onClear }:
           <div className="flex-1 min-h-0 overflow-y-auto koncar-scrollbar px-5">
             <ProductFilters
               variant="drawer"
-              brandOptions={brandOptions}
+              attributeGroups={attributeGroups}
+              categoryOptions={categoryOptions}
               filters={filters}
               onChange={onChange}
               onClear={onClear}

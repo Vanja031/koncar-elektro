@@ -7,7 +7,11 @@ import { useLiveApi } from '@/lib/api/config';
 import type { WcStoreProductsQuery } from '@/lib/api/types/wc-store';
 import type { WcStoreCategory } from '@/lib/api/types/wc-store';
 import type { ListingFilters } from '@/lib/listingFilters';
-import { listingFiltersToSearchParams } from '@/lib/listingFilters';
+import {
+  countActiveFilters,
+  listingFiltersToSearchParams,
+  resolveFilterCategorySlug,
+} from '@/lib/listingFilters';
 import type { ListingSort } from '@/lib/listingSort';
 import { listingSortToStoreQuery } from '@/lib/listingSort';
 import type { ProductDetail } from '@/data/productDetail';
@@ -121,19 +125,31 @@ export function useLiveRelatedProducts(
 }
 
 export function useLiveSaleProducts(
-  options: { page?: number; perPage?: number } = {},
+  options: {
+    page?: number;
+    perPage?: number;
+    filters?: ListingFilters;
+  } = {},
   initialData?: LiveProductsResult,
 ) {
-  const { page = 1, perPage = 48 } = options;
+  const { page = 1, perPage = 48, filters = {} } = options;
+  const filterParams = listingFiltersToSearchParams(filters);
+  const { min_price, max_price, ...attributeParams } = filterParams;
+  const hasFilters = countActiveFilters(filters) > 0;
 
   return useQuery({
-    queryKey: ['live-sale-products', page, perPage],
+    queryKey: ['live-sale-products', page, perPage, filters],
     queryFn: async () => {
       const result = await getStoreProductsPaginated({
         on_sale: true,
+        category: resolveFilterCategorySlug(filters),
         per_page: perPage,
         page,
         orderby: 'popularity',
+        in_stock: filters.inStockOnly ? true : undefined,
+        attributeParams,
+        min_price: min_price ? Number(min_price) : undefined,
+        max_price: max_price ? Number(max_price) : undefined,
       });
       return {
         products: result.data.map(mapStoreProductToCatalog),
@@ -143,7 +159,7 @@ export function useLiveSaleProducts(
       };
     },
     enabled: useLiveApi,
-    initialData,
+    initialData: hasFilters ? undefined : initialData,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

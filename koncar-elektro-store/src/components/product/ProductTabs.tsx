@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Check } from 'lucide-react';
 import type { ProductDetail } from '@/data/productDetail';
 import { ProductReviews } from '@/components/product/ProductReviews';
+import { BrandMark } from '@/components/brand/BrandMark';
+import { getBrandLogoSrc } from '@/lib/brandLogos';
 
 type TabId = 'description' | 'specs' | 'reviews' | 'declaration';
 
@@ -21,6 +23,9 @@ const tabs: Tab[] = [
   { id: 'declaration', label: 'Deklaracija', shortLabel: 'Deklaracija' },
   { id: 'reviews', label: 'Recenzije', shortLabel: 'Recenzije' },
 ];
+
+const isBrandSpecLabel = (label: string) =>
+  /proizvodja[cč]|brend/i.test(label.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 
 export const ProductTabs = ({ product }: Props) => {
   const [activeTab, setActiveTab] = useState<TabId>('specs');
@@ -66,12 +71,17 @@ export const ProductTabs = ({ product }: Props) => {
           <div className="product-specs-table-wrap">
             <table className="product-specs-table">
               <tbody>
-                {product.specifications.map((spec, i) => (
-                  <tr key={spec.label + spec.value} className={i % 2 === 0 ? 'bg-secondary/40' : 'bg-white'}>
-                    <th scope="row">{spec.label}</th>
-                    <td>{spec.value}</td>
-                  </tr>
-                ))}
+                {product.specifications.map((spec, i) => {
+                  const showLogo = isBrandSpecLabel(spec.label) && getBrandLogoSrc(spec.value);
+                  return (
+                    <tr key={spec.label + spec.value} className={i % 2 === 0 ? 'bg-secondary/40' : 'bg-white'}>
+                      <th scope="row">{spec.label}</th>
+                      <td>
+                        {showLogo ? <BrandMark brand={spec.value} size="sm" /> : spec.value}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -83,12 +93,17 @@ export const ProductTabs = ({ product }: Props) => {
           <div className="product-specs-table-wrap">
             <table className="product-specs-table">
               <tbody>
-                {product.declaration.map((row, i) => (
-                  <tr key={row.label} className={i % 2 === 0 ? 'bg-secondary/40' : 'bg-white'}>
-                    <th scope="row">{row.label}</th>
-                    <td>{row.value}</td>
-                  </tr>
-                ))}
+                {product.declaration.map((row, i) => {
+                  const showLogo = isBrandSpecLabel(row.label) && getBrandLogoSrc(row.value);
+                  return (
+                    <tr key={row.label} className={i % 2 === 0 ? 'bg-secondary/40' : 'bg-white'}>
+                      <th scope="row">{row.label}</th>
+                      <td>
+                        {showLogo ? <BrandMark brand={row.value} size="sm" /> : row.value}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

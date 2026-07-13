@@ -4,6 +4,7 @@ import { formatPrice } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { getDiscountPercent } from '@/data/koncarProducts';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 import type { CatalogProductCardProduct } from '@/data/catalogListing';
 
 type Props = {
@@ -50,7 +51,7 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
 
       <div className={isList ? 'catalog-product-card-body--list' : 'catalog-product-card-body'}>
         <div className={isList ? 'catalog-product-card-main--list' : 'catalog-product-card-main'}>
-          <p className="catalog-product-card-brand">{product.brand}</p>
+          <ManufacturerRow brand={product.brand} className="catalog-product-card-brand" size="xs" />
           <Link to={productUrl}>
             <h3 className="catalog-product-card-title">{product.name}</h3>
           </Link>

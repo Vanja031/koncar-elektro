@@ -55,3 +55,44 @@ export async function getFirstProductImageForCategory(
   const image = products[0]?.images?.[0];
   return image?.thumbnail || image?.src;
 }
+
+export type WcStoreAttributeCount = {
+  term: number;
+  count: number;
+};
+
+export type WcStoreCollectionData = {
+  attribute_counts?: WcStoreAttributeCount[];
+};
+
+/**
+ * Facet counts for product attributes in the current listing context.
+ * Uses Store API `/products/collection-data` (covers the full result set, not just a page sample).
+ */
+export async function getStoreAttributeCounts(query: {
+  category?: string;
+  search?: string;
+  on_sale?: boolean;
+  taxonomies: string[];
+}): Promise<WcStoreAttributeCount[]> {
+  if (!query.taxonomies.length) return [];
+
+  const searchParams: Record<string, string | number | boolean | undefined> = {
+    category: query.category,
+    search: query.search,
+    on_sale: query.on_sale ? true : undefined,
+  };
+
+  query.taxonomies.forEach((taxonomy, index) => {
+    searchParams[`calculate_attribute_counts[${index}][taxonomy]`] = taxonomy;
+    searchParams[`calculate_attribute_counts[${index}][query_type]`] = 'or';
+  });
+
+  const data = await fetchJson<WcStoreCollectionData>(
+    wcStoreApiBase,
+    '/products/collection-data',
+    { searchParams },
+  );
+
+  return data.attribute_counts ?? [];
+}

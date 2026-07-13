@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { formatPrice, type Product } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 
 type Props = {
   product: Product;
@@ -33,6 +34,7 @@ export const ProductCard = ({ product, rank, bestseller, bestsellerCompact }: Pr
         <img src={product.image} alt={product.name} loading="lazy" />
       </Link>
       <div className="p-3 flex flex-col gap-1.5 flex-1 border-t border-border">
+        <ManufacturerRow brand={product.brand} size="xs" />
         <Link to={productUrl}>
           <p className="text-sm font-semibold text-foreground leading-tight line-clamp-1 hover:text-primary transition-colors">{product.name}</p>
         </Link>

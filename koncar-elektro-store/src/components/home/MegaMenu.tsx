@@ -30,7 +30,7 @@ const MegaMenuSubcategoryMedia = ({
       <img
         src={productSrc}
         alt=""
-        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
+        className="group-hover:scale-105 transition-transform"
       />
     );
   }
@@ -77,9 +77,9 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
     <div className="mega-menu-panel absolute left-0 right-0 top-full z-40 pointer-events-none">
       <div data-mega-menu className="container mb-6 pointer-events-auto -mt-1 pt-1">
         <div className="mega-menu-inner flex">
-          <aside className="mega-menu-sidebar koncar-scrollbar w-[17.5rem] shrink-0 flex flex-col overflow-y-auto">
-            <div className="mega-menu-sidebar-alati py-5 pr-0">
-              <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <aside className="mega-menu-sidebar koncar-scrollbar shrink-0 flex flex-col overflow-y-auto bg-[#eef2f7]">
+            <div className="mega-menu-sidebar-alati pr-0">
+              <p className="mega-menu-sidebar-label mega-menu-sidebar-label--muted">
                 Alati i oprema
               </p>
               <ul>
@@ -96,7 +96,9 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
                         className={`mega-menu-nav-item w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
                       >
                         <Icon className="mega-menu-nav-icon shrink-0" strokeWidth={1.85} />
-                        <span className="flex-1 text-left leading-snug">{cat.label}</span>
+                        <span className="flex-1 text-left leading-snug tracking-wide text-foreground">
+                          {cat.label}
+                        </span>
                         <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
                       </Link>
                     </li>
@@ -105,8 +107,8 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
               </ul>
             </div>
 
-            <div className="mega-menu-sidebar-programs py-4 pr-0 mt-auto">
-              <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-primary/70">
+            <div className="mega-menu-sidebar-programs pr-0 mt-auto">
+              <p className="mega-menu-sidebar-label">
                 Ostali programi
               </p>
               <ul>
@@ -123,10 +125,10 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
                         className={`mega-menu-nav-item mega-menu-nav-item--program w-full ${isActive ? 'mega-menu-nav-item--active' : ''}`}
                       >
                         <Icon className="mega-menu-nav-icon shrink-0" strokeWidth={1.85} />
-                        <span className="flex-1 text-left leading-snug uppercase text-[13px] font-semibold tracking-wide">
+                        <span className="flex-1 text-left leading-snug uppercase text-[12px] font-semibold tracking-wider text-primary">
                           {cat.label}
                         </span>
-                        <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-40" />
+                        <ChevronRight className="w-3.5 h-3.5 shrink-0 text-primary/50" />
                       </Link>
                     </li>
                   );
@@ -139,23 +141,23 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
             <Link
               to={getMegaMenuCategoryUrl(active.id)}
               onClick={onClose}
-              className="title-accent-line font-display font-bold text-primary uppercase text-base tracking-wide mb-3 shrink-0 px-6 pt-5 hover:text-primary/80 transition-colors"
+              className="title-accent-line font-display font-bold text-primary uppercase text-sm tracking-wider mb-2 shrink-0 px-4 pt-4 hover:text-primary/80 transition-colors"
             >
               {active.label}
             </Link>
 
             {isLoading ? (
-              <p className="px-6 text-sm text-muted-foreground">Učitavanje kategorija…</p>
+              <p className="px-4 text-sm text-muted-foreground">Učitavanje kategorija…</p>
             ) : isError ? (
-              <div className="px-6 pb-4">
+              <div className="px-4 pb-3">
                 <CatalogStateMessage variant="error" onRetry={() => refetch()} className="py-6" />
               </div>
             ) : active.subcategories.length === 0 ? (
-              <p className="px-6 text-sm text-muted-foreground">
-                Trenutno nema podkategorija za ovaj program.
+              <p className="px-4 text-sm text-muted-foreground">
+                Trenutno nema kategorija za ovaj program.
               </p>
             ) : (
-              <div className="mega-menu-grid grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 px-6 content-start">
+              <div className="mega-menu-grid koncar-scrollbar grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-4 content-start pb-1">
                 {active.subcategories.map((sub) => (
                   <Link
                     key={sub.slug ?? sub.label}
@@ -171,20 +173,20 @@ export const MegaMenu = ({ mode, onClose }: Props) => {
                       />
                     </div>
                     <div className="mega-menu-card-body">
-                      <p className="font-display font-bold text-primary text-[11px] leading-tight pr-5 line-clamp-2">
+                      <p className="font-display font-bold text-primary text-[11px] lg:text-xs uppercase tracking-wide leading-tight line-clamp-2">
                         {sub.label}
                       </p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                      <p className="text-[10px] text-muted-foreground/80 mt-0.5 tracking-wide">
                         {sub.count} proizvoda
                       </p>
-                      <ArrowRight className="absolute right-2 bottom-2.5 w-3.5 h-3.5 text-primary/40 group-hover:text-primary transition-colors" />
+                      <ArrowRight className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-primary/35 group-hover:text-primary transition-colors" />
                     </div>
                   </Link>
                 ))}
               </div>
             )}
 
-            <div className="mega-menu-footer shrink-0 px-6 pb-3 pt-2">
+            <div className="mega-menu-footer shrink-0 px-4 pb-3 pt-1.5">
               <Link
                 to={getMegaMenuCategoryUrl(active.id)}
                 onClick={onClose}

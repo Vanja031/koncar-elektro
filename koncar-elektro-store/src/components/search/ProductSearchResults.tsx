@@ -8,6 +8,7 @@ import { useLiveApi } from '@/lib/api/config';
 import { searchKoncarProducts } from '@/data/koncarProducts';
 import { getProductUrl } from '@/data/productDetail';
 import { getSearchUrl } from '@/lib/catalogUrls';
+import { BrandMark } from '@/components/brand/BrandMark';
 
 type Props = {
   query: string;
@@ -120,7 +121,7 @@ export const ProductSearchResults = ({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground">{product.brand}</p>
+                    <BrandMark brand={product.brand} size="xs" />
                     <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{product.name}</p>
                     <p className="text-sm font-display font-bold text-primary mt-0.5">{formatPrice(product.price)}</p>
                   </div>

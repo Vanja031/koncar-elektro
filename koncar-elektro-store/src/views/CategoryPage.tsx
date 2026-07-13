@@ -4,12 +4,13 @@ import { useMemo } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, Navigate, useParams } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
-import { CategoryHero, SubcategoryGrid } from '@/components/catalog/CategoryHero';
+import { ListingHero } from '@/components/catalog/ListingHero';
+import { SubcategoryGrid } from '@/components/catalog/CategoryHero';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { Carousel } from '@/components/home/Carousel';
 import { ProductCard } from '@/components/home/ProductCard';
-import { getCategoryPage } from '@/data/categoryPages';
+import { getCategoryHubSectionTitle, getCategoryPage } from '@/data/categoryPages';
 import type { SubcategoryItem } from '@/data/categoryPages';
 import { useCategoryPageLive } from '@/hooks/api/useCategoryPageLive';
 import { useLiveBestSellers } from '@/hooks/api/useLiveCatalog';
@@ -79,7 +80,11 @@ const CategoryPage = ({ programSlug }: Props) => {
 
   return (
     <ShopLayout>
-      <CategoryHero data={staticData} />
+      <ListingHero
+        breadcrumbs={staticData.breadcrumbs}
+        title={staticData.title}
+        description={staticData.subtitle}
+      />
 
       {useLiveApi && isLoading ? (
         <div className="container py-10">
@@ -87,7 +92,7 @@ const CategoryPage = ({ programSlug }: Props) => {
         </div>
       ) : subcategories.length > 0 ? (
         <SubcategoryGrid
-          title={staticData.slug === 'alati' ? 'Izaberite kategoriju alata' : 'Izaberite podkategoriju'}
+          title={getCategoryHubSectionTitle(staticData.slug, staticData.title)}
           items={subcategories}
           categorySlug={staticData.slug}
         />
@@ -95,8 +100,8 @@ const CategoryPage = ({ programSlug }: Props) => {
         <div className="container py-10">
           <CatalogStateMessage
             variant="empty"
-            title="Nema podkategorija"
-            description="Za ovu kategoriju trenutno nema dostupnih podkategorija u prodavnici."
+            title="Nema kategorija"
+            description="Za ovu kategoriju trenutno nema dostupnih kategorija u prodavnici."
           />
         </div>
       ) : null}

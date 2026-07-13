@@ -15,8 +15,10 @@ import type { MegaMenuMode } from '@/data/navigation';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
 import { contactChannels } from '@/data/staticPages';
 
-/** Širina kolone logotipa — ista u gornjem redu i na tabu „Svi proizvodi”. */
+/** Širina kolone logotipa u gornjem redu. */
 const LOGO_COLUMN_WIDTH = 'w-[13rem]';
+/** Uža širina dugmeta „Svi proizvodi” u nav traci. */
+const ALL_PRODUCTS_BTN_WIDTH = 'w-[11rem]';
 
 type NavItem = {
   label: string;
@@ -217,22 +219,22 @@ export const SiteHeader = () => {
 
         <div
           ref={megaZoneRef}
-          className="relative hidden lg:block border-t border-border bg-white header-nav-row"
+          className="relative hidden lg:block border-t border-border bg-secondary header-nav-row"
           onMouseLeave={handleMegaZoneLeave}
         >
           <div data-mega-nav className="container flex items-center h-11 gap-1">
             <button
               type="button"
               onClick={toggleAllProducts}
-              className={`flex items-center justify-center gap-2 h-11 font-display font-semibold uppercase text-sm transition-all shrink-0 ${LOGO_COLUMN_WIDTH} ${
+              className={`flex items-center justify-center gap-1.5 h-11 font-display font-semibold uppercase text-[13px] tracking-wide transition-all shrink-0 px-2 ${ALL_PRODUCTS_BTN_WIDTH} ${
                 megaOpen
                   ? 'bg-accent/90 text-accent-foreground'
                   : 'bg-accent text-accent-foreground hover:brightness-105'
               }`}
             >
-              <Menu className="w-4 h-4" />
-              Svi proizvodi
-              <ChevronDown className={`w-4 h-4 transition-transform ${megaOpen ? 'rotate-180' : ''}`} />
+              <Menu className="w-4 h-4 shrink-0" />
+              <span className="truncate">Svi proizvodi</span>
+              <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform ${megaOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <div className="flex items-center gap-0.5 ml-2">
@@ -243,7 +245,7 @@ export const SiteHeader = () => {
                     ? 'text-destructive font-semibold hover:text-destructive'
                     : isActive
                       ? 'text-primary font-semibold'
-                      : 'text-foreground hover:text-primary'
+                      : 'text-primary/90 hover:text-primary'
                 }`;
 
                 if (item.href.startsWith('/')) {

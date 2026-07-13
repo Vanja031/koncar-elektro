@@ -8,7 +8,7 @@ import {
 } from '@/lib/catalogUrls';
 import { programToWcSlug, toWcParentSlug } from '@/lib/wcSlugs';
 
-function resolveWcParentSlug(def: NavigationMenuDef): string {
+export function resolveWcParentSlug(def: NavigationMenuDef): string {
   if (def.wcParentSlug) return def.wcParentSlug;
   const internal = MEGA_MENU_PARENT_SLUG[def.id] ?? def.id;
   if (OTHER_PROGRAM_SLUGS.has(def.id)) {
@@ -68,6 +68,17 @@ export function buildNavigationMenu(
   allCategories: WcStoreCategory[],
 ): MegaMenuCategory[] {
   return defs.map((def) => buildMenuCategory(def, allCategories));
+}
+
+/** Mega-menu hubs usable as sale-page category filters (skips synthetic multi-parent groups). */
+export function getSaleCategoryFilterOptions(): { id: string; label: string; wcSlug: string }[] {
+  return [...alatiMenuDefs, ...otherProgramMenuDefs]
+    .filter((def) => !def.wcChildSlugs?.length)
+    .map((def) => ({
+      id: def.id,
+      label: def.label,
+      wcSlug: resolveWcParentSlug(def),
+    }));
 }
 
 /** Root WC categories for the "Alati i oprema" program (from mega-menu defs). */

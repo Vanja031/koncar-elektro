@@ -1,4 +1,4 @@
-export type PaymentMethod = 'card' | 'cod' | 'bank';
+export type PaymentMethod = 'cod' | 'card' | 'bank';
 
 export type PlacedOrder = {
   id: string;
@@ -34,8 +34,10 @@ export const getPlacedOrder = (): PlacedOrder | null => {
 export const createOrderId = () =>
   `KE-${Date.now().toString(36).toUpperCase().slice(-8)}`;
 
+export const paymentMethodOrder: PaymentMethod[] = ['cod', 'card', 'bank'];
+
 export const paymentMethodLabel: Record<PaymentMethod, string> = {
-  card: 'Platna kartica',
   cod: 'Plaćanje pouzećem',
+  card: 'Platna kartica',
   bank: 'Uplata na račun',
 };

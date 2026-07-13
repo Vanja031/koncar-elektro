@@ -1,4 +1,4 @@
-import { alatiSubcategories } from '@/data/categoryPages';
+import { alatiSubcategories, getCategoryHubHeroDescription, getCategoryHubSectionTitle } from '@/data/categoryPages';
 import { getProductsByCategorySlug, getSaleCatalogProducts, koncarProducts, type KoncarCatalogProduct } from '@/data/koncarProducts';
 import { otherProgramCategories } from '@/data/navigation';
 import {
@@ -67,6 +67,7 @@ export type ParentListingData = {
   parentSlug: string;
   categorySlug: string;
   title: string;
+  sectionTitle: string;
   description: string;
   breadcrumbs: { label: string; href?: string }[];
   chips: (ListingChip & { href: string })[];
@@ -196,9 +197,9 @@ export const getParentListing = (
   const menuCategory = findMenuCategoryByParentSlug(parentSlug);
   const alatiItem = alatiSubcategories.find((s) => s.slug === parentSlug);
   const title = menuCategory?.label ?? alatiItem?.name ?? parentSlug;
-  const description = menuCategory
-    ? `Izaberite podkategoriju iz ponude: ${menuCategory.label.toLowerCase()}.`
-    : `Pregledajte ponudu u kategoriji ${title.toLowerCase()}.`;
+  const description =
+    getCategoryHubHeroDescription(parentSlug, title) ??
+    `Pregledajte ponudu u kategoriji ${title.toLowerCase()}.`;
 
   const chips: ParentListingData['chips'] = menuCategory
     ? menuCategory.subcategories.map((sub, i) => ({
@@ -223,6 +224,7 @@ export const getParentListing = (
     parentSlug,
     categorySlug,
     title: title.toUpperCase(),
+    sectionTitle: getCategoryHubSectionTitle(parentSlug, title),
     description,
     breadcrumbs: [
       { label: 'Početna', href: '/' },

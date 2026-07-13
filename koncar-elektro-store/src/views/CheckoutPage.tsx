@@ -28,8 +28,8 @@ const CheckoutPage = () => {
 
       <section className="container py-8 lg:py-10">
         <div className="cart-page-header">
-          <h1 className="section-heading text-xl md:text-2xl">Plaćanje / Odjava</h1>
-          <p className="text-sm text-muted-foreground">Sigurno završite porudžbinu u nekoliko koraka</p>
+          <h1 className="section-heading text-xl md:text-2xl">Završetak porudžbine</h1>
+          <p className="text-sm text-muted-foreground">Unesite podatke i potvrdite porudžbinu</p>
         </div>
 
         <div className="cart-page-grid">

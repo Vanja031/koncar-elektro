@@ -12,6 +12,7 @@ import { ListingToolbar, type ListingPerPage } from '@/components/catalog/Listin
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { ParentHubBestSellers } from '@/components/catalog/ParentHubBestSellers';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
+import { getCategoryHubHeroDescription } from '@/data/categoryPages';
 import { getParentListing, getProductListing, getProgramListing } from '@/data/catalogListing';
 import { useLiveApi } from '@/lib/api/config';
 import { useLiveProductsByCategory } from '@/hooks/api/useLiveCatalog';
@@ -26,11 +27,11 @@ import { findMenuIdByParentSlug } from '@/lib/navigation/buildNavigationMenu';
 import { slugify } from '@/lib/slugify';
 import type { ListingSort } from '@/lib/listingSort';
 import {
-  emptyListingFilters,
-  getBrandFilterOptions,
   countActiveFilters,
+  emptyListingFilters,
   type ListingFilters,
 } from '@/lib/listingFilters';
+import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
 import { toWcParentSlug, programToWcSlug, resolveListingCategorySlug } from '@/lib/wcSlugs';
 import { markTopBestsellers } from '@/lib/catalogCardHelpers';
 import { buildListingHighlightChips } from '@/lib/listingHighlightChips';
@@ -56,7 +57,6 @@ const ProductsPage = ({
   const [sort, setSort] = useState<ListingSort>('bestsellers');
   const [filters, setFilters] = useState<ListingFilters>(emptyListingFilters());
   const { getCategoryById, isLive: navLive } = useNavigationMenu();
-  const brandOptions = useMemo(() => getBrandFilterOptions(), []);
 
   const scrollListingToTop = useCallback(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -150,6 +150,11 @@ const ProductsPage = ({
     isDefaultListingQuery ? initialListing : undefined,
   );
 
+  const { groups: attributeGroups } = useListingAttributeGroups(
+    { category: wcCategorySlug },
+    filters,
+  );
+
   const parentBestSellers = useLiveProductsByCategory(useLiveApi ? parentWcSlug : undefined, {
     perPage: 8,
     sort: 'bestsellers',
@@ -229,10 +234,19 @@ const ProductsPage = ({
 
     return (
       <ShopLayout>
-        <ListingHero breadcrumbs={parentData.breadcrumbs} title={parentData.title} />
+        <ListingHero
+          breadcrumbs={parentData.breadcrumbs}
+          title={parentData.title}
+          description={
+            parentData.description ||
+            getCategoryHubHeroDescription(parentSlug, parentData.title)
+          }
+        />
         {chips.length > 0 ? (
           <SubcategoryChips
             chips={chips}
+            title={parentData.sectionTitle}
+            layout="cards"
             description=""
             imagesLoading={isLiveChips && (parentChipImages.isPending || parentChipImages.isFetching)}
           />
@@ -240,8 +254,8 @@ const ProductsPage = ({
           <div className="container py-6">
             <CatalogStateMessage
               variant="empty"
-              title="Nema podkategorija"
-              description="Za ovu kategoriju trenutno nema dostupnih podkategorija u prodavnici."
+              title="Nema kategorija"
+              description="Za ovu kategoriju trenutno nema dostupnih kategorija u prodavnici."
             />
           </div>
         )}
@@ -379,12 +393,16 @@ const ProductsPage = ({
 
   return (
     <ShopLayout>
-      <ListingHero breadcrumbs={listingData.breadcrumbs} title={listingData.title} />
+      <ListingHero
+        breadcrumbs={listingData.breadcrumbs}
+        title={listingData.title}
+        description={listingData.description}
+      />
 
       {chips.length > 0 && (
         <SubcategoryChips
           chips={chips}
-          description={listingData.description}
+          description=""
           hideOnMobile
         />
       )}
@@ -393,7 +411,7 @@ const ProductsPage = ({
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
           <div className="hidden lg:block">
             <ProductFilters
-              brandOptions={brandOptions}
+              attributeGroups={attributeGroups}
               filters={filters}
               onChange={handleFiltersChange}
               onClear={handleFiltersClear}
@@ -403,7 +421,7 @@ const ProductsPage = ({
           <div>
             <div className="catalog-mobile-actions lg:hidden">
               <MobileFiltersSheet
-                brandOptions={brandOptions}
+                attributeGroups={attributeGroups}
                 filters={filters}
                 onChange={handleFiltersChange}
                 onClear={handleFiltersClear}

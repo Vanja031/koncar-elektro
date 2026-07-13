@@ -1,11 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { ListingHero } from '@/components/catalog/ListingHero';
 import { SaleIntroBanner } from '@/components/catalog/SaleIntroBanner';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
+import { ProductFilters } from '@/components/catalog/ProductFilters';
+import { MobileFiltersSheet } from '@/components/catalog/MobileFiltersSheet';
 import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
@@ -14,20 +16,45 @@ import { getDiscountPercent } from '@/data/koncarProducts';
 import { useLiveSaleProducts } from '@/hooks/api/useLiveCatalog';
 import type { LiveProductsResult } from '@/hooks/api/useLiveCatalog';
 import { useLiveApi } from '@/lib/api/config';
+import { getSaleCategoryFilterOptions } from '@/lib/navigation/buildNavigationMenu';
+import {
+  countActiveFilters,
+  emptyListingFilters,
+  type ListingFilters,
+} from '@/lib/listingFilters';
+import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
+import { useSearchParams } from '@/lib/router-compat';
 
 type Props = {
   initialListing?: LiveProductsResult;
 };
 
+const saleCategoryOptions = getSaleCategoryFilterOptions().map((opt) => ({
+  label: opt.label,
+  slug: opt.wcSlug,
+}));
+
 const SalePage = ({ initialListing }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState<ListingPerPage>(48);
+  const [filters, setFilters] = useState<ListingFilters>(() => ({
+    ...emptyListingFilters(),
+    categorySlug: searchParams.get('kategorija') || undefined,
+  }));
   const { breadcrumbs, title, whyBuy, faq } = saleListing;
-  const isDefaultSaleQuery = page === 1 && perPage === 48;
+
+  const isDefaultSaleQuery = page === 1 && perPage === 48 && countActiveFilters(filters) === 0;
+
   const liveSale = useLiveSaleProducts(
-    { page, perPage },
+    { page, perPage, filters },
     isDefaultSaleQuery ? initialListing : undefined,
+  );
+
+  const { groups: attributeGroups } = useListingAttributeGroups(
+    { onSale: true, category: filters.categorySlug },
+    filters,
   );
 
   const products = useMemo(() => {
@@ -42,6 +69,46 @@ const SalePage = ({ initialListing }: Props) => {
     () => products.reduce((max, p) => Math.max(max, getDiscountPercent(p)), 0),
     [products],
   );
+
+  const scrollListingToTop = useCallback(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, []);
+
+  const syncFilterParams = useCallback(
+    (nextFilters: ListingFilters) => {
+      const next = new URLSearchParams(searchParams);
+      if (nextFilters.categorySlug) next.set('kategorija', nextFilters.categorySlug);
+      else next.delete('kategorija');
+      next.delete('podkategorija');
+      setSearchParams(next);
+    },
+    [searchParams, setSearchParams],
+  );
+
+  const handleFiltersChange = useCallback(
+    (next: ListingFilters) => {
+      setFilters(next);
+      syncFilterParams(next);
+      setPage(1);
+      scrollListingToTop();
+    },
+    [scrollListingToTop, syncFilterParams],
+  );
+
+  const handleFiltersClear = useCallback(() => {
+    const next = emptyListingFilters();
+    setFilters(next);
+    syncFilterParams(next);
+    setPage(1);
+    scrollListingToTop();
+  }, [scrollListingToTop, syncFilterParams]);
+
+  useEffect(() => {
+    const categorySlug = searchParams.get('kategorija') || undefined;
+    setFilters((prev) =>
+      prev.categorySlug === categorySlug ? prev : { ...prev, categorySlug },
+    );
+  }, [searchParams]);
 
   const pageNumbers = (() => {
     if (totalPages <= 7) {
@@ -88,7 +155,7 @@ const SalePage = ({ initialListing }: Props) => {
               disabled={page <= 1 || liveSale.isFetching}
               onClick={() => {
                 setPage((p) => Math.max(1, p - 1));
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                scrollListingToTop();
               }}
               className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary disabled:opacity-40"
               aria-label="Prethodna strana"
@@ -106,7 +173,7 @@ const SalePage = ({ initialListing }: Props) => {
                     disabled={liveSale.isFetching}
                     onClick={() => {
                       setPage(pageNum);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      scrollListingToTop();
                     }}
                     className={`w-9 h-9 border rounded text-sm font-medium ${
                       pageNum === page
@@ -124,7 +191,7 @@ const SalePage = ({ initialListing }: Props) => {
               disabled={page >= totalPages || liveSale.isFetching}
               onClick={() => {
                 setPage((p) => Math.min(totalPages, p + 1));
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                scrollListingToTop();
               }}
               className="w-9 h-9 border border-border rounded flex items-center justify-center hover:bg-secondary disabled:opacity-40"
               aria-label="Sledeća strana"
@@ -143,20 +210,45 @@ const SalePage = ({ initialListing }: Props) => {
       <SaleIntroBanner maxDiscount={maxDiscount} />
 
       <section className="container py-8">
-        {!useLiveApi || (!liveSale.isLoading && !liveSale.isError && products.length > 0) ? (
-          <ListingToolbar
-            view={view}
-            onViewChange={setView}
-            productCount={useLiveApi ? totalCount : products.length}
-            perPage={perPage}
-            onPerPageChange={(value) => {
-              setPerPage(value);
-              setPage(1);
-            }}
-          />
-        ) : null}
+        <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
+          <div className="hidden lg:block">
+            <ProductFilters
+              attributeGroups={attributeGroups}
+              categoryOptions={saleCategoryOptions}
+              filters={filters}
+              onChange={handleFiltersChange}
+              onClear={handleFiltersClear}
+            />
+          </div>
 
-        {listingBody()}
+          <div>
+            <div className="catalog-mobile-actions lg:hidden">
+              <MobileFiltersSheet
+                attributeGroups={attributeGroups}
+                categoryOptions={saleCategoryOptions}
+                filters={filters}
+                onChange={handleFiltersChange}
+                onClear={handleFiltersClear}
+              />
+            </div>
+
+            {!useLiveApi || (!liveSale.isLoading && !liveSale.isError) ? (
+              <ListingToolbar
+                view={view}
+                onViewChange={setView}
+                productCount={useLiveApi ? totalCount : products.length}
+                perPage={perPage}
+                onPerPageChange={(value) => {
+                  setPerPage(value);
+                  setPage(1);
+                  scrollListingToTop();
+                }}
+              />
+            ) : null}
+
+            {listingBody()}
+          </div>
+        </div>
       </section>
 
       <CatalogInfoSections

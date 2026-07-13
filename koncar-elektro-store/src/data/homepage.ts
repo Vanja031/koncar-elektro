@@ -51,8 +51,17 @@ export const popularCategories = [
 ];
 
 export const featuredBrands = [
-  'Bosch', 'Makita', 'Metabo', 'Villager', 'Einhell', 'Hyundai', 'Scheppach', 'Ingco', 'Rema Power', 'Cedrus',
-];
+  { name: 'Bosch', slug: 'bosch' },
+  { name: 'Makita', slug: 'makita' },
+  { name: 'Metabo', slug: 'metabo' },
+  { name: 'Villager', slug: 'villager' },
+  { name: 'Einhell', slug: 'einhell' },
+  { name: 'Hyundai', slug: 'hyundai' },
+  { name: 'Scheppach', slug: 'scheppach' },
+  { name: 'Ingco', slug: 'ingco' },
+  { name: 'REM Power', slug: 'rem-power' },
+  { name: 'Cedrus', slug: 'cedrus' },
+] as const;
 
 export const faqItems = [
   {

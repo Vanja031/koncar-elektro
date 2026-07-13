@@ -7,11 +7,14 @@ import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import {
   createOrderId,
   paymentMethodLabel,
+  paymentMethodOrder,
   savePlacedOrder,
   type PaymentMethod,
 } from '@/lib/order';
 import { ROUTES } from '@/lib/catalogUrls';
 import { companyInfo } from '@/data/staticPages';
+
+export const CHECKOUT_FORM_ID = 'checkout-form';
 
 type FormState = {
   email: string;
@@ -34,12 +37,12 @@ const initialForm: FormState = {
   city: '',
   postalCode: '',
   note: '',
-  paymentMethod: 'card',
+  paymentMethod: 'cod',
 };
 
 const paymentIcons: Record<PaymentMethod, typeof CreditCard> = {
-  card: CreditCard,
   cod: Coins,
+  card: CreditCard,
   bank: FileStack,
 };
 
@@ -80,7 +83,7 @@ export const CheckoutForm = () => {
   };
 
   return (
-    <form className="checkout-form" onSubmit={handleSubmit} noValidate>
+    <form id={CHECKOUT_FORM_ID} className="checkout-form" onSubmit={handleSubmit} noValidate>
       <div className="checkout-card">
         <h2 className="checkout-card-title">1. Kontakt</h2>
         <div className="checkout-field-grid">
@@ -185,12 +188,9 @@ export const CheckoutForm = () => {
       </div>
 
       <div className="checkout-card">
-        <h2 className="checkout-card-title">4. Plaćanje</h2>
-        <p className="text-xs text-muted-foreground mb-3">Prihvatamo kartice:</p>
-        <PaymentCardIcons size="sm" className="mb-4" />
-
+        <h2 className="checkout-card-title">4. Način plaćanja</h2>
         <div className="checkout-payment-grid">
-          {(Object.keys(paymentMethodLabel) as PaymentMethod[]).map((method) => {
+          {paymentMethodOrder.map((method) => {
             const Icon = paymentIcons[method];
             const active = form.paymentMethod === method;
             return (
@@ -208,13 +208,18 @@ export const CheckoutForm = () => {
         </div>
 
         <p className="checkout-payment-note">
-          {form.paymentMethod === 'card' && 'Nakon potvrde bićete preusmereni na sigurnu stranicu banke.'}
           {form.paymentMethod === 'cod' && 'Plaćanje gotovinom kuriru prilikom preuzimanja.'}
+          {form.paymentMethod === 'card' && (
+            <>
+              Nakon potvrde bićete preusmereni na sigurnu stranicu banke.
+              <PaymentCardIcons size="sm" className="mt-3" />
+            </>
+          )}
           {form.paymentMethod === 'bank' && 'Instrukcije za uplatu stižu na email nakon potvrde.'}
         </p>
       </div>
 
-      <button type="submit" className="btn-yellow w-full py-4 text-sm">
+      <button type="submit" className="checkout-submit-btn lg:hidden">
         Završi porudžbinu · {formatPrice(total)}
       </button>
     </form>

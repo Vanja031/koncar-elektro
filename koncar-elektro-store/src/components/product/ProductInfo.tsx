@@ -1,6 +1,7 @@
 import { Check, Star } from 'lucide-react';
 import type { ProductDetail } from '@/data/productDetail';
 import { ProductWarrantyExtension } from '@/components/product/ProductWarrantyExtension';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 
 type Props = {
   product: ProductDetail;
@@ -12,7 +13,7 @@ export const ProductInfo = ({ product, onReviewsClick }: Props) => {
 
   return (
     <div className="product-info">
-      <p className="product-info-brand">{product.brand}</p>
+      <ManufacturerRow brand={product.brand} className="product-info-brand" size="md" />
 
       <h1 className="product-info-title">{product.name}</h1>
 

@@ -4,7 +4,7 @@ import { Link } from '@/lib/router-compat';
 import { Phone, Mail, MessageSquare } from 'lucide-react';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
 import { StaticFaqAccordion } from '@/components/static/StaticFaqAccordion';
-import { faqPageContent, staticFaqItems, companyInfo } from '@/data/staticPages';
+import { faqPageContent, staticFaqItems, companyInfo, contactChannels } from '@/data/staticPages';
 import agentAvatar from '@/assets/agent-avatar.png';
 
 const FaqPage = () => {
@@ -37,7 +37,7 @@ const FaqPage = () => {
                   Pošaljite poruku
                 </Link>
                 <a
-                  href={`tel:${companyInfo.phones[0].replace(/\s/g, '')}`}
+                  href={contactChannels.primaryPhoneHref}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
                 >
                   <Phone className="w-4 h-4 text-accent" />

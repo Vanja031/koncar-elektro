@@ -1,4 +1,5 @@
 import type { KoncarCatalogProduct } from '@/data/koncarProducts';
+import { BRAND_ATTRIBUTE_SLUG } from '@/lib/listingFilters';
 import type { WcStoreAttribute, WcStorePrice, WcStoreProduct } from '@/lib/api/types/wc-store';
 
 /** Store API prices are in minor units (e.g. 34000 + minor_unit 2 → 340.00 RSD). */
@@ -8,21 +9,81 @@ export function minorUnitsToMajor(price: WcStorePrice): number {
   return raw / 10 ** price.currency_minor_unit;
 }
 
+function normalizeAttrKey(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'dj')
+    .replace(/Đ/g, 'dj')
+    .toLowerCase()
+    .trim();
+}
+
 export function getAttributeValue(product: WcStoreProduct, ...names: string[]): string | undefined {
   const attrs = product.attributes ?? [];
-  for (const name of names) {
-    const attr = attrs.find((a) => a.name.toLowerCase() === name.toLowerCase());
-    const term = attr?.terms?.[0]?.name;
+  const wanted = names.map(normalizeAttrKey);
+
+  for (const attr of attrs) {
+    const byName = wanted.includes(normalizeAttrKey(attr.name));
+    const byTaxonomy = wanted.includes(normalizeAttrKey(attr.taxonomy ?? ''));
+    if (!byName && !byTaxonomy) continue;
+    const term = attr.terms?.[0]?.name;
     if (term) return term;
   }
   return undefined;
 }
 
+/** Prefer WC attribute; never fall back to the first word of the title. */
 function extractBrand(product: WcStoreProduct): string {
-  const fromAttr = getAttributeValue(product, 'Proizvodjac', 'Proizvođač');
+  const fromAttr = getAttributeValue(
+    product,
+    'Proizvodjač',
+    'Proizvođač',
+    'Proizvodjac',
+    BRAND_ATTRIBUTE_SLUG,
+  );
   if (fromAttr) return fromAttr;
-  const firstWord = product.name.split(/\s+/)[0];
-  return firstWord ?? 'Končar';
+
+  // Last resort: known brand token in the product name (longest match wins).
+  const nameNorm = normalizeAttrKey(product.name);
+  const known = [
+    'super ingco',
+    'garden master',
+    'rem power',
+    'f.f. group',
+    'ff group',
+    'dah solar',
+    'st garden',
+    'anti fire',
+    'iskra ero',
+    'makita',
+    'metabo',
+    'bosch',
+    'villager',
+    'einhell',
+    'hyundai',
+    'scheppach',
+    'ingco',
+    'hugong',
+    'varstroj',
+    'dolomite',
+    'dewalt',
+    'milwaukee',
+    'hikoki',
+    'raider',
+    'cedrus',
+    'agm',
+    'wilo',
+  ];
+  const hit = known.find((b) => nameNorm.includes(b));
+  if (hit) {
+    return hit
+      .split(' ')
+      .map((w) => w.toUpperCase())
+      .join(' ');
+  }
+
+  return '';
 }
 
 /** Deepest category slug path from permalink, e.g. `rucni-alat-i-pribor/rucni-alat`. */
@@ -42,9 +103,13 @@ export function extractProdavnicaPath(product: WcStoreProduct): string {
 }
 
 export function extractSpecsFromAttributes(product: WcStoreProduct): string[] {
-  const skip = new Set(['proizvodjac', 'proizvođač', 'uvoznik', 'zemlja porekla']);
+  const skip = new Set(['proizvodjac', 'uvoznik', 'zemlja porekla', 'pa_proizvodjac']);
   return (product.attributes ?? [])
-    .filter((a) => !skip.has(a.name.toLowerCase()))
+    .filter((a) => {
+      const key = normalizeAttrKey(a.name);
+      const tax = normalizeAttrKey(a.taxonomy ?? '');
+      return !skip.has(key) && !skip.has(tax);
+    })
     .flatMap((a) => a.terms.map((t) => `${a.name}: ${t.name}`))
     .slice(0, 6);
 }

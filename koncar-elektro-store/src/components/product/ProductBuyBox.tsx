@@ -3,6 +3,7 @@ import { Star, ShoppingCart, Heart, Minus, Plus, Truck, Shield, CreditCard, Phon
 import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
 import { contactChannels } from '@/data/staticPages';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 
 type Props = {
   product: ProductDetail;
@@ -22,7 +23,7 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
 
   return (
     <div className="product-buy-box">
-      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{product.brand}</p>
+      <ManufacturerRow brand={product.brand} size="md" />
       <h1 className="font-display font-bold text-2xl md:text-3xl text-foreground leading-tight mt-1">
         {product.name}
       </h1>

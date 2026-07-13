@@ -16,9 +16,9 @@ import { useLiveSearchProducts } from '@/hooks/api/useLiveCatalog';
 import type { ListingSort } from '@/lib/listingSort';
 import {
   emptyListingFilters,
-  getBrandFilterOptions,
   type ListingFilters,
 } from '@/lib/listingFilters';
+import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -31,7 +31,6 @@ const SearchPage = () => {
   const [perPage, setPerPage] = useState<ListingPerPage>(24);
   const [sort, setSort] = useState<ListingSort>('bestsellers');
   const [filters, setFilters] = useState<ListingFilters>(emptyListingFilters());
-  const brandOptions = useMemo(() => getBrandFilterOptions(), []);
 
   const scrollListingToTop = useCallback(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -53,6 +52,15 @@ const SearchPage = () => {
     sort,
     filters,
   });
+
+  const { groups: attributeGroups } = useListingAttributeGroups(
+    {
+      search: query || undefined,
+      category,
+      onSale: onSale || undefined,
+    },
+    filters,
+  );
 
   const title = (() => {
     if (onSale && query.trim()) return `Akcija: „${query.trim()}“`;
@@ -184,7 +192,7 @@ const SearchPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
           <div className="hidden lg:block">
             <ProductFilters
-              brandOptions={brandOptions}
+              attributeGroups={attributeGroups}
               filters={filters}
               onChange={(next) => {
                 setFilters(next);
@@ -202,7 +210,7 @@ const SearchPage = () => {
           <div>
             <div className="catalog-mobile-actions lg:hidden">
               <MobileFiltersSheet
-                brandOptions={brandOptions}
+                attributeGroups={attributeGroups}
                 filters={filters}
                 onChange={(next) => {
                   setFilters(next);

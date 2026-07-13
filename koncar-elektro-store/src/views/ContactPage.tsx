@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
-import { companyInfo, contactContent } from '@/data/staticPages';
+import { companyInfo, contactChannels, contactContent } from '@/data/staticPages';
 
 const ContactPage = () => {
   const { breadcrumbs, title, subtitle, formIntro } = contactContent;
@@ -39,7 +39,7 @@ const ContactPage = () => {
       label: 'Telefon',
       bg: 'bg-primary',
       iconColor: 'text-accent',
-      href: `tel:${companyInfo.phones[0].replace(/\s/g, '')}`,
+      href: contactChannels.primaryPhoneHref,
       content: (
         <div className="mt-1">
           {companyInfo.phones.map((phone) => (
