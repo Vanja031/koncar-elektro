@@ -20,23 +20,18 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
   const discount = getDiscountPercent(product);
   const onSale = Boolean(product.oldPrice) && discount > 0;
 
-  // Jedan bedž. Popust ima prioritet svuda osim u bestseller sekcijama.
-  const badge: 'sale' | 'bestseller' | null = bestsellerBadge
-    ? 'bestseller'
-    : onSale
-      ? 'sale'
-      : product.bestseller
-        ? 'bestseller'
-        : null;
+  // Oba bedža se prikazuju istovremeno kad je proizvod i na popustu i najprodavaniji.
+  const showSaleBadge = onSale;
+  const showBestsellerBadge = bestsellerBadge || product.bestseller;
 
   return (
     <article
       className={`catalog-product-card group ${isList ? 'catalog-product-card--list' : ''} ${product.bestseller ? 'catalog-product-card--bestseller' : ''}`}
     >
-      {badge && (
+      {(showSaleBadge || showBestsellerBadge) && (
         <div className="catalog-product-badges">
-          {badge === 'sale' && <span className="catalog-badge-sale">-{discount}%</span>}
-          {badge === 'bestseller' && (
+          {showSaleBadge && <span className="catalog-badge-sale">-{discount}%</span>}
+          {showBestsellerBadge && (
             <span className="catalog-badge-bestseller">Najprodavanije</span>
           )}
         </div>

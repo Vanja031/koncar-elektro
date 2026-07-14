@@ -15,22 +15,39 @@ import { useLiveApi } from '@/lib/api/config';
 import { useLiveSearchProducts } from '@/hooks/api/useLiveCatalog';
 import type { ListingSort } from '@/lib/listingSort';
 import {
+  BRAND_ATTRIBUTE_SLUG,
   emptyListingFilters,
+  getBrandAttributeSlug,
+  getBrandFilterOptions,
   type ListingFilters,
 } from '@/lib/listingFilters';
 import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
+import { featuredBrands } from '@/data/homepage';
+
+/** WC term names are often ALL CAPS (e.g. "MAKITA") — prettify for display. */
+const titleCaseLabel = (label: string) =>
+  /^[A-ZŠĐČĆŽ0-9 .-]+$/.test(label)
+    ? label
+        .toLowerCase()
+        .split(' ')
+        .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+        .join(' ')
+    : label;
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const category = searchParams.get('category') ?? undefined;
   const onSale = searchParams.get('akcija') === '1';
+  const brandSlug = searchParams.get('brend') ?? undefined;
 
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState<ListingPerPage>(24);
   const [sort, setSort] = useState<ListingSort>('bestsellers');
-  const [filters, setFilters] = useState<ListingFilters>(emptyListingFilters());
+  const [filters, setFilters] = useState<ListingFilters>(
+    brandSlug ? { attributes: { [BRAND_ATTRIBUTE_SLUG]: [brandSlug] } } : emptyListingFilters(),
+  );
 
   const scrollListingToTop = useCallback(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -40,8 +57,10 @@ const SearchPage = () => {
     setPage(1);
     setPerPage(24);
     setSort('bestsellers');
-    setFilters(emptyListingFilters());
-  }, [query, category, onSale]);
+    setFilters(
+      brandSlug ? { attributes: { [BRAND_ATTRIBUTE_SLUG]: [brandSlug] } } : emptyListingFilters(),
+    );
+  }, [query, category, onSale, brandSlug]);
 
   const liveSearch = useLiveSearchProducts({
     search: query || undefined,
@@ -62,16 +81,26 @@ const SearchPage = () => {
     filters,
   );
 
+  const brandName = (() => {
+    if (!brandSlug) return undefined;
+    const known = featuredBrands.find((b) => getBrandAttributeSlug(b.name, b.slug) === brandSlug);
+    if (known) return known.name;
+    const option = getBrandFilterOptions().find((o) => o.slug === brandSlug);
+    return option ? titleCaseLabel(option.label) : brandSlug;
+  })();
+
   const title = (() => {
     if (onSale && query.trim()) return `Akcija: „${query.trim()}“`;
     if (onSale) return 'Proizvodi na akciji';
+    if (brandName && query.trim()) return `${brandName}: „${query.trim()}“`;
+    if (brandName) return `Brend: ${brandName}`;
     if (query.trim()) return `Rezultati pretrage: „${query.trim()}“`;
     return 'Pretraga proizvoda';
   })();
 
   const breadcrumbs = [
     { label: 'Početna', href: '/' },
-    { label: 'Pretraga' },
+    { label: brandName ?? 'Pretraga' },
   ];
 
   const products = useMemo(() => {
@@ -108,7 +137,7 @@ const SearchPage = () => {
     );
   }
 
-  const hasSearchContext = Boolean(query.trim()) || Boolean(category) || onSale;
+  const hasSearchContext = Boolean(query.trim()) || Boolean(category) || onSale || Boolean(brandSlug);
 
   const listingBody = () => {
     if (!hasSearchContext) {

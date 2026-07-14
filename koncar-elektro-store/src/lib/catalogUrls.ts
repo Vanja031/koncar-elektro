@@ -27,18 +27,25 @@ export const ROUTES = {
   search: '/pretraga',
 } as const;
 
-/** Pretraga proizvoda — `q`, opciono `category` (WC slug), `akcija=1` za sniženja u kategoriji. */
+/** Pretraga proizvoda — `q`, opciono `category` (WC slug), `akcija=1` za sniženja u kategoriji, `brend` (pa_proizvodjac slug). */
 export function getSearchUrl(params: {
   q?: string;
   category?: string;
   onSale?: boolean;
+  brand?: string;
 }): string {
   const sp = new URLSearchParams();
   if (params.q?.trim()) sp.set('q', params.q.trim());
   if (params.category) sp.set('category', params.category);
   if (params.onSale) sp.set('akcija', '1');
+  if (params.brand) sp.set('brend', params.brand);
   const qs = sp.toString();
   return qs ? `${ROUTES.search}?${qs}` : ROUTES.search;
+}
+
+/** Svi proizvodi jednog brenda (pa_proizvodjac slug), preko stranice pretrage. */
+export function getBrandProductsUrl(brandSlug: string): string {
+  return getSearchUrl({ brand: brandSlug });
 }
 
 /** Default listing when product or category is not found. */

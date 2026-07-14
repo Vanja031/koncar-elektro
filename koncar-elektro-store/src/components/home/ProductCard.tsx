@@ -21,15 +21,17 @@ export const ProductCard = ({ product, rank, bestseller, bestsellerCompact }: Pr
 
   return (
     <div className={`product-card-home h-full${bestseller ? ' product-card-home--bestseller' : ''}`}>
-      {bestseller ? (
-        <span className={bestsellerCompact ? 'badge-bestseller badge-bestseller--compact' : 'badge-bestseller'}>
-          Najprodavanije
-        </span>
-      ) : discount > 0 ? (
-        <span className="badge-discount">-{discount}%</span>
-      ) : rank != null ? (
-        <span className="badge-rank">{rank}</span>
-      ) : null}
+      {(bestseller || discount > 0 || rank != null) && (
+        <div className="product-card-home-badges">
+          {discount > 0 && <span className="badge-discount">-{discount}%</span>}
+          {bestseller && (
+            <span className={bestsellerCompact ? 'badge-bestseller badge-bestseller--compact' : 'badge-bestseller'}>
+              Najprodavanije
+            </span>
+          )}
+          {!bestseller && discount <= 0 && rank != null && <span className="badge-rank">{rank}</span>}
+        </div>
+      )}
       <Link to={productUrl} className="product-card-media block">
         <img src={product.image} alt={product.name} loading="lazy" />
       </Link>

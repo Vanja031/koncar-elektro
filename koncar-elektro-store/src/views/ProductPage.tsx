@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, useParams } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
-import { ListingHero } from '@/components/catalog/ListingHero';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfo } from '@/components/product/ProductInfo';
@@ -97,8 +96,6 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
 
   return (
     <ShopLayout>
-      <ListingHero breadcrumbs={product.breadcrumbs} title={product.name} />
-
       <section className="container py-6 lg:py-8">
         <div className="product-hero-grid">
           <ProductGallery images={product.gallery} name={product.name} discount={discount} />

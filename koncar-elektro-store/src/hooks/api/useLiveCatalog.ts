@@ -209,7 +209,8 @@ export function useLiveSearchProducts(
     filters = {},
   } = options;
 
-  const hasQuery = Boolean(search?.trim()) || Boolean(category) || onSale;
+  const hasAttributeFilters = Object.values(filters.attributes ?? {}).some((slugs) => slugs?.length);
+  const hasQuery = Boolean(search?.trim()) || Boolean(category) || onSale || hasAttributeFilters;
 
   return useQuery({
     queryKey: ['live-search-products', search, category, onSale, page, perPage, sort, filters],

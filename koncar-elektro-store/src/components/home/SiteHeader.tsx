@@ -17,8 +17,8 @@ import { contactChannels } from '@/data/staticPages';
 
 /** Širina kolone logotipa u gornjem redu. */
 const LOGO_COLUMN_WIDTH = 'w-[13rem]';
-/** Uža širina dugmeta „Svi proizvodi” u nav traci. */
-const ALL_PRODUCTS_BTN_WIDTH = 'w-[11rem]';
+/** Dugme „Svi proizvodi” u nav traci — ista širina kao kolona logotipa. */
+const ALL_PRODUCTS_BTN_WIDTH = LOGO_COLUMN_WIDTH;
 
 type NavItem = {
   label: string;
@@ -226,7 +226,7 @@ export const SiteHeader = () => {
             <button
               type="button"
               onClick={toggleAllProducts}
-              className={`flex items-center justify-center gap-1.5 h-11 font-display font-semibold uppercase text-[13px] tracking-wide transition-all shrink-0 px-2 ${ALL_PRODUCTS_BTN_WIDTH} ${
+              className={`flex items-center justify-center gap-1.5 h-11 font-display font-semibold uppercase text-[15px] tracking-wide transition-all shrink-0 px-2 ${ALL_PRODUCTS_BTN_WIDTH} ${
                 megaOpen
                   ? 'bg-accent/90 text-accent-foreground'
                   : 'bg-accent text-accent-foreground hover:brightness-105'

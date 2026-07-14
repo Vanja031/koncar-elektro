@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { ProductImageLightbox } from './ProductImageLightbox';
 
 /** Product video thumb — enable when WC/video URL is wired */
 const SHOW_PRODUCT_VIDEO_THUMB = false;
@@ -14,6 +15,7 @@ type Props = {
 export const ProductGallery = ({ images, name, discount }: Props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: images.length > 1, align: 'start' });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -56,14 +58,32 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
           <div className="product-gallery-track">
             {images.map((img, i) => (
               <div key={`${img}-${i}`} className="product-gallery-slide">
-                <div className="product-gallery-image-wrap">
+                <button
+                  type="button"
+                  className="product-gallery-image-wrap w-full"
+                  onClick={() => setLightboxOpen(true)}
+                  aria-label="Uvećaj sliku"
+                >
                   <img src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" />
-                </div>
+                </button>
               </div>
             ))}
           </div>
         </div>
+
+        <span className="product-gallery-zoom-hint">
+          <ZoomIn className="w-4 h-4" />
+        </span>
       </div>
+
+      {lightboxOpen && (
+        <ProductImageLightbox
+          images={images}
+          name={name}
+          initialIndex={activeIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
 
       <div className="product-gallery-thumbs" role="tablist" aria-label="Slike proizvoda">
         {images.map((img, i) => (

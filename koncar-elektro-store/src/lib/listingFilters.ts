@@ -116,6 +116,21 @@ export function getBrandFilterOptions(): AttributeFilterOption[] {
   return getAttributeFilterOptions(BRAND_ATTRIBUTE_SLUG);
 }
 
+/**
+ * Resolve the actual `pa_proizvodjac` term slug for a brand display name.
+ * The taxonomy term slug doesn't always match a naive slugify of the name
+ * (e.g. brand name "Bosch" → term slug "bosch-professional"), so this looks
+ * up the real term by name first and only falls back to the given slug hint.
+ */
+export function getBrandAttributeSlug(brandName: string, slugHint?: string): string | undefined {
+  const normalized = brandName.trim().toLowerCase();
+  const options = getBrandFilterOptions();
+  const byName = options.find((o) => o.label.trim().toLowerCase() === normalized);
+  if (byName) return byName.slug;
+  if (slugHint && options.some((o) => o.slug === slugHint)) return slugHint;
+  return slugHint;
+}
+
 export function getAttributeLabel(attributeSlug: string): string {
   if (ATTRIBUTE_LABEL_OVERRIDES[attributeSlug]) {
     return ATTRIBUTE_LABEL_OVERRIDES[attributeSlug];

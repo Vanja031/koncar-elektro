@@ -277,20 +277,24 @@
   .product-card-home .product-card-media {
     @apply border-b border-border;
   }
+  .product-card-home-badges {
+    @apply absolute top-2 left-2 z-10 flex flex-row items-start gap-1 max-w-[calc(100%-1rem)] overflow-hidden;
+  }
+  .badge-discount,
+  .badge-bestseller {
+    @apply inline-flex items-center justify-center h-4 md:h-5 font-bold uppercase rounded-sm leading-none whitespace-nowrap shrink-0;
+  }
   .badge-discount {
-    @apply absolute top-2 left-2 z-10 bg-destructive text-white text-xs font-bold px-2 py-0.5 rounded-sm;
-    @apply md:text-sm md:px-2.5 md:py-1;
+    @apply bg-destructive text-white text-[9px] md:text-[11px] px-1.5 md:px-2;
   }
   .badge-rank {
-    @apply absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center;
+    @apply bg-primary text-primary-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0;
   }
   .badge-bestseller {
-    @apply absolute top-2 left-2 z-10 bg-accent text-accent-foreground text-xs font-bold uppercase px-2 py-0.5 rounded-sm;
-    @apply md:text-sm md:px-2.5 md:py-1;
+    @apply bg-accent text-accent-foreground text-[10px] md:text-xs px-2 md:px-2.5;
   }
   .badge-bestseller--compact {
-    @apply text-[8px] px-1 py-px leading-tight tracking-tight;
-    @apply sm:text-[9px] sm:px-1.5 sm:py-0.5;
+    @apply text-[8px] px-1 tracking-tight;
   }
   .product-card-home--bestseller {
     @apply bg-accent/10 border-accent/30;
@@ -377,7 +381,8 @@
     box-shadow: var(--shadow-navy-menu);
   }
   .mega-menu-sidebar {
-    @apply border-r border-border/50 self-stretch w-[15.5rem];
+    /* Ista širina kao dugme „Svi proizvodi” (ALL_PRODUCTS_BTN_WIDTH u SiteHeader.tsx). */
+    @apply border-r border-border/50 self-stretch w-[13rem];
   }
   .mega-menu-sidebar-alati {
     @apply bg-[#eef2f7] py-3;
@@ -790,15 +795,18 @@
       display: flex;
     }
   }
+  .catalog-badge-sale,
   .catalog-badge-bestseller {
-    @apply bg-accent text-accent-foreground text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm leading-tight;
+    @apply inline-flex items-center justify-center h-4 md:h-5 font-bold uppercase rounded-sm leading-none whitespace-nowrap shrink-0;
   }
   .catalog-badge-sale {
-    @apply bg-destructive text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm leading-tight;
-    @apply md:text-xs md:px-2.5 md:py-1;
+    @apply bg-destructive text-white text-[8px] md:text-[10px] px-1 md:px-1.5;
+  }
+  .catalog-badge-bestseller {
+    @apply bg-accent text-accent-foreground text-[9px] md:text-[11px] px-1.5 md:px-2;
   }
   .catalog-product-badges {
-    @apply absolute top-2 left-2 z-10 flex flex-col items-start gap-1 max-w-[calc(100%-3rem)];
+    @apply absolute top-2 left-2 z-10 flex flex-row items-start gap-1 max-w-[calc(100%-3rem)] overflow-hidden;
   }
   .sale-stat-card {
     @apply flex flex-col items-center justify-center text-center rounded-lg border border-border bg-white px-2 py-3.5 shadow-sm;
@@ -888,6 +896,39 @@
   .product-gallery-thumb--video {
     @apply bg-secondary/50;
   }
+  .product-gallery-zoom-hint {
+    @apply absolute bottom-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 border border-border shadow-sm flex items-center justify-center text-primary pointer-events-none;
+  }
+  .product-lightbox {
+    @apply fixed inset-0 z-[100] bg-black/95 flex flex-col;
+  }
+  .product-lightbox-topbar {
+    @apply relative z-10 flex items-center justify-center h-12 px-4 shrink-0;
+  }
+  .product-lightbox-counter {
+    @apply text-white/80 text-sm font-medium;
+  }
+  .product-lightbox-close {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors;
+  }
+  .product-lightbox-frame {
+    @apply relative flex-1 overflow-hidden flex items-center justify-center touch-none select-none;
+  }
+  .product-lightbox-image {
+    @apply max-h-full max-w-full object-contain will-change-transform;
+  }
+  .product-lightbox-arrow {
+    @apply absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors;
+  }
+  .product-lightbox-arrow--left {
+    @apply left-2 sm:left-4;
+  }
+  .product-lightbox-arrow--right {
+    @apply right-2 sm:right-4;
+  }
+  .product-lightbox-hint {
+    @apply text-center text-white/50 text-xs pb-3 sm:pb-4 px-4;
+  }
 
   .product-info {
     @apply flex flex-col gap-3 pt-1 min-w-0 lg:max-w-[21.5rem];
@@ -896,7 +937,7 @@
     @apply min-h-[1.75rem];
   }
   .product-info-title {
-    @apply font-display font-bold text-2xl md:text-3xl lg:text-xl lg:leading-snug xl:text-[1.35rem] text-primary leading-tight;
+    @apply font-display font-bold text-3xl md:text-4xl lg:text-2xl lg:leading-snug xl:text-[1.6rem] text-primary leading-tight;
   }
   .product-info-rating {
     @apply flex items-center gap-2 text-sm font-medium text-foreground hover:opacity-80 transition-opacity w-fit;
