@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Carousel } from '@/components/home/Carousel';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import type { CatalogProduct } from '@/data/catalogListing';
@@ -23,9 +23,9 @@ export const ParentHubBestSellers = ({ title, products, viewAllHref }: Props) =>
           </Link>
         )}
       </div>
-      <Carousel slideClassName="!basis-[85%] sm:!basis-[45%] md:!basis-[32%] lg:!basis-[24%]">
+      <Carousel edgeArrowsOnMobile slideClassName="!basis-1/2 sm:!basis-[45%] md:!basis-[32%] lg:!basis-[24%]">
         {products.map((product) => (
-          <CatalogProductCard key={product.id} product={product} />
+          <CatalogProductCard key={product.id} product={product} bestsellerBadge />
         ))}
       </Carousel>
     </section>

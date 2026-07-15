@@ -1,4 +1,4 @@
-import { alatiSubcategories } from '@/data/categoryPages';
+import { alatiSubcategories, getCategoryHubHeroDescription, getCategoryHubSectionTitle } from '@/data/categoryPages';
 import { getProductsByCategorySlug, getSaleCatalogProducts, koncarProducts, type KoncarCatalogProduct } from '@/data/koncarProducts';
 import { otherProgramCategories } from '@/data/navigation';
 import {
@@ -14,7 +14,24 @@ import { parentSlugToCatalogPrefix } from '@/lib/parentCatalogSlugs';
 import catAku from '@/assets/aku-alat.png';
 import catElektricni from '@/assets/elektricni-alat.png';
 
-export type CatalogProduct = KoncarCatalogProduct;
+import type { Product } from '@/data/homepage';
+
+export type CatalogProduct = KoncarCatalogProduct & {
+  bestseller?: boolean;
+  subtitle?: string;
+};
+
+/** Minimal shape for product cards (mock + live API). */
+export type CatalogProductCardProduct = Product & {
+  bestseller?: boolean;
+  subtitle?: string;
+  categorySlug?: string;
+  slug?: string;
+  permalink?: string;
+  sku?: string;
+  inStock?: boolean;
+  specs?: string[];
+};
 
 export type FilterGroup = {
   id: string;
@@ -50,6 +67,7 @@ export type ParentListingData = {
   parentSlug: string;
   categorySlug: string;
   title: string;
+  sectionTitle: string;
   description: string;
   breadcrumbs: { label: string; href?: string }[];
   chips: (ListingChip & { href: string })[];
@@ -179,18 +197,22 @@ export const getParentListing = (
   const menuCategory = findMenuCategoryByParentSlug(parentSlug);
   const alatiItem = alatiSubcategories.find((s) => s.slug === parentSlug);
   const title = menuCategory?.label ?? alatiItem?.name ?? parentSlug;
-  const description = menuCategory
-    ? `Izaberite podkategoriju iz ponude: ${menuCategory.label.toLowerCase()}.`
-    : `Pregledajte ponudu u kategoriji ${title.toLowerCase()}.`;
+  const description =
+    getCategoryHubHeroDescription(parentSlug, title) ??
+    `Pregledajte ponudu u kategoriji ${title.toLowerCase()}.`;
 
   const chips: ParentListingData['chips'] = menuCategory
     ? menuCategory.subcategories.map((sub, i) => ({
-        slug: slugify(sub.label),
+        // Prefer an explicit WC slug override (e.g. when the real WC term slug has a typo
+        // that doesn't match a naive slugify of the display label) over guessing from the label.
+        slug: sub.slug ?? slugify(sub.label),
         label: sub.label,
         count: sub.count,
         image: sub.image,
         featured: i === 0,
-        href: getMegaMenuSubcategoryUrl(menuCategory.id, sub.label),
+        href: sub.slug
+          ? getMegaMenuSubcategoryUrl(menuCategory.id, sub.slug, { wcSlug: true })
+          : getMegaMenuSubcategoryUrl(menuCategory.id, sub.label),
       }))
     : [
         {
@@ -206,6 +228,7 @@ export const getParentListing = (
     parentSlug,
     categorySlug,
     title: title.toUpperCase(),
+    sectionTitle: getCategoryHubSectionTitle(parentSlug, title),
     description,
     breadcrumbs: [
       { label: 'Početna', href: '/' },
@@ -264,9 +287,10 @@ export const getProductListing = (
     alatiSubcategories.find((s) => s.slug === parentSlug)?.name ??
     parentSlug;
 
+  const leafSlug = slug.split('/').filter(Boolean).pop() ?? slug;
   const subLabel =
-    menuCategory?.subcategories.find((s) => slugify(s.label) === slug)?.label ??
-    slug.replace(/-/g, ' ');
+    menuCategory?.subcategories.find((s) => slugify(s.label) === leafSlug)?.label ??
+    leafSlug.replace(/-/g, ' ');
 
   return buildListing(categorySlug, parentSlug, slug, subLabel, parentLabel);
 };

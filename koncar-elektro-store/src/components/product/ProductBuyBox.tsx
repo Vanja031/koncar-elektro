@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Star, ShoppingCart, Heart, Minus, Plus, Truck, Shield, CreditCard, Phone } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
+import { contactChannels } from '@/data/staticPages';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 
 type Props = {
   product: ProductDetail;
@@ -21,7 +23,7 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
 
   return (
     <div className="product-buy-box">
-      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{product.brand}</p>
+      <ManufacturerRow brand={product.brand} size="md" />
       <h1 className="font-display font-bold text-2xl md:text-3xl text-foreground leading-tight mt-1">
         {product.name}
       </h1>
@@ -46,7 +48,7 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
         </span>
       </button>
 
-      <p className="text-sm text-foreground/80 leading-relaxed mt-4">{product.subtitle}</p>
+      <p className="text-sm text-foreground/80 leading-relaxed mt-4">{product.description}</p>
 
       <div className="flex flex-wrap gap-2 mt-4">
         {product.specs.map((spec) => (
@@ -135,8 +137,8 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
         </div>
         <div className="product-buy-trust-item">
           <Phone className="w-4 h-4 text-primary shrink-0" />
-          <a href="tel:0111234567" className="hover:text-primary transition-colors">
-            Stručna podrška: <strong>011 123 4567</strong>
+          <a href={contactChannels.primaryPhoneHref} className="hover:text-primary transition-colors">
+            Stručna podrška: <strong>{contactChannels.primaryPhone}</strong>
           </a>
         </div>
       </div>

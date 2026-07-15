@@ -42,7 +42,7 @@ export const rightCarouselSlides: HeroSlide[] = [
   },
   {
     image: c22,
-    brand: 'Končar Alati',
+    brand: 'Končar Elektro',
     title: 'Pažljivo pakovanje – sigurna isporuka!',
     desc: 'Svaku pošiljku pakujemo i šaljemo u roku od 1–2 radna dana.',
     variant: 'yellow',

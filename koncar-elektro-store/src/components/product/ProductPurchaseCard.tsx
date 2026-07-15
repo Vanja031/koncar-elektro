@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Minus, Plus, Check, Truck, Package, Phone } from 'lucide-react';
+import { Minus, Plus, Check, Truck, Package, Phone, RotateCcw } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
+import { contactChannels } from '@/data/staticPages';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { SocialIcon } from '@/components/home/SocialIcon';
+import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import type { ProductDetail } from '@/data/productDetail';
 
 type Props = {
@@ -12,6 +15,7 @@ type Props = {
 export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
   const [quantity, setQuantity] = useState(1);
   const savings = product.oldPrice ? product.oldPrice - product.price : 0;
+  const onSale = Boolean(product.oldPrice && product.oldPrice > product.price);
 
   return (
     <aside className="product-purchase-card lg:sticky lg:top-28">
@@ -35,12 +39,21 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
         <div className="product-purchase-shipping">
           <div className="product-purchase-shipping-row">
             <Truck className="w-4 h-4 text-primary shrink-0" />
-            <span>Isporuka već <strong>sutra</strong></span>
+            <span><strong>Brza isporuka</strong></span>
           </div>
           <div className="product-purchase-shipping-row">
             <Package className="w-4 h-4 text-primary shrink-0" />
-            <span>Besplatna dostava preko <strong>10.000 RSD</strong></span>
+            <span>Besplatna dostava preko <strong>{FREE_SHIPPING_THRESHOLD.toLocaleString('sr-RS')} din.</strong></span>
           </div>
+          <div className="product-purchase-shipping-row product-purchase-shipping-row--return">
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span><strong>Povraćaj novca 14 dana</strong></span>
+          </div>
+          {onSale && product.saleStart && product.saleEnd && (
+            <p className="product-purchase-sale-period">
+              Akcija važi od <strong>{product.saleStart}</strong> do <strong>{product.saleEnd}</strong>
+            </p>
+          )}
         </div>
       )}
 
@@ -66,26 +79,27 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
         </div>
 
         <AddToCartButton
-          productId={product.id}
+          product={product}
           quantity={quantity}
-          variant="yellow"
-          disabled={!product.inStock}
-          className="w-full py-3.5"
+          variant="product"
           onAdded={onAdded}
         />
-
-        <button type="button" className="product-purchase-buy-now" disabled={!product.inStock}>
-          Kupi odmah
-        </button>
       </div>
 
-      <div className="product-purchase-contact">
-        <a href="tel:0616544490" className="product-purchase-contact-link">
-          <Phone className="w-4 h-4" />
-          061 65 444 90
+      <div className="product-purchase-contact" aria-label="Kontakt za pomoć">
+        <a
+          href={contactChannels.viberHref}
+          className="product-purchase-contact-action product-purchase-contact-action--viber"
+        >
+          <SocialIcon name="viber" className="w-5 h-5" alt="" />
+          <span className="product-purchase-contact-label">Pošalji poruku</span>
         </a>
-        <a href="tel:0616544490" className="product-purchase-contact-link product-purchase-contact-link--viber">
-          Viber podrška
+        <a
+          href={contactChannels.primaryPhoneHref}
+          className="product-purchase-contact-action product-purchase-contact-action--call"
+        >
+          <Phone className="w-5 h-5" strokeWidth={2} aria-hidden />
+          <span className="product-purchase-contact-label">Stručna pomoć</span>
         </a>
       </div>
     </aside>

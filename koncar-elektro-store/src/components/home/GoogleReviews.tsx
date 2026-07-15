@@ -32,7 +32,7 @@ export const GoogleReviews = ({ rating = 4.9, reviewCount = 287, variant = 'dark
   const isLight = variant === 'light';
 
   return (
-    <div className="google-reviews-block">
+    <div className="google-reviews-block flex flex-col items-start">
       <div className="flex items-baseline gap-1.5 mb-2">
         <span className={isLight ? 'google-reviews-rating' : 'google-reviews-rating-dark'}>{rating}</span>
         <span className={`text-lg font-normal ${isLight ? 'text-[#5F6368]' : 'text-white/50'}`}>/ 5</span>
@@ -52,7 +52,7 @@ export const GoogleReviews = ({ rating = 4.9, reviewCount = 287, variant = 'dark
         href={googleReviewsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity"
+        className="inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
       >
         <GoogleLogo />
         <span className={`google-reviews-brand ${isLight ? '!text-[#202124]' : ''}`}>
@@ -64,10 +64,10 @@ export const GoogleReviews = ({ rating = 4.9, reviewCount = 287, variant = 'dark
         href={googleReviewsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="google-reviews-link"
+        className="google-reviews-link mt-3"
       >
         Pogledajte sve recenzije
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="w-4 h-4 shrink-0" />
       </a>
     </div>
   );

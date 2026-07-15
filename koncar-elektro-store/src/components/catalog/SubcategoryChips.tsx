@@ -1,54 +1,145 @@
-import { ChevronRight, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import type { ListingChip } from '@/data/catalogListing';
-
-type Chip = ListingChip & { href?: string };
+import { ChevronRight, Flame, Loader2, Star } from 'lucide-react';
+import { Link } from '@/lib/router-compat';
+import type { HighlightChip } from '@/lib/listingHighlightChips';
 
 type Props = {
-  chips: Chip[];
+  chips: HighlightChip[];
   description: string;
+  /** Naslov sekcije ispod hero banera (npr. hub podkategorija). */
+  title?: string;
+  /** Vertikalne kartice (hub) umesto kompaktnih chipova (listing). */
+  layout?: 'chips' | 'cards';
+  /** Skriva celu sekciju ispod `lg` (npr. 4 highlight kartice na listingu). */
+  hideOnMobile?: boolean;
+  /** Prikaži skeleton dok se prave slike proizvoda učitavaju (bez mock slike). */
+  imagesLoading?: boolean;
 };
 
-export const SubcategoryChips = ({ chips, description }: Props) => (
-  <section className="border-b border-border bg-white">
-    <div className="container py-6">
-      <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
-        <div className="lg:w-[min(18rem,32%)] shrink-0">
-          <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-        </div>
+const productCountLabel = (count: number) =>
+  count === 1 ? '1 proizvod' : `${count} proizvoda`;
 
-        <div className="flex-1 min-w-0 grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-          {chips.map((chip) => {
-            const className = `catalog-chip--listing ${chip.featured ? 'catalog-chip--featured' : ''}`;
-            const content = (
-              <>
-                {chip.featured ? (
+export const SubcategoryChips = ({
+  chips,
+  description,
+  title,
+  layout = 'chips',
+  hideOnMobile = false,
+  imagesLoading = false,
+}: Props) => {
+  const isCards = layout === 'cards';
+
+  return (
+    <section className={`border-b border-border bg-white ${hideOnMobile ? 'hidden lg:block' : ''}`}>
+      <div className="container py-6">
+        {title ? <h2 className="section-heading mb-6">{title}</h2> : null}
+
+        {isCards ? (
+          <div className="hub-category-grid">
+            {chips.map((chip) => {
+              const body = (
+                <>
+                  <div className="hub-category-card-media">
+                    {chip.isSale ? (
+                      <Flame className="w-10 h-10 text-accent fill-accent" />
+                    ) : chip.image ? (
+                      <img
+                        src={chip.image}
+                        alt=""
+                        className="hub-category-card-image"
+                        loading="lazy"
+                      />
+                    ) : imagesLoading ? (
+                      <Loader2 className="w-5 h-5 text-muted-foreground/50 animate-spin" />
+                    ) : (
+                      <div className="hub-category-card-image-empty" aria-hidden />
+                    )}
+                  </div>
+                  <div className="hub-category-card-footer">
+                    <div className="min-w-0 flex-1">
+                      <span className="hub-category-card-title">{chip.label}</span>
+                      {chip.count != null && (
+                        <span className="hub-category-card-count">{productCountLabel(chip.count)}</span>
+                      )}
+                    </div>
+                    <span className="hub-category-card-arrow" aria-hidden>
+                      <ChevronRight />
+                    </span>
+                  </div>
+                </>
+              );
+
+              return chip.href ? (
+                <Link key={chip.slug} to={chip.href} className="hub-category-card group">
+                  {body}
+                </Link>
+              ) : (
+                <div key={chip.slug} className="hub-category-card group">
+                  {body}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
+            {description ? (
+              <div className="lg:w-[min(18rem,32%)] shrink-0">
+                <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+              </div>
+            ) : null}
+
+            <div className="flex-1 min-w-0 grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {chips.map((chip) => {
+                const className = `catalog-chip--listing ${chip.featured ? 'catalog-chip--featured' : ''}`;
+                const media = chip.isSale ? (
+                  <Flame className="w-8 h-8 text-accent fill-accent shrink-0" />
+                ) : chip.featured ? (
                   <Star className="w-5 h-5 text-accent fill-accent shrink-0" />
                 ) : chip.image ? (
-                  <img src={chip.image} alt="" className="w-10 h-10 object-contain shrink-0" />
-                ) : null}
-                <div className="min-w-0 flex-1">
-                  <p className="font-display font-bold text-xs lg:text-sm text-primary uppercase leading-snug line-clamp-2">
-                    {chip.label}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{chip.count} proizvoda</p>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              </>
-            );
+                  <div className="catalog-chip-image-wrap">
+                    <img src={chip.image} alt="" className="max-h-full max-w-full object-contain" />
+                  </div>
+                ) : imagesLoading ? (
+                  <div
+                    className="catalog-chip-image-wrap rounded-md bg-muted/50 flex items-center justify-center"
+                    aria-hidden
+                  >
+                    <Loader2 className="w-4 h-4 text-muted-foreground/50 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="catalog-chip-image-wrap rounded-md bg-muted/25" aria-hidden />
+                );
 
-            return chip.href ? (
-              <Link key={chip.slug} to={chip.href} className={className}>
-                {content}
-              </Link>
-            ) : (
-              <div key={chip.slug} className={className}>
-                {content}
-              </div>
-            );
-          })}
-        </div>
+                const content = (
+                  <>
+                    {media}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-display font-bold text-xs lg:text-sm text-primary uppercase leading-snug line-clamp-2">
+                        {chip.label}
+                      </p>
+                      {chip.count != null && (
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          {productCountLabel(chip.count)}
+                        </p>
+                      )}
+                    </div>
+                    <ChevronRight className="hidden lg:block w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </>
+                );
+
+                return chip.href ? (
+                  <Link key={chip.slug} to={chip.href} className={className}>
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={chip.slug} className={className}>
+                    {content}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};

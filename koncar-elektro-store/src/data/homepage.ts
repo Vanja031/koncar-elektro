@@ -4,10 +4,10 @@ import catRucni from '@/assets/rucni-alat.png';
 import catKompresor from '@/assets/kompresor.png';
 import catAgregat from '@/assets/agregat.webp';
 import catKosacica from '@/assets/kosacica.png';
-import catHtz from '@/assets/htz-oprema.jpg';
+import catHtz from '@/assets/htz-oprema.png';
 import catTraktor from '@/assets/traktor.png';
-import catVarenje from '@/assets/aparat-za-varenje.webp';
-import catDvorishte from '@/assets/oprema-za-dvoriste.jpg';
+import catVarenje from '@/assets/aparat-za-varenje.png';
+import catDvorishte from '@/assets/oprema-za-dvoriste.png';
 import imgProfesionalni from '@/assets/prefesionalni-alati.png';
 import imgElektromaterijal from '@/assets/elektromaterijal.png';
 import imgRasveta from '@/assets/rasveta.png';
@@ -51,8 +51,17 @@ export const popularCategories = [
 ];
 
 export const featuredBrands = [
-  'Bosch', 'Makita', 'Metabo', 'Villager', 'Einhell', 'Hyundai', 'Scheppach', 'Ingco', 'Rema Power', 'Cedrus',
-];
+  { name: 'Bosch', slug: 'bosch' },
+  { name: 'Makita', slug: 'makita' },
+  { name: 'Metabo', slug: 'metabo' },
+  { name: 'Villager', slug: 'villager' },
+  { name: 'Einhell', slug: 'einhell' },
+  { name: 'Hyundai', slug: 'hyundai' },
+  { name: 'Scheppach', slug: 'scheppach' },
+  { name: 'Ingco', slug: 'ingco' },
+  { name: 'REM Power', slug: 'rem-power' },
+  { name: 'Cedrus', slug: 'cedrus' },
+] as const;
 
 export const faqItems = [
   {

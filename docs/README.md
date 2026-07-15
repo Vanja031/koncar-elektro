@@ -10,6 +10,8 @@ Centralna lokacija za plan, izveštaje i referentne snimke iz **nedelja 1–2** 
 | [permalink-structure.md](./permalink-structure.md) | WooCommerce permalink struktura (WP admin) |
 | [url-routing-map.md](./url-routing-map.md) | Mapa ruta novog sajta ↔ stari URL-ovi |
 | [meta-parity-plan.md](./meta-parity-plan.md) | Plan za title, meta, canonical, JSON-LD |
+| [wp-headless-setup.md](./wp-headless-setup.md) | WP headless + REST/Store API setup (nedelja 3) |
+| [LIVE_SHOP_SAFETY.md](./LIVE_SHOP_SAFETY.md) | **Pravilo:** live shop ne sme biti poremećen do go-live-a |
 
 ## SEO baseline (nedelja 1)
 
@@ -34,4 +36,4 @@ Centralna lokacija za plan, izveštaje i referentne snimke iz **nedelja 1–2** 
 | Lokacija | Opis |
 |----------|------|
 | [wp-reference/wp-pages.json](./wp-reference/wp-pages.json) | WP REST — lista stranica |
-| [wp-reference/wp-page-slugs.txt](./wp-reference/wp-page-slugs.txt) | Slug-ovi WP stranica (korpa, checkout, …) |
+| [wp-reference/wp-plugin-audit.md](./wp-reference/wp-plugin-audit.md) | Audit aktivnih WP plugina (nedelja 3) |

@@ -1,31 +1,42 @@
-import { Star, ShoppingCart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
+import { Link } from '@/lib/router-compat';
 import { formatPrice, type Product } from '@/data/homepage';
-import { getProductUrl } from '@/data/productDetail';
+import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { ManufacturerRow } from '@/components/brand/BrandMark';
 
 type Props = {
   product: Product;
   rank?: number;
+  bestseller?: boolean;
+  /** Manji badge za home carousel kartice */
+  bestsellerCompact?: boolean;
 };
 
-export const ProductCard = ({ product, rank }: Props) => {
+export const ProductCard = ({ product, rank, bestseller, bestsellerCompact }: Props) => {
   const discount = product.oldPrice
     ? Math.round(100 - (product.price / product.oldPrice) * 100)
     : 0;
-  const productUrl = getProductUrl(product.id);
+  const productUrl = getCatalogProductUrl(product);
 
   return (
-    <div className="product-card-home h-full">
-      {rank != null ? (
-        <span className="badge-rank">{rank}</span>
-      ) : product.oldPrice ? (
-        <span className="badge-discount">-{discount}%</span>
-      ) : null}
-      <Link to={productUrl} className="aspect-square p-4 flex items-center justify-center bg-white block">
-        <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain" loading="lazy" />
+    <div className={`product-card-home h-full${bestseller ? ' product-card-home--bestseller' : ''}`}>
+      {(bestseller || discount > 0 || rank != null) && (
+        <div className="product-card-home-badges">
+          {discount > 0 && <span className="badge-discount">-{discount}%</span>}
+          {bestseller && (
+            <span className={bestsellerCompact ? 'badge-bestseller badge-bestseller--compact' : 'badge-bestseller'}>
+              Najprodavanije
+            </span>
+          )}
+          {!bestseller && discount <= 0 && rank != null && <span className="badge-rank">{rank}</span>}
+        </div>
+      )}
+      <Link to={productUrl} className="product-card-media block">
+        <img src={product.image} alt={product.name} loading="lazy" />
       </Link>
       <div className="p-3 flex flex-col gap-1.5 flex-1 border-t border-border">
+        <ManufacturerRow brand={product.brand} size="xs" />
         <Link to={productUrl}>
           <p className="text-sm font-semibold text-foreground leading-tight line-clamp-1 hover:text-primary transition-colors">{product.name}</p>
         </Link>
@@ -39,14 +50,15 @@ export const ProductCard = ({ product, rank }: Props) => {
           ))}
           <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
         </div>
-        <div className="flex items-end justify-between mt-auto pt-2">
+        <div className="mt-auto pt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {product.oldPrice && (
               <span className="text-xs text-muted-foreground line-through block">{formatPrice(product.oldPrice)}</span>
             )}
             <span className="font-display font-bold text-lg text-foreground">{formatPrice(product.price)}</span>
           </div>
-          <AddToCartButton productId={product.id} variant="icon" />
+          <AddToCartButton product={product} variant="yellow" className="w-full sm:hidden product-card-home-cart-btn" />
+          <AddToCartButton product={product} variant="icon" className="hidden sm:inline-flex shrink-0" />
         </div>
       </div>
     </div>

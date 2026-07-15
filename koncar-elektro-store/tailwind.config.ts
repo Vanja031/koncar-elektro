@@ -5,7 +5,7 @@ export default {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
-    container: { center: true, padding: "1rem", screens: { "2xl": "1320px" } },
+    container: { center: true, padding: "1rem", screens: { "2xl": "1452px" } },
     extend: {
       fontFamily: {
         display: ['"Roboto Condensed"', 'sans-serif'],
@@ -44,5 +44,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

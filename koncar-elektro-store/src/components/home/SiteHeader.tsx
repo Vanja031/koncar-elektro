@@ -2,16 +2,23 @@ import {
   Phone, Search, User, ShoppingCart, Menu, ChevronDown,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { FaIcon, footerIcons, trustIcons } from './FaIcon';
-import { SocialIcon } from './SocialIcon';
 import { SocialLinks } from './SocialLinks';
 import { MegaMenu } from './MegaMenu';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { MobileSearch } from '@/components/layout/MobileSearch';
+import { DesktopProductSearch } from '@/components/search/DesktopProductSearch';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useCart } from '@/context/CartContext';
 import type { MegaMenuMode } from '@/data/navigation';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
+import { contactChannels } from '@/data/staticPages';
+
+/** Širina kolone logotipa u gornjem redu. */
+const LOGO_COLUMN_WIDTH = 'w-[13rem]';
+/** Dugme „Svi proizvodi” u nav traci — ista širina kao kolona logotipa. */
+const ALL_PRODUCTS_BTN_WIDTH = LOGO_COLUMN_WIDTH;
 
 type NavItem = {
   label: string;
@@ -21,14 +28,11 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { label: 'Početna', href: ROUTES.home },
   { label: 'Akcija', href: ROUTES.sale, highlight: true },
   { label: 'Alati', href: getTopCategoryUrl('alati'), megaMode: 'alati' },
   { label: 'Elektromaterijal', href: getTopCategoryUrl('elektromaterijal'), megaMode: 'elektromaterijal' },
   { label: 'Rasveta', href: getTopCategoryUrl('rasveta'), megaMode: 'rasveta' },
   { label: 'Solarne elektrane', href: getTopCategoryUrl('solarne'), megaMode: 'solarne' },
-  { label: 'O nama', href: ROUTES.about },
-  { label: 'Kontakt', href: ROUTES.contact },
 ];
 
 export const SiteHeader = () => {
@@ -132,75 +136,80 @@ export const SiteHeader = () => {
       </div>
 
       <header className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="container py-3 flex items-center gap-3 lg:gap-6">
+        <div className="container py-2 sm:py-3 flex items-center gap-2 sm:gap-3 lg:gap-6">
           <button
             type="button"
             onClick={() => setMobileNavOpen(true)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 -ml-1 rounded-lg border border-border hover:bg-secondary transition-colors shrink-0"
+            className="lg:hidden header-mobile-action -ml-1"
             aria-label="Otvori meni"
           >
-            <Menu className="w-5 h-5 text-primary" />
+            <Menu className="w-5 h-5" />
           </button>
 
-          <Link to="/" className="shrink-0 min-w-0">
-            <div className="font-display font-bold text-2xl leading-none text-primary tracking-tight">
-              KONČAR <span className="text-accent">ALATI</span>
-            </div>
-            <div className="text-[10px] text-destructive font-semibold tracking-wider uppercase mt-0.5">
-              Profesionalni alati i oprema
-            </div>
+          <Link
+            to="/"
+            className={`min-w-0 shrink-0 overflow-hidden hidden sm:block ${LOGO_COLUMN_WIDTH}`}
+          >
+            <BrandLogo className="h-10 max-w-full min-[380px]:h-11 lg:h-14" />
+          </Link>
+          <Link
+            to="/"
+            className="flex-1 min-w-0 flex justify-center items-center overflow-hidden px-1 sm:hidden"
+          >
+            <BrandLogo className="h-9 w-auto max-w-full max-h-10 object-contain" />
           </Link>
 
-          <div className="flex-1 hidden md:flex items-stretch h-11 border border-border rounded overflow-hidden max-w-xl lg:max-w-2xl mx-auto">
-            <input
-              type="search"
-              placeholder="Pretražite proizvode, kategorije ili brendove..."
-              className="flex-1 px-4 text-sm outline-none bg-white placeholder:text-muted-foreground"
-            />
-            <button type="button" className="px-4 bg-primary text-white hover:brightness-110 transition-all">
-              <Search className="w-5 h-5" />
-            </button>
-          </div>
+          <DesktopProductSearch />
 
-          <div className="hidden xl:flex items-center gap-3 shrink-0">
-            <a href="tel:0111234567" className="flex items-center gap-2 bg-secondary rounded px-3 py-2 hover:bg-muted transition-colors">
-              <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
-                <Phone className="w-4 h-4 text-accent-foreground" />
-              </div>
-              <div className="text-xs leading-tight">
-                <div className="font-semibold text-primary uppercase">Pozovite stručnjaka</div>
-                <div className="font-bold text-sm">011 123 4567</div>
-                <div className="text-muted-foreground">08–20h radnim danima</div>
-              </div>
-            </a>
-            <a href="#" className="flex items-center gap-2 bg-secondary rounded px-3 py-2 hover:bg-muted transition-colors">
-              <SocialIcon name="viber" className="w-9 h-9" />
-              <div className="text-xs leading-tight">
-                <div className="font-semibold text-primary uppercase">Viber podrška</div>
-                <div className="font-bold text-sm">063 123 4567</div>
-                <div className="text-muted-foreground">Kliknite za chat</div>
-              </div>
-            </a>
-          </div>
+          <a
+            href={contactChannels.primaryPhoneHref}
+            className="hidden lg:flex items-center gap-2.5 bg-secondary rounded px-3 h-11 shrink-0 hover:bg-muted transition-colors header-expert-banner"
+          >
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0">
+              <Phone className="w-4 h-4 text-accent-foreground" />
+            </div>
+            <div className="text-xs leading-tight min-w-0">
+              <div className="font-semibold text-primary uppercase text-[10px] tracking-wide">Stručna pomoć</div>
+              <div className="font-bold text-sm text-primary whitespace-nowrap">{contactChannels.primaryPhone}</div>
+            </div>
+          </a>
 
           <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
             <button
               type="button"
               onClick={() => setMobileSearchOpen(true)}
-              className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg border border-border hover:bg-secondary transition-colors"
+              className="md:hidden header-mobile-action"
               aria-label="Pretraga"
             >
-              <Search className="w-5 h-5 text-primary" />
+              <Search className="w-5 h-5" />
             </button>
-            <a href="#" className="hidden sm:flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors">
-              <User className="w-5 h-5" />
-              <span className="hidden lg:inline">Prijava / registracija</span>
-            </a>
-            <Link to={ROUTES.cart} className="flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors relative">
-              <ShoppingCart className="w-5 h-5" />
+            <div className="hidden sm:flex items-center gap-2.5">
+              <User className="w-6 h-6 text-primary shrink-0" />
+              <div className="flex flex-col leading-tight text-xs">
+                <Link to={ROUTES.login} className="text-foreground hover:text-primary transition-colors font-medium">
+                  Prijava
+                </Link>
+                <Link to={ROUTES.register} className="text-foreground hover:text-primary transition-colors font-medium">
+                  Registracija
+                </Link>
+              </div>
+            </div>
+            <Link
+              to={ROUTES.cart}
+              className="flex items-center gap-1.5 text-xs text-foreground hover:text-primary transition-colors relative shrink-0"
+            >
+              <span className="md:hidden header-mobile-action relative">
+                <ShoppingCart className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-accent-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </span>
+              <ShoppingCart className="w-6 h-6 text-primary shrink-0 hidden md:block" />
               <span className="hidden lg:inline font-medium">Korpa</span>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 lg:static lg:ml-0 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="hidden md:flex lg:static lg:ml-0 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -210,22 +219,22 @@ export const SiteHeader = () => {
 
         <div
           ref={megaZoneRef}
-          className="relative hidden lg:block border-t border-border bg-white"
+          className="relative hidden lg:block border-t border-border bg-secondary header-nav-row"
           onMouseLeave={handleMegaZoneLeave}
         >
           <div data-mega-nav className="container flex items-center h-11 gap-1">
             <button
               type="button"
               onClick={toggleAllProducts}
-              className={`flex items-center gap-2 px-4 h-11 font-display font-semibold uppercase text-sm transition-all shrink-0 ${
+              className={`flex items-center justify-center gap-1.5 h-11 font-display font-semibold uppercase text-[15px] tracking-wide transition-all shrink-0 px-2 ${ALL_PRODUCTS_BTN_WIDTH} ${
                 megaOpen
                   ? 'bg-accent/90 text-accent-foreground'
                   : 'bg-accent text-accent-foreground hover:brightness-105'
               }`}
             >
-              <Menu className="w-4 h-4" />
-              Svi proizvodi
-              <ChevronDown className={`w-4 h-4 transition-transform ${megaOpen ? 'rotate-180' : ''}`} />
+              <Menu className="w-4 h-4 shrink-0" />
+              <span className="truncate">Svi proizvodi</span>
+              <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform ${megaOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <div className="flex items-center gap-0.5 ml-2">
@@ -236,7 +245,7 @@ export const SiteHeader = () => {
                     ? 'text-destructive font-semibold hover:text-destructive'
                     : isActive
                       ? 'text-primary font-semibold'
-                      : 'text-foreground hover:text-primary'
+                      : 'text-primary/90 hover:text-primary'
                 }`;
 
                 if (item.href.startsWith('/')) {

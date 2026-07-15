@@ -1,14 +1,13 @@
-import { Link } from 'react-router-dom';
-import { Truck, Lock } from 'lucide-react';
+import { Lock, Truck } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
-import { ROUTES } from '@/lib/catalogUrls';
-import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
+import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 
 export const CheckoutSummary = () => {
-  const { lines, subtotal, shipping, total } = useCart();
+  const { lines, subtotal, subtotalRegular, savings, shipping, total } = useCart();
   const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const hasSavings = savings > 0;
 
   return (
     <aside className="cart-summary lg:sticky lg:top-28">
@@ -32,7 +31,12 @@ export const CheckoutSummary = () => {
       <dl className="cart-summary-rows">
         <div className="cart-summary-row">
           <dt>Suma</dt>
-          <dd>{formatPrice(subtotal)}</dd>
+          <dd>
+            {hasSavings && (
+              <span className="cart-summary-old-value">{formatPrice(subtotalRegular)}</span>
+            )}
+            {formatPrice(subtotal)}
+          </dd>
         </div>
         <div className="cart-summary-row">
           <dt>Dostava</dt>
@@ -51,14 +55,19 @@ export const CheckoutSummary = () => {
         <span>Ukupno</span>
         <strong>{formatPrice(total)}</strong>
       </div>
-      <p className="text-xs text-muted-foreground">Cene su sa uračunatim PDV-om</p>
+      <p className="text-[10px] text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      <Link to={ROUTES.cart} className="cart-summary-continue mt-4">
-        ← Nazad u korpu
-      </Link>
+      {hasSavings && (
+        <p className="cart-summary-savings-badge">
+          Uštedeli ste <strong>{formatPrice(savings)}</strong> na ovoj porudžbini
+        </p>
+      )}
+
+      <button type="submit" form={CHECKOUT_FORM_ID} className="checkout-submit-btn mt-5 hidden lg:block">
+        Završi porudžbinu
+      </button>
 
       <div className="cart-summary-payments">
-        <PaymentCardIcons size="sm" />
         <p className="cart-summary-secure">
           <Lock className="w-3.5 h-3.5" />
           Sigurna kupovina

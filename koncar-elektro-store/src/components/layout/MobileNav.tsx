@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
-  ChevronRight, Phone, ShoppingCart, Flame, Home, Info, Mail,
+  ChevronRight, Phone, Flame, Info, Mail, UserPlus,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import {
   Sheet,
   SheetContent,
@@ -10,17 +10,15 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  alatiMenuCategories,
-  otherProgramCategories,
-} from '@/data/navigation';
+import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
 import {
   getMegaMenuCategoryUrl,
-  getMegaMenuSubcategoryUrl,
   getTopCategoryUrl,
+  resolveMegaMenuSubcategoryUrl,
   ROUTES,
 } from '@/lib/catalogUrls';
-import { useCart } from '@/context/CartContext';
+import { BrandLogo } from '@/components/brand/BrandLogo';
+import { contactChannels } from '@/data/staticPages';
 
 type Props = {
   open: boolean;
@@ -28,10 +26,13 @@ type Props = {
 };
 
 export const MobileNav = ({ open, onOpenChange }: Props) => {
-  const { itemCount } = useCart();
+  const { alatiMenuCategories, otherProgramCategories, isLoading, isError } = useNavigationMenu();
   const [openSection, setOpenSection] = useState<string | null>('alati');
 
   const close = () => onOpenChange(false);
+
+  const subcategoryUrl = (menuId: string, sub: Parameters<typeof resolveMegaMenuSubcategoryUrl>[1]) =>
+    resolveMegaMenuSubcategoryUrl(menuId, sub);
 
   const toggleSection = (id: string) => {
     setOpenSection((prev) => (prev === id ? null : id));
@@ -43,9 +44,9 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
         side="left"
         className="w-[min(100vw,22rem)] sm:max-w-sm p-0 flex flex-col gap-0 border-r border-border [&>button]:top-3.5 [&>button]:right-3.5"
       >
-        <SheetHeader className="px-4 py-4 border-b border-border bg-secondary/30 text-left space-y-1">
-          <SheetTitle className="font-display font-bold text-primary text-left">
-            KONČAR <span className="text-accent">ALATI</span>
+        <SheetHeader className="px-4 py-4 border-b border-border bg-secondary/30 text-left space-y-2">
+          <SheetTitle className="text-left p-0">
+            <BrandLogo height="sm" className="max-w-[10rem]" />
           </SheetTitle>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
             Katalog i kategorije
@@ -56,12 +57,12 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
           <ul className="px-2 space-y-0.5">
             <li>
               <Link
-                to="/"
+                to={ROUTES.login}
                 onClick={close}
                 className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               >
-                <Home className="w-4 h-4 text-primary shrink-0" />
-                Početna
+                <UserPlus className="w-4 h-4 text-primary shrink-0" />
+                Prijava / Registracija
               </Link>
             </li>
             <li>
@@ -72,21 +73,6 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
               >
                 <Flame className="w-4 h-4 shrink-0 fill-destructive/20" />
                 Akcija
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={ROUTES.cart}
-                onClick={close}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-              >
-                <ShoppingCart className="w-4 h-4 text-primary shrink-0" />
-                Korpa
-                {itemCount > 0 && (
-                  <span className="ml-auto bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {itemCount}
-                  </span>
-                )}
               </Link>
             </li>
           </ul>
@@ -106,6 +92,12 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
             <ChevronRight className="w-4 h-4 text-accent" />
           </Link>
 
+          {isLoading ? (
+            <p className="px-4 py-2 text-xs text-muted-foreground">Učitavanje kategorija…</p>
+          ) : isError ? (
+            <p className="px-4 py-2 text-xs text-destructive">Kategorije nisu učitane. Pokušajte ponovo.</p>
+          ) : null}
+
           <ul className="px-2 space-y-0.5">
             {alatiMenuCategories.map((cat) => {
               const Icon = cat.icon;
@@ -119,18 +111,11 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                       <ChevronRight className={`w-4 h-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 pr-1 pb-1">
-                      <Link
-                        to={getMegaMenuCategoryUrl(cat.id)}
-                        onClick={close}
-                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
-                      >
-                        Pogledajte sve →
-                      </Link>
-                      <ul className="space-y-0.5 max-h-[12rem] overflow-y-auto koncar-scrollbar">
+                      <ul className="space-y-0.5">
                         {cat.subcategories.map((sub) => (
-                          <li key={sub.label}>
+                          <li key={sub.slug ?? sub.label}>
                             <Link
-                              to={getMegaMenuSubcategoryUrl(cat.id, sub.label)}
+                              to={subcategoryUrl(cat.id, sub)}
                               onClick={close}
                               className="block px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-primary hover:bg-secondary/60 transition-colors line-clamp-2"
                             >
@@ -140,6 +125,13 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                           </li>
                         ))}
                       </ul>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onClick={close}
+                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
+                      >
+                        Pogledajte sve →
+                      </Link>
                     </CollapsibleContent>
                   </Collapsible>
                 </li>
@@ -166,18 +158,11 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                       <ChevronRight className={`w-4 h-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 pr-1 pb-1">
-                      <Link
-                        to={getMegaMenuCategoryUrl(cat.id)}
-                        onClick={close}
-                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
-                      >
-                        Pogledajte sve →
-                      </Link>
                       <ul className="space-y-0.5">
                         {cat.subcategories.map((sub) => (
                           <li key={sub.label}>
                             <Link
-                              to={getMegaMenuSubcategoryUrl(cat.id, sub.label)}
+                              to={subcategoryUrl(cat.id, sub)}
                               onClick={close}
                               className="block px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-primary hover:bg-secondary/60 transition-colors line-clamp-2"
                             >
@@ -186,6 +171,13 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
                           </li>
                         ))}
                       </ul>
+                      <Link
+                        to={getMegaMenuCategoryUrl(cat.id)}
+                        onClick={close}
+                        className="block px-3 py-2 text-xs font-semibold text-primary hover:underline"
+                      >
+                        Pogledajte sve →
+                      </Link>
                     </CollapsibleContent>
                   </Collapsible>
                 </li>
@@ -221,11 +213,11 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
 
         <div className="shrink-0 border-t border-border p-4 bg-secondary/20">
           <a
-            href="tel:0111234567"
+            href={contactChannels.primaryPhoneHref}
             className="flex items-center gap-3 btn-yellow w-full justify-center text-xs py-3"
           >
             <Phone className="w-4 h-4" />
-            Pozovite 011 123 4567
+            Pozovite {contactChannels.primaryPhone}
           </a>
         </div>
       </SheetContent>

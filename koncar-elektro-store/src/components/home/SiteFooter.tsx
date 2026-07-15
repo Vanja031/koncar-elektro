@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import {
   ChevronRight,
   Drill, Plug, Lightbulb, Sun,
@@ -7,9 +7,10 @@ import {
   categoryHighlights, valueProps, footerServiceLinks, footerInfoLinks,
   paymentBanks,
 } from '@/data/homepage';
-import { footerLinkRoutes } from '@/data/staticPages';
+import { brand, companyInfo, contactChannels, footerLinkRoutes } from '@/data/staticPages';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { SocialLinks } from './SocialLinks';
 import { FaIcon, trustIcons, footerIcons } from './FaIcon';
 
@@ -120,9 +121,7 @@ export const AboutSection = () => (
     </h2>
     <div className="max-w-3xl space-y-4">
       <p className="text-sm text-muted-foreground leading-relaxed">
-        Končar Alati je specijalizovana prodavnica profesionalnih i hobi alata, elektromaterijala,
-        rasvete i solarne opreme. U ponudi imamo proizvode vodećih svetskih proizvođača — od
-        električnih i akumulatorskih alata do kompresora, kosačica i opreme za elektro instalacije.
+        {brand.aboutIntro}
       </p>
       <p className="text-sm text-muted-foreground leading-relaxed">
         Naš tim stručnjaka stoji vam na raspolaganju za savet pri izboru alata i opreme, a brza
@@ -137,31 +136,36 @@ export const SiteFooter = () => (
     <div className="container py-12 lg:py-14">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
         <div className="lg:col-span-3">
-          <div className="font-display font-bold text-2xl mb-6 tracking-tight">
-            KONČAR <span className="text-accent">ALATI</span>
-          </div>
+          <Link to="/" className="inline-flex items-center mb-6 rounded-lg bg-white px-3.5 py-2 shadow-sm">
+            <BrandLogo className="h-11 sm:h-12" />
+          </Link>
           <ul className="space-y-3.5 mb-6">
             {[
-              { icon: footerIcons.phone, text: '011/123-4567' },
-              { icon: footerIcons.mobile, text: '063/123-4567' },
-              { icon: footerIcons.mail, text: 'info@koncaralati.rs' },
-              { icon: footerIcons.location, text: 'Leskovac' },
-              { icon: footerIcons.clock, text: 'Pon–Pet: 08–20h, Sub: 08–16h' },
+              { icon: footerIcons.phone, text: contactChannels.primaryPhone, href: contactChannels.primaryPhoneHref },
+              { icon: footerIcons.mobile, text: contactChannels.secondaryPhone, href: contactChannels.secondaryPhoneHref },
+              { icon: footerIcons.mail, text: contactChannels.email, href: contactChannels.emailHref },
+              { icon: footerIcons.location, text: contactChannels.addressFull },
+              { icon: footerIcons.clock, text: contactChannels.hoursSummary },
             ].map((item) => (
               <li key={item.text} className="flex items-center gap-3 text-sm text-white/90">
                 <span className="footer-contact-icon">
                   <FaIcon icon={item.icon} />
                 </span>
-                {item.text}
+                {'href' in item && item.href ? (
+                  <a href={item.href} className="hover:text-accent transition-colors">
+                    {item.text}
+                  </a>
+                ) : (
+                  item.text
+                )}
               </li>
             ))}
           </ul>
-          <SocialLinks variant="footer" />
         </div>
 
         <div className="lg:col-span-2 lg:col-start-5">
-          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-5 tracking-wide">Korisnički servis</h4>
-          <ul className="space-y-0.5">
+          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-4 tracking-wide">Korisnički servis</h4>
+          <ul className="space-y-0">
             {footerServiceLinks.map((l) => (
               <li key={l}>
                 <FooterNavLink label={l} />
@@ -171,8 +175,8 @@ export const SiteFooter = () => (
         </div>
 
         <div className="lg:col-span-2">
-          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-5 tracking-wide">Informacije</h4>
-          <ul className="space-y-0.5">
+          <h4 className="title-accent-line font-display font-bold uppercase text-sm mb-4 tracking-wide">Informacije</h4>
+          <ul className="space-y-0">
             {footerInfoLinks.map((l) => (
               <li key={l}>
                 <FooterNavLink label={l} />
@@ -209,14 +213,17 @@ export const SiteFooter = () => (
               <ChevronRight className="w-4 h-4" />
             </button>
           </form>
+          <SocialLinks variant="footer" className="mt-5" />
         </div>
       </div>
     </div>
 
     <div className="border-t border-white/10 bg-[#0c1a33]">
-      <div className="container py-5">
-        <p className="title-accent-line text-[11px] text-white/45 uppercase tracking-widest mb-4 font-semibold">Načini plaćanja</p>
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="container py-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <p className="text-[11px] text-white/45 uppercase tracking-widest font-semibold shrink-0">
+            Načini plaćanja
+          </p>
           <PaymentCardIcons size="sm" className="footer-payment-cards" />
           <span className="hidden sm:inline w-px h-6 bg-white/20" aria-hidden />
           {paymentBanks.map((p) => (
@@ -228,7 +235,7 @@ export const SiteFooter = () => (
 
     <div className="border-t border-white/10 bg-[#060f1f]">
       <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
-        <span>© 2026 Končar Alati. Sva prava zadržana.</span>
+        <span>© 2026 {companyInfo.name}. Sva prava zadržana.</span>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-white/60">
             <FaIcon icon={trustIcons.secure} className="text-accent text-sm" />
@@ -244,9 +251,10 @@ export const SiteFooter = () => (
 export const FloatingChat = () => (
   <Link
     to="/kontakt"
-    className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-primary text-white pl-4 pr-5 py-3 rounded-full shadow-lg hover:brightness-110 transition-all text-sm font-semibold"
+    className="fixed z-50 flex items-center justify-center gap-2 bg-primary text-white rounded-full shadow-navy-soft hover:brightness-110 transition-all font-semibold bottom-4 right-3 min-[380px]:justify-start py-2.5 px-3 min-[380px]:pl-3 min-[380px]:pr-3.5 text-xs sm:bottom-6 sm:right-6 sm:gap-2.5 sm:pl-4 sm:pr-5 sm:py-3 sm:text-sm"
+    aria-label="Stručna pomoć"
   >
-    <FaIcon icon={footerIcons.chat} className="text-base" />
-    Pitaj stručnjaka
+    <FaIcon icon={footerIcons.chat} className="text-base shrink-0" />
+    <span className="hidden min-[380px]:inline truncate">Stručna pomoć</span>
   </Link>
 );

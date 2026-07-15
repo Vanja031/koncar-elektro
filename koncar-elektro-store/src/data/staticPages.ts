@@ -14,7 +14,7 @@ export const companyInfo = {
     country: 'Srbija',
     full: 'Stanoja Glavaša br. 4, 16000 Leskovac, Srbija',
   },
-  phones: ['+381 61 65 444 90', '+381 61 152 00 71'],
+  phones: ['061 65 444 90', '060 676 72 50'],
   email: 'kontakt@koncarelektro.com',
   supportHours: [
     { day: 'Ponedeljak – Petak', hours: '08:00 – 20:00' },
@@ -23,6 +23,39 @@ export const companyInfo = {
   ],
   mapQuery: 'Stanoja Glavaša 4, Leskovac, Srbija',
 };
+
+/** Local `0xx` → E.164 without `+` (e.g. `381616544490`). */
+const toE164Digits = (phone: string) => {
+  const digits = phone.replace(/\s/g, '');
+  if (digits.startsWith('0')) return `381${digits.slice(1)}`;
+  if (digits.startsWith('+')) return digits.slice(1);
+  return digits;
+};
+
+/** Local `0xx` display → `tel:+381…` for reliable dialing. */
+const toTelHref = (phone: string) => `tel:+${toE164Digits(phone)}`;
+
+/** Opens Viber chat with the given number (mobile / desktop app). */
+const toViberHref = (phone: string) =>
+  `viber://chat?number=%2B${toE164Digits(phone)}`;
+
+export const brand = {
+  whyChooseTitle: `Zašto kupci biraju ${companyInfo.name}?`,
+  aboutIntro: `${companyInfo.name} je specijalizovana prodavnica profesionalnih i hobi alata, elektromaterijala, rasvete i solarne opreme. U ponudi imamo proizvode vodećih svetskih proizvođača — od električnih i akumulatorskih alata do kompresora, kosačica i opreme za elektro instalacije.`,
+} as const;
+
+export const contactChannels = {
+  primaryPhone: companyInfo.phones[0],
+  secondaryPhone: companyInfo.phones[1],
+  primaryPhoneHref: toTelHref(companyInfo.phones[0]),
+  secondaryPhoneHref: toTelHref(companyInfo.phones[1]),
+  viberHref: toViberHref(companyInfo.phones[0]),
+  email: companyInfo.email,
+  emailHref: `mailto:${companyInfo.email}`,
+  addressShort: companyInfo.address.city,
+  addressFull: companyInfo.address.full,
+  hoursSummary: 'Pon–Pet: 08–20h, Sub: 08–16h',
+} as const;
 
 export const aboutContent = {
   breadcrumbs: [
