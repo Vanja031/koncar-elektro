@@ -1,8 +1,10 @@
+import sanitizeHtml from 'sanitize-html';
 import type { BreadcrumbItem } from '@/data/categoryPages';
 import type { ProductDetail, ProductDeclarationRow, ProductSpec } from '@/data/productDetail';
 import { ROUTES } from '@/lib/catalogUrls';
 import {
   extractProdavnicaPath,
+  extractSpecsFromAttributes,
   getAttributeValue,
   mapStoreProductToCatalog,
   mapStoreAttributesToSpecs,
@@ -13,15 +15,30 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+/** Sanitized rich description — keeps headings/paragraphs/lists, strips scripts/styles/attrs we don't need. */
+function sanitizeDescriptionHtml(html: string): string | undefined {
+  if (!html.trim()) return undefined;
+  const clean = sanitizeHtml(html, {
+    allowedTags: [
+      'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'table', 'thead',
+      'tbody', 'tr', 'th', 'td', 'blockquote',
+    ],
+    allowedAttributes: { a: ['href', 'target', 'rel'] },
+  }).trim();
+  return clean.length > 0 ? clean : undefined;
+}
+
 function buildBreadcrumbs(product: WcStoreProduct): BreadcrumbItem[] {
   const items: BreadcrumbItem[] = [{ label: 'Početna', href: ROUTES.home }];
 
+  // Embedded product category refs use `link`, not `permalink` — see extractCategorySlugFromProduct.
   const sorted = [...(product.categories ?? [])].sort(
-    (a, b) => (a.permalink?.split('/').length ?? 0) - (b.permalink?.split('/').length ?? 0),
+    (a, b) => (a.link?.split('/').length ?? 0) - (b.link?.split('/').length ?? 0),
   );
 
   for (const cat of sorted) {
-    const match = cat.permalink?.match(/\/product-category\/(.+)\/?$/);
+    const match = cat.link?.match(/\/product-category\/(.+)\/?$/);
     if (match) {
       items.push({
         label: cat.name,
@@ -67,13 +84,15 @@ export function mapStoreProductToDetail(product: WcStoreProduct): ProductDetail 
   if (gallery.length === 0 && catalog.image) gallery.push(catalog.image);
 
   const longHtml = product.description || product.short_description || '';
-  const features = attrSpecs.slice(0, 6).map((s) => `${s.label}: ${s.value}`);
+  // Proizvođač/uvoznik/zemlja porekla se već prikazuju u Deklaraciji — ne dupliramo ih ovde.
+  const features = extractSpecsFromAttributes(product);
 
   return {
     ...catalog,
     slug: product.slug,
     gallery: gallery.slice(0, 8),
     longDescription: stripHtml(longHtml) || catalog.description,
+    longDescriptionHtml: sanitizeDescriptionHtml(product.description || ''),
     features: features.length > 0 ? features : [catalog.description],
     specifications: [...buildSpecifications(catalog), ...attrSpecs],
     declaration: buildDeclaration(product),

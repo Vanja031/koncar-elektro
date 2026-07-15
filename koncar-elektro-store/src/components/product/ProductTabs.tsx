@@ -55,15 +55,24 @@ export const ProductTabs = ({ product }: Props) => {
       <div className="product-tabs-panel" role="tabpanel">
         {activeTab === 'description' && (
           <div className="max-w-3xl">
-            <p className="text-sm text-foreground/90 leading-relaxed">{product.longDescription}</p>
-            <ul className="mt-6 space-y-2.5">
-              {product.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-sm text-foreground/90">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" strokeWidth={3} />
-                  {feature}
-                </li>
-              ))}
-            </ul>
+            {product.longDescriptionHtml ? (
+              <div
+                className="product-description-html"
+                dangerouslySetInnerHTML={{ __html: product.longDescriptionHtml }}
+              />
+            ) : (
+              <>
+                <p className="text-sm text-foreground/90 leading-relaxed">{product.longDescription}</p>
+                <ul className="mt-6 space-y-2.5">
+                  {product.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm text-foreground/90">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" strokeWidth={3} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
         )}
 

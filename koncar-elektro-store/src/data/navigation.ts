@@ -1,6 +1,6 @@
 import {
   Zap, BatteryFull, Wrench, Wind, Ruler, HardHat, Cog, Package,
-  Sprout, Plug, Lightbulb, Sun, type LucideIcon,
+  Sprout, Plug, Lightbulb, Sun, Tractor, Fence, type LucideIcon,
 } from 'lucide-react';
 import imgElektricni from '@/assets/elektricni-alat.png';
 import imgAku from '@/assets/aku-alat.png';
@@ -9,6 +9,8 @@ import imgKompresor from '@/assets/kompresor.png';
 import imgElektromaterijal from '@/assets/elektromaterijal.png';
 import imgRasveta from '@/assets/rasveta.png';
 import imgSolarne from '@/assets/solarne.png';
+import imgTraktor from '@/assets/traktor.png';
+import imgDvorishte from '@/assets/oprema-za-dvoriste.png';
 import productGeneric from '@/assets/product-generic.jpg';
 
 export type MegaMenuSubcategory = {
@@ -166,6 +168,37 @@ export const alatiMenuCategories: MegaMenuCategory[] = [
       { label: 'Prskalice', count: 51, image: productGeneric },
       { label: 'Baštenski alati', count: 67, image: productGeneric },
       { label: 'Cevi i prskalice', count: 39, image: productGeneric },
+    ],
+  },
+  {
+    id: 'poljoprivredni-program',
+    label: 'Poljoprivredni program',
+    icon: Tractor,
+    viewAllLabel: 'Pogledajte sav poljoprivredni program',
+    subcategories: [
+      { label: 'Kosačice', count: 105, image: imgTraktor },
+      { label: 'Trimeri', count: 57, image: imgTraktor },
+      { label: 'Prskalice i atomizeri', count: 33, image: imgTraktor },
+      { label: 'Motorne testere', count: 33, image: imgTraktor },
+      { label: 'Kultivatori i freze', count: 15, image: imgTraktor },
+      { label: 'Motorna drobilica za grane', count: 15, image: imgTraktor },
+      { label: 'Tresači', count: 7, image: imgTraktor },
+      { label: 'Motorni duvači', count: 6, image: imgTraktor },
+      // WC term slug has a typo ("elekticni" — missing 'r') that doesn't match a naive slugify.
+      { label: 'Električni duvači', count: 6, image: imgTraktor, slug: 'elekticni-duvaci' },
+      { label: 'Motorni bušači', count: 3, image: imgTraktor },
+      { label: 'Motorni čistač snega', count: 2, image: imgTraktor },
+    ],
+  },
+  {
+    id: 'oprema-za-dvoriste',
+    label: 'Oprema za dvorište',
+    icon: Fence,
+    viewAllLabel: 'Pogledajte svu opremu za dvorište',
+    subcategories: [
+      { label: 'Baštenski alat', count: 19, image: imgDvorishte },
+      { label: 'Creva za dvorište i baštu', count: 9, image: imgDvorishte },
+      { label: 'Baštenski nameštaj', count: 2, image: imgDvorishte },
     ],
   },
 ];

@@ -1,4 +1,4 @@
-import { mapStoreProductToCatalog } from '@/lib/api/mappers/product';
+import { leafCategorySlug, mapStoreProductToCatalog } from '@/lib/api/mappers/product';
 import { mapStoreProductToDetail } from '@/lib/api/mappers/productDetail';
 import {
   getStoreProductBySlugServer,
@@ -27,8 +27,10 @@ export async function fetchProductPageData(slug: string): Promise<ProductPageDat
 
     let related: CatalogProduct[] = [];
     if (categorySlug) {
+      // Store API's `category` filter wants the leaf term slug, not the full nested path
+      // (e.g. `poljoprivredni-alati-i-oprema/kosacice` → `kosacice`) — otherwise it returns nothing.
       const siblings = await getStoreProductsServer({
-        category: categorySlug,
+        category: leafCategorySlug(categorySlug),
         per_page: 8,
         orderby: 'popularity',
       });

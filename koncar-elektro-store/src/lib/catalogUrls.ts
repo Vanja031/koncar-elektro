@@ -68,6 +68,8 @@ export const MEGA_MENU_PARENT_SLUG: Record<string, string> = {
   'masine-oprema': 'agregati',
   'potrosni-materijal': 'potrosni-materijal',
   'bastenski-alati': 'kosacice-i-trimeri',
+  'poljoprivredni-program': 'poljoprivredni-program',
+  'oprema-za-dvoriste': 'oprema-za-dvoriste',
   elektromaterijal: 'elektromaterijal',
   rasveta: 'rasveta',
   solarne: 'solarne',

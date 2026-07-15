@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { mapStoreProductToDetail } from '@/lib/api/mappers/productDetail';
-import { mapStoreProductToCatalog } from '@/lib/api/mappers/product';
-import { getStoreProductBySlug, getStoreProducts, getStoreProductsPaginated } from '@/lib/api/wc-store/products';
+import { leafCategorySlug, mapStoreProductToCatalog } from '@/lib/api/mappers/product';
+import {
+  getStoreProductBySlug,
+  getStoreProducts,
+  getStoreProductsPaginated,
+  searchStoreProductsMultiWord,
+} from '@/lib/api/wc-store/products';
 import { getStoreCategories } from '@/lib/api/wc-store/categories';
 import { useLiveApi } from '@/lib/api/config';
 import type { WcStoreProductsQuery } from '@/lib/api/types/wc-store';
@@ -108,8 +113,10 @@ export function useLiveRelatedProducts(
     queryKey: ['live-related', categorySlug, excludeId],
     queryFn: async () => {
       if (!categorySlug) return [];
+      // Store API's `category` filter wants the leaf term slug, not the full nested path
+      // (e.g. `poljoprivredni-alati-i-oprema/kosacice` → `kosacice`) — otherwise it returns nothing.
       const products = await getStoreProducts({
-        category: categorySlug,
+        category: leafCategorySlug(categorySlug),
         per_page: 8,
         orderby: 'popularity',
       });
@@ -219,7 +226,7 @@ export function useLiveSearchProducts(
       const filterParams = listingFiltersToSearchParams(filters);
       const { min_price, max_price, ...attributeParams } = filterParams;
 
-      const result = await getStoreProductsPaginated({
+      const result = await searchStoreProductsMultiWord({
         search: search?.trim() || undefined,
         category,
         on_sale: onSale ? true : undefined,

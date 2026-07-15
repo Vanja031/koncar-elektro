@@ -203,12 +203,16 @@ export const getParentListing = (
 
   const chips: ParentListingData['chips'] = menuCategory
     ? menuCategory.subcategories.map((sub, i) => ({
-        slug: slugify(sub.label),
+        // Prefer an explicit WC slug override (e.g. when the real WC term slug has a typo
+        // that doesn't match a naive slugify of the display label) over guessing from the label.
+        slug: sub.slug ?? slugify(sub.label),
         label: sub.label,
         count: sub.count,
         image: sub.image,
         featured: i === 0,
-        href: getMegaMenuSubcategoryUrl(menuCategory.id, sub.label),
+        href: sub.slug
+          ? getMegaMenuSubcategoryUrl(menuCategory.id, sub.slug, { wcSlug: true })
+          : getMegaMenuSubcategoryUrl(menuCategory.id, sub.label),
       }))
     : [
         {

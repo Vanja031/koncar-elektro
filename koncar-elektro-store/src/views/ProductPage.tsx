@@ -6,7 +6,7 @@ import { Link, useParams } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { ProductGallery } from '@/components/product/ProductGallery';
-import { ProductInfo } from '@/components/product/ProductInfo';
+import { ProductInfoHeader, ProductInfoDetails } from '@/components/product/ProductInfo';
 import { ProductPurchaseCard } from '@/components/product/ProductPurchaseCard';
 import { ProductTabs } from '@/components/product/ProductTabs';
 import { ProductTrustStrip } from '@/components/product/ProductTrustStrip';
@@ -97,9 +97,27 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
   return (
     <ShopLayout>
       <section className="container py-6 lg:py-8">
-        <div className="product-hero-grid">
+        {/*
+         * Mobilni i desktop redosled se razlikuju na način koji CSS grid ne može čisto da
+         * postigne jednom šemom (mobilni ubacuje karticu za kupovinu IZMEĐU brenda i detalja,
+         * dok desktop želi brend+detalje kao jednu celinu pored slike/kartice) — bez ovoga bi
+         * red sa brendom na desktopu bio razvučen da odgovara visini slike, ostavljajući veliki
+         * razmak do detalja ispod. Zato renderujemo dva odvojena rasporeda i sakrivamo jedan.
+         */}
+        <div className="product-hero-grid lg:hidden">
           <ProductGallery images={product.gallery} name={product.name} discount={discount} />
-          <ProductInfo product={product} onReviewsClick={scrollToReviews} />
+          <ProductInfoHeader product={product} />
+          <div className={cartBump ? 'product-purchase-bump' : ''}>
+            <ProductPurchaseCard product={product} onAdded={handleAdd} />
+          </div>
+          <ProductInfoDetails product={product} onReviewsClick={scrollToReviews} />
+        </div>
+        <div className="hidden lg:grid product-hero-grid-desktop">
+          <ProductGallery images={product.gallery} name={product.name} discount={discount} />
+          <div className="product-hero-item-info">
+            <ProductInfoHeader product={product} />
+            <ProductInfoDetails product={product} onReviewsClick={scrollToReviews} />
+          </div>
           <div className={cartBump ? 'product-purchase-bump' : ''}>
             <ProductPurchaseCard product={product} onAdded={handleAdd} />
           </div>

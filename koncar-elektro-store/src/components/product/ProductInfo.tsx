@@ -8,15 +8,20 @@ type Props = {
   onReviewsClick?: () => void;
 };
 
-export const ProductInfo = ({ product, onReviewsClick }: Props) => {
+/** Brend/logo + naslov — na mobilnom ide odmah posle slike, pre cene i dugmeta za korpu. */
+export const ProductInfoHeader = ({ product }: { product: ProductDetail }) => (
+  <div className="product-info">
+    <ManufacturerRow brand={product.brand} className="product-info-brand" size="md" />
+    <h1 className="product-info-title">{product.name}</h1>
+  </div>
+);
+
+/** Ocena, kratak opis, šifra, isticanja i garancija — na mobilnom idu posle cene/korpe. */
+export const ProductInfoDetails = ({ product, onReviewsClick }: Props) => {
   const highlights = product.features.slice(0, 5);
 
   return (
     <div className="product-info">
-      <ManufacturerRow brand={product.brand} className="product-info-brand" size="md" />
-
-      <h1 className="product-info-title">{product.name}</h1>
-
       <button
         type="button"
         onClick={onReviewsClick}

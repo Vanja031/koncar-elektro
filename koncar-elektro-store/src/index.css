@@ -832,10 +832,29 @@
   }
 
   /* Product detail page */
+  /*
+   * Mobilni: slika → brend/naslov → cena/korpa → ostalo, prost stek (bez grid-area trikova).
+   * Desktop koristi POTPUNO odvojen raspored (vidi .product-hero-grid-desktop) umesto da
+   * razvlačimo isti grid preko dva reda — kad bi slika/kartica za kupovinu "preskakale" dva
+   * reda dok su brend i detalji u zasebnim redovima, red sa brendom bi se razvlačio da odgovara
+   * visini slike i ostavljao veliki, neželjeni razmak do detalja ispod njega.
+   */
   .product-hero-grid {
-    @apply grid grid-cols-1 gap-8 items-start;
-    @apply lg:grid-cols-[minmax(0,1.3fr)_20rem_20rem] lg:gap-5;
-    @apply xl:grid-cols-[minmax(0,1.4fr)_21.5rem_21.5rem] xl:gap-6;
+    @apply flex flex-col gap-6;
+  }
+  .product-hero-grid-desktop {
+    grid-template-columns: minmax(0, 1.3fr) 20rem 20rem;
+    align-items: start;
+    gap: 0.75rem 1.25rem;
+  }
+  @media (min-width: 1280px) {
+    .product-hero-grid-desktop {
+      grid-template-columns: minmax(0, 1.4fr) 21.5rem 21.5rem;
+      gap: 0.75rem 1.5rem;
+    }
+  }
+  .product-hero-item-info {
+    @apply flex flex-col gap-3;
   }
   .product-purchase-bump {
     @apply transition-transform scale-[1.01];
@@ -1133,6 +1152,15 @@
     .product-tabs-panel {
       @apply pt-4 pb-6;
     }
+  }
+  /* Sanitized WooCommerce opis (naslovi/pasusi/liste) — koristi tailwindcss/typography. */
+  .product-description-html {
+    @apply prose prose-sm sm:prose-base max-w-none text-foreground/90;
+    @apply prose-p:my-3 prose-p:leading-relaxed prose-p:text-foreground/90;
+    @apply prose-strong:text-primary prose-strong:font-semibold;
+    @apply prose-ul:my-3 prose-ul:space-y-1.5 prose-li:text-foreground/90 prose-li:my-0;
+    @apply prose-headings:font-display prose-headings:font-bold prose-headings:text-primary;
+    @apply prose-a:text-primary prose-a:font-medium;
   }
   .product-specs-table-wrap {
     @apply overflow-x-auto rounded-lg border border-border;

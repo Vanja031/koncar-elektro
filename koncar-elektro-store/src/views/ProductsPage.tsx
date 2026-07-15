@@ -112,11 +112,22 @@ const ProductsPage = ({
   const parentLiveMenu = parentMenuId ? getCategoryById(parentMenuId) : undefined;
 
   const parentChipSources = useMemo(() => {
-    if (!isParentRoute || !navLive || !parentLiveMenu?.subcategories.length) return [];
-    return parentLiveMenu.subcategories
-      .filter((sub) => sub.slug)
-      .map((sub) => ({ label: sub.label, slug: sub.slug! }));
-  }, [isParentRoute, navLive, parentLiveMenu]);
+    if (!isParentRoute) return [];
+    if (navLive && parentLiveMenu?.subcategories.length) {
+      return parentLiveMenu.subcategories
+        .filter((sub) => sub.slug)
+        .map((sub) => ({ label: sub.label, slug: sub.slug! }));
+    }
+    // Hub categories not wired into the mega menu (e.g. Poljoprivredni program, Oprema za
+    // dvorište) render their subcategory chips from the static fallback list — still fetch
+    // each one's real first-product photo instead of showing the same category placeholder.
+    if (parentData?.chips.length) {
+      return parentData.chips
+        .filter((c) => c.slug && c.slug !== 'svi-proizvodi')
+        .map((c) => ({ label: c.label, slug: c.slug! }));
+    }
+    return [];
+  }, [isParentRoute, navLive, parentLiveMenu, parentData]);
 
   const parentChipImages = useSubcategoryProductImages(parentChipSources);
 
@@ -227,7 +238,10 @@ const ProductsPage = ({
           image: sub.slug ? parentChipImages.data?.[sub.slug] : undefined,
           href: resolveMegaMenuSubcategoryUrl(parentMenuId!, sub),
         }))
-      : parentData.chips;
+      : parentData.chips.map((c) => ({
+          ...c,
+          image: (c.slug && parentChipImages.data?.[c.slug]) || c.image,
+        }));
 
     const bestSellers = useLiveApi ? (parentBestSellers.data?.products ?? []) : [];
     const firstChipHref = chips[0]?.href;

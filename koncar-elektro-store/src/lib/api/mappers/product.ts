@@ -88,12 +88,26 @@ function extractBrand(product: WcStoreProduct): string {
 
 /** Deepest category slug path from permalink, e.g. `rucni-alat-i-pribor/rucni-alat`. */
 export function extractCategorySlugFromProduct(product: WcStoreProduct): string {
+  // Category refs embedded on a product use `link`, not `permalink` (that field only exists
+  // on the standalone /products/categories endpoint) — reading the wrong key here silently
+  // made every live product fall back to 'ponuda', breaking related-products/category-based logic.
   const deepest = [...(product.categories ?? [])].sort(
-    (a, b) => (b.permalink?.split('/').length ?? 0) - (a.permalink?.split('/').length ?? 0),
+    (a, b) => (b.link?.split('/').length ?? 0) - (a.link?.split('/').length ?? 0),
   )[0];
-  if (!deepest?.permalink) return 'ponuda';
-  const match = deepest.permalink.match(/\/product-category\/(.+)\/?$/);
+  if (!deepest?.link) return 'ponuda';
+  const match = deepest.link.match(/\/product-category\/(.+)\/?$/);
   return match?.[1]?.replace(/\/$/, '') ?? deepest.slug;
+}
+
+/**
+ * `categorySlug` can be a full nested path (e.g. `poljoprivredni-alati-i-oprema/kosacice`)
+ * for products in a subcategory. The WC Store API's `category` filter only accepts a single
+ * term slug — passing the full path silently returns zero results. Use this to get the leaf
+ * term slug (WP category slugs are unique across the whole taxonomy, so this stays precise).
+ */
+export function leafCategorySlug(categorySlug: string): string {
+  const segments = categorySlug.split('/').filter(Boolean);
+  return segments[segments.length - 1] ?? categorySlug;
 }
 
 /** Prodavnica path segments from permalink, e.g. `rucni-alat-i-pribor/rucni-alat`. */

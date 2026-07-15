@@ -47,6 +47,18 @@ export type WcStoreCategory = {
   permalink: string;
 };
 
+/**
+ * Category refs embedded in a product's `categories[]` (e.g. inside `/products/{id}`)
+ * use a different, smaller shape than the standalone `/products/categories` endpoint —
+ * notably `link` instead of `permalink`.
+ */
+export type WcStoreProductCategoryRef = {
+  id: number;
+  name: string;
+  slug: string;
+  link: string;
+};
+
 export type WcStoreProduct = {
   id: number;
   name: string;
@@ -64,7 +76,7 @@ export type WcStoreProduct = {
   average_rating: string;
   review_count: number;
   images: WcStoreImage[];
-  categories: WcStoreCategory[];
+  categories: WcStoreProductCategoryRef[];
   tags: { id: number; name: string; slug: string }[];
   stock_availability: {
     text: string;

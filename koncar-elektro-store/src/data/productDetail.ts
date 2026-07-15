@@ -26,6 +26,8 @@ export type ProductDetail = KoncarCatalogProduct & {
   subtitle?: string;
   gallery: string[];
   longDescription: string;
+  /** Sanitized rich HTML (headings/lists) from WooCommerce — preferred over `longDescription` when present. */
+  longDescriptionHtml?: string;
   features: string[];
   specifications: ProductSpec[];
   declaration: ProductDeclarationRow[];
