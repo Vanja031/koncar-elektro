@@ -62,6 +62,7 @@
   html {
     scroll-behavior: smooth;
     font-size: 110%;
+    @apply overflow-x-hidden;
   }
   body {
     @apply bg-background text-foreground font-body antialiased overflow-x-hidden;
@@ -189,12 +190,12 @@
     .home-carousel--edge-arrows .home-carousel-arrow--prev {
       left: 0;
       margin-left: 0;
-      transform: translate(-3px, -50%);
+      transform: translateY(-50%);
     }
     .home-carousel--edge-arrows .home-carousel-arrow--next {
       right: 0;
       margin-right: 0;
-      transform: translate(3px, -50%);
+      transform: translateY(-50%);
     }
     .home-carousel--compact-arrows .home-carousel-arrow {
       @apply w-7 h-7;
@@ -334,6 +335,12 @@
   .header-mobile-action {
     @apply flex items-center justify-center w-10 h-10 shrink-0 rounded-lg border border-border text-primary hover:bg-secondary transition-colors;
     box-shadow: var(--shadow-navy-soft);
+  }
+  .product-back-bar {
+    @apply border-b border-border bg-secondary/30;
+  }
+  .product-back-btn {
+    @apply inline-flex items-center gap-1 max-w-full py-2.5 -my-px text-sm font-semibold text-primary active:opacity-60 transition-opacity;
   }
   .header-expert-banner {
     box-shadow: var(--shadow-navy-soft);

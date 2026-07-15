@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { Link, useParams } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
+import { ProductBackBar } from '@/components/product/ProductBackBar';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfoHeader, ProductInfoDetails } from '@/components/product/ProductInfo';
 import { ProductPurchaseCard } from '@/components/product/ProductPurchaseCard';
@@ -96,6 +97,7 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
 
   return (
     <ShopLayout>
+      <ProductBackBar breadcrumbs={product.breadcrumbs} />
       <section className="container py-6 lg:py-8">
         {/*
          * Mobilni i desktop redosled se razlikuju na način koji CSS grid ne može čisto da

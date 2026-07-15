@@ -230,6 +230,7 @@ const ProductsPage = ({
   if (parentData) {
     const isLiveChips =
       navLive && Boolean(parentLiveMenu) && (parentLiveMenu?.subcategories.length ?? 0) > 0;
+    const chipImagesSettled = !parentChipImages.isPending && !parentChipImages.isFetching;
     const chips = isLiveChips
       ? parentLiveMenu!.subcategories.map((sub) => ({
           slug: sub.slug ?? slugify(sub.label),
@@ -240,7 +241,12 @@ const ProductsPage = ({
         }))
       : parentData.chips.map((c) => ({
           ...c,
-          image: (c.slug && parentChipImages.data?.[c.slug]) || c.image,
+          // Dok se prava slika proizvoda učitava, ne prikazuj statičnu sliku kategorije kao
+          // privremenu zamenu (npr. Poljoprivredni program/Oprema za dvorište bi "flashovali"
+          // sliku matične kategorije) — sačekaj loader, isto kao kod kategorija iz live menija.
+          image:
+            (c.slug && parentChipImages.data?.[c.slug]) ||
+            (chipImagesSettled ? c.image : undefined),
         }));
 
     const bestSellers = useLiveApi ? (parentBestSellers.data?.products ?? []) : [];
@@ -262,7 +268,7 @@ const ProductsPage = ({
             title={parentData.sectionTitle}
             layout="cards"
             description=""
-            imagesLoading={isLiveChips && (parentChipImages.isPending || parentChipImages.isFetching)}
+            imagesLoading={!chipImagesSettled}
           />
         ) : (
           <div className="container py-6">
