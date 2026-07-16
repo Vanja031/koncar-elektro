@@ -10,7 +10,7 @@ export const CheckoutSummary = () => {
   const hasSavings = savings > 0;
 
   return (
-    <aside className="cart-summary lg:sticky lg:top-28">
+    <aside className="cart-summary">
       <h2 className="cart-summary-title">Vaša porudžbina</h2>
 
       <ul className="checkout-summary-items">

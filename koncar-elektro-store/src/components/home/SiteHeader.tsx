@@ -135,7 +135,7 @@ export const SiteHeader = () => {
         </div>
       </div>
 
-      <header className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
+      <header className="site-main-header bg-white border-b border-border shadow-sm">
         <div className="container py-2 sm:py-3 flex items-center gap-2 sm:gap-3 lg:gap-6">
           <button
             type="button"

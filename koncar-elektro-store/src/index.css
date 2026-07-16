@@ -62,10 +62,11 @@
   html {
     scroll-behavior: smooth;
     font-size: 110%;
-    @apply overflow-x-hidden;
+    overflow-x: clip;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased overflow-x-hidden;
+    @apply bg-background text-foreground font-body antialiased;
+    overflow-x: clip;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
@@ -73,6 +74,12 @@
 }
 
 @layer components {
+  .site-main-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
   .section-heading {
     @apply title-accent-line font-display font-bold text-xl md:text-2xl uppercase tracking-wide text-primary;
   }
@@ -319,6 +326,25 @@
     @apply w-14 h-14 rounded-full flex items-center justify-center text-primary;
     border: 2px solid hsl(var(--primary) / 0.22);
     background: hsl(var(--primary) / 0.06);
+  }
+  .mobile-home-trust {
+    @apply grid grid-cols-4 bg-white border-b border-border;
+  }
+  .mobile-home-trust-item {
+    @apply relative min-w-0 flex flex-col items-center justify-start px-1 py-3 text-center text-primary;
+  }
+  .mobile-home-trust-item:not(:first-child)::before {
+    content: '';
+    @apply absolute left-0 top-3 bottom-3 w-px bg-border;
+  }
+  .mobile-home-trust-icon {
+    @apply mb-2 text-[26px];
+  }
+  .mobile-home-trust-item p {
+    @apply text-[9px] min-[380px]:text-[10px] leading-snug;
+  }
+  .mobile-home-trust-item p span {
+    @apply block;
   }
   .footer-contact-icon {
     @apply w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white text-primary text-sm;
@@ -1603,6 +1629,19 @@
   }
 
   /* Checkout */
+  .checkout-summary-sticky {
+    @apply w-full min-w-0;
+  }
+  @media (min-width: 1024px) {
+    .checkout-summary-sticky {
+      position: sticky;
+      top: 8rem;
+      align-self: start;
+    }
+    .checkout-summary-sticky .cart-summary {
+      position: static;
+    }
+  }
   .checkout-form {
     @apply space-y-5 min-w-0;
   }

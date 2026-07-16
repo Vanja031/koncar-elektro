@@ -11,6 +11,13 @@ const trustItems: { icon: IconDefinition; title: string; sub: string }[] = [
   { icon: trustIcons.secure, title: 'Sigurna kupovina', sub: 'Bezbedno plaćanje svim karticama' },
 ];
 
+const mobileTrustItems: { icon: IconDefinition; title: string; sub: string }[] = [
+  { icon: trustIcons.warranty, title: 'Garancija na', sub: 'sve proizvode' },
+  { icon: trustIcons.delivery, title: 'Brza dostava', sub: 'širom Srbije' },
+  { icon: trustIcons.verified, title: 'Provereni', sub: 'brendovi' },
+  { icon: trustIcons.support, title: 'Stručna podrška', sub: 'na raspolaganju' },
+];
+
 const allHeroSlides = [...leftCarouselSlides, ...rightCarouselSlides];
 
 export const HeroSection = () => (
@@ -18,6 +25,17 @@ export const HeroSection = () => (
     <section className="lg:hidden py-3">
       <div className="container px-0 sm:px-4">
         <HeroCarousel slides={allHeroSlides} layout="mobile" />
+        <div className="mobile-home-trust md:hidden" aria-label="Prednosti kupovine">
+          {mobileTrustItems.map((item) => (
+            <div key={item.title} className="mobile-home-trust-item">
+              <FaIcon icon={item.icon} className="mobile-home-trust-icon" />
+              <p>
+                <span>{item.title}</span>
+                <span>{item.sub}</span>
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 

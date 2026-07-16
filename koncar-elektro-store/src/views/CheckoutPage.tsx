@@ -16,7 +16,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <ShopLayout>
+    <ShopLayout showFloatingChat={false}>
       <Breadcrumbs
         items={[
           { label: 'Početna', href: '/' },
@@ -34,7 +34,9 @@ const CheckoutPage = () => {
 
         <div className="cart-page-grid">
           <CheckoutForm />
-          <CheckoutSummary />
+          <div className="checkout-summary-sticky">
+            <CheckoutSummary />
+          </div>
         </div>
       </section>
     </ShopLayout>

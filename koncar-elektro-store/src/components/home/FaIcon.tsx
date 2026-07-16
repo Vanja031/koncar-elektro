@@ -12,6 +12,7 @@ import {
   faLocationDot,
   faClock,
   faComments,
+  faAward,
 } from '@fortawesome/free-solid-svg-icons';
 
 type FaIconProps = {
@@ -30,6 +31,7 @@ export const trustIcons = {
   warranty: faShieldHalved,
   returns: faRotateLeft,
   secure: faLock,
+  verified: faAward,
 } as const;
 
 export const footerIcons = {
