@@ -9,6 +9,9 @@ import ProductCategoryRoute from '@/views/ProductCategoryRoute';
 type Props = { params: { slug?: string[] } };
 
 export const revalidate = REVALIDATE_CATEGORY;
+// No generateStaticParams here — category tree is small enough that
+// on-demand render + ISR cache (default dynamicParams) is sufficient.
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slugParts = params.slug ?? [];
