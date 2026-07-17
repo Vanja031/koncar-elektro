@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { SiteHeader } from '@/components/home/SiteHeader';
-import { SiteFooter, FloatingChat } from '@/components/home/SiteFooter';
+import { SiteFooter } from '@/components/home/SiteFooter';
+import { FloatingContactWidget } from '@/components/layout/FloatingContactWidget';
 
 type Props = {
   children: ReactNode;
@@ -12,6 +13,6 @@ export const ShopLayout = ({ children, showFloatingChat = true }: Props) => (
     <SiteHeader />
     <main>{children}</main>
     <SiteFooter />
-    {showFloatingChat && <FloatingChat />}
+    {showFloatingChat && <FloatingContactWidget />}
   </div>
 );

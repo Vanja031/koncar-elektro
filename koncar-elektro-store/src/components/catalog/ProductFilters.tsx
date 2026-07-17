@@ -1,6 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -25,10 +34,48 @@ type Props = {
   variant?: 'sidebar' | 'drawer';
   className?: string;
   categoryOptions?: CategoryFilterOption[];
+  /** When false, hide bottom Primeni/Poništi (mobile sheet footer owns them). */
+  showActions?: boolean;
+};
+
+export type ProductFiltersHandle = {
+  apply: () => void;
+  clear: () => void;
+  isDirty: () => boolean;
 };
 
 const OPTION_PAGE_SIZE = 20;
-const PRICE_DEBOUNCE_MS = 400;
+
+function parsePrice(raw: string): number | undefined {
+  if (!raw.trim()) return undefined;
+  const n = Number(raw);
+  return !Number.isNaN(n) && n > 0 ? n : undefined;
+}
+
+function normalizeFilters(filters: ListingFilters): string {
+  const attrs = Object.entries(filters.attributes ?? {})
+    .filter(([, slugs]) => slugs?.length)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, slugs]) => [key, [...(slugs ?? [])].sort()]);
+  return JSON.stringify({
+    attributes: attrs,
+    priceMin: filters.priceMin ?? null,
+    priceMax: filters.priceMax ?? null,
+    inStockOnly: Boolean(filters.inStockOnly),
+    categorySlug: filters.categorySlug ?? null,
+  });
+}
+
+function filtersEqual(a: ListingFilters, b: ListingFilters): boolean {
+  return normalizeFilters(a) === normalizeFilters(b);
+}
+
+function priceInputsFromFilters(filters: ListingFilters) {
+  return {
+    min: filters.priceMin != null ? String(filters.priceMin) : '',
+    max: filters.priceMax != null ? String(filters.priceMax) : '',
+  };
+}
 
 function FilterSection({
   id,
@@ -98,13 +145,9 @@ function AttributeOptionsList({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const matched = q
-      ? group.options.filter((o) => o.label.toLowerCase().includes(q))
-      : group.options;
-    const selected = matched.filter((o) => selectedSet.has(o.slug));
-    const rest = matched.filter((o) => !selectedSet.has(o.slug));
-    return [...selected, ...rest];
-  }, [group.options, query, selectedSet]);
+    if (!q) return group.options;
+    return group.options.filter((o) => o.label.toLowerCase().includes(q));
+  }, [group.options, query]);
 
   const visible = filtered.slice(0, limit);
   const hasMore = filtered.length > limit;
@@ -169,64 +212,79 @@ function AttributeOptionsList({
   );
 }
 
-export const ProductFilters = ({
-  attributeGroups = [],
-  filters,
-  onChange,
-  onClear,
-  variant = 'sidebar',
-  className,
-  categoryOptions,
-}: Props) => {
+export const ProductFilters = forwardRef<ProductFiltersHandle, Props>(function ProductFilters(
+  {
+    attributeGroups = [],
+    filters,
+    onChange,
+    onClear,
+    variant = 'sidebar',
+    className,
+    categoryOptions,
+    showActions = true,
+  },
+  ref,
+) {
   const showCategory = Boolean(categoryOptions?.length);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-  const [priceDraft, setPriceDraft] = useState({
-    min: filters.priceMin != null ? String(filters.priceMin) : '',
-    max: filters.priceMax != null ? String(filters.priceMax) : '',
-  });
-  const filtersRef = useRef(filters);
-  const onChangeRef = useRef(onChange);
-  filtersRef.current = filters;
-  onChangeRef.current = onChange;
+  const [draft, setDraft] = useState<ListingFilters>(filters);
+  const [priceDraft, setPriceDraft] = useState(() => priceInputsFromFilters(filters));
 
   const isSectionOpen = (id: string) => openSections[id] ?? true;
 
+  // Sync draft when applied filters change from outside (badges, clear, URL).
   useEffect(() => {
-    if (filters.priceMin == null && filters.priceMax == null) {
-      setPriceDraft((prev) =>
-        prev.min === '' && prev.max === '' ? prev : { min: '', max: '' },
-      );
-    }
-  }, [filters.priceMin, filters.priceMax]);
+    setDraft(filters);
+    setPriceDraft(priceInputsFromFilters(filters));
+  }, [filters]);
 
-  useEffect(() => {
-    const nextMinRaw = priceDraft.min ? Number(priceDraft.min) : undefined;
-    const nextMaxRaw = priceDraft.max ? Number(priceDraft.max) : undefined;
-    const nextMin =
-      nextMinRaw != null && !Number.isNaN(nextMinRaw) && nextMinRaw > 0 ? nextMinRaw : undefined;
-    const nextMax =
-      nextMaxRaw != null && !Number.isNaN(nextMaxRaw) && nextMaxRaw > 0 ? nextMaxRaw : undefined;
+  const draftRef = useRef(draft);
+  const priceDraftRef = useRef(priceDraft);
+  draftRef.current = draft;
+  priceDraftRef.current = priceDraft;
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const onClearRef = useRef(onClear);
+  onClearRef.current = onClear;
 
-    const current = filtersRef.current;
-    if (nextMin === current.priceMin && nextMax === current.priceMax) return;
+  const pendingFilters = useMemo<ListingFilters>(
+    () => ({
+      ...draft,
+      priceMin: parsePrice(priceDraft.min),
+      priceMax: parsePrice(priceDraft.max),
+    }),
+    [draft, priceDraft.min, priceDraft.max],
+  );
 
-    const timer = window.setTimeout(() => {
-      onChangeRef.current({
-        ...filtersRef.current,
-        priceMin: nextMin,
-        priceMax: nextMax,
-      });
-    }, PRICE_DEBOUNCE_MS);
+  const dirty = !filtersEqual(pendingFilters, filters);
+  const hasAppliedFilters = countActiveFilters(filters) > 0;
+  const hasDraftFilters = countActiveFilters(pendingFilters) > 0;
 
-    return () => window.clearTimeout(timer);
-  }, [priceDraft.min, priceDraft.max]);
+  const apply = useCallback(() => {
+    const next: ListingFilters = {
+      ...draftRef.current,
+      priceMin: parsePrice(priceDraftRef.current.min),
+      priceMax: parsePrice(priceDraftRef.current.max),
+    };
+    if (filtersEqual(next, filtersRef.current)) return;
+    onChangeRef.current(next);
+  }, []);
 
-  const hasActiveFilters = countActiveFilters(filters) > 0;
+  const clear = useCallback(() => {
+    setDraft({});
+    setPriceDraft({ min: '', max: '' });
+    onClearRef.current();
+  }, []);
+
+  useImperativeHandle(ref, () => ({ apply, clear, isDirty: () => dirty }), [apply, clear, dirty]);
+
   const priceActiveCount =
-    (filters.priceMin != null && filters.priceMin > 0 ? 1 : 0) +
-    (filters.priceMax != null && filters.priceMax > 0 ? 1 : 0);
-  const categoryActiveCount = filters.categorySlug ? 1 : 0;
-  const availabilityActiveCount = filters.inStockOnly ? 1 : 0;
+    (pendingFilters.priceMin != null && pendingFilters.priceMin > 0 ? 1 : 0) +
+    (pendingFilters.priceMax != null && pendingFilters.priceMax > 0 ? 1 : 0);
+  const categoryActiveCount = pendingFilters.categorySlug ? 1 : 0;
+  const availabilityActiveCount = pendingFilters.inStockOnly ? 1 : 0;
   const isDrawer = variant === 'drawer';
 
   return (
@@ -242,8 +300,8 @@ export const ProductFilters = ({
           <h2 className="font-display font-bold text-primary uppercase text-sm tracking-wide">
             Filteri
           </h2>
-          {hasActiveFilters && (
-            <button type="button" onClick={onClear} className="catalog-filters-clear">
+          {(hasAppliedFilters || dirty) && (
+            <button type="button" onClick={clear} className="catalog-filters-clear">
               <X className="w-3.5 h-3.5" aria-hidden />
               Očisti
             </button>
@@ -264,9 +322,13 @@ export const ProductFilters = ({
               <input
                 type="radio"
                 name={`catalog-category-${variant}`}
-                checked={!filters.categorySlug}
+                checked={!draft.categorySlug}
                 onChange={() =>
-                  onChange({ ...filters, categorySlug: undefined, attributes: undefined })
+                  setDraft((prev) => ({
+                    ...prev,
+                    categorySlug: undefined,
+                    attributes: undefined,
+                  }))
                 }
                 className="catalog-filters-input"
               />
@@ -277,9 +339,13 @@ export const ProductFilters = ({
                 <input
                   type="radio"
                   name={`catalog-category-${variant}`}
-                  checked={filters.categorySlug === opt.slug}
+                  checked={draft.categorySlug === opt.slug}
                   onChange={() =>
-                    onChange({ ...filters, categorySlug: opt.slug, attributes: undefined })
+                    setDraft((prev) => ({
+                      ...prev,
+                      categorySlug: opt.slug,
+                      attributes: undefined,
+                    }))
                   }
                   className="catalog-filters-input"
                 />
@@ -301,12 +367,12 @@ export const ProductFilters = ({
           <label className="catalog-filters-option">
             <input
               type="checkbox"
-              checked={Boolean(filters.inStockOnly)}
+              checked={Boolean(draft.inStockOnly)}
               onChange={(e) =>
-                onChange({
-                  ...filters,
+                setDraft((prev) => ({
+                  ...prev,
                   inStockOnly: e.target.checked ? true : undefined,
-                })
+                }))
               }
               className="catalog-filters-input catalog-filters-input--check"
             />
@@ -322,12 +388,12 @@ export const ProductFilters = ({
           title={group.label}
           open={isSectionOpen(group.slug)}
           onOpenChange={(open) => setOpenSections((prev) => ({ ...prev, [group.slug]: open }))}
-          activeCount={getSelectedAttributeSlugs(filters, group.slug).length}
+          activeCount={getSelectedAttributeSlugs(draft, group.slug).length}
         >
           <AttributeOptionsList
             group={group}
-            filters={filters}
-            onChange={onChange}
+            filters={draft}
+            onChange={setDraft}
             variant={variant}
           />
         </FilterSection>
@@ -352,6 +418,12 @@ export const ProductFilters = ({
             placeholder="Od"
             value={priceDraft.min}
             onChange={(e) => setPriceDraft((prev) => ({ ...prev, min: e.target.value }))}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                apply();
+              }
+            }}
             className="catalog-filters-price-input"
           />
           <span className="text-muted-foreground text-xs" aria-hidden>
@@ -368,16 +440,37 @@ export const ProductFilters = ({
             placeholder="Do"
             value={priceDraft.max}
             onChange={(e) => setPriceDraft((prev) => ({ ...prev, max: e.target.value }))}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                apply();
+              }
+            }}
             className="catalog-filters-price-input"
           />
         </div>
       </FilterSection>
 
-      {hasActiveFilters && !isDrawer && (
-        <button type="button" onClick={onClear} className="btn-navy w-full mt-4 text-xs">
-          Poništi filtere
-        </button>
+      {showActions && (
+        <div className="catalog-filters-actions">
+          <button
+            type="button"
+            onClick={apply}
+            disabled={!dirty}
+            className="catalog-filters-action catalog-filters-action--apply"
+          >
+            Primeni
+          </button>
+          <button
+            type="button"
+            onClick={clear}
+            disabled={!hasAppliedFilters && !hasDraftFilters}
+            className="catalog-filters-action catalog-filters-action--clear"
+          >
+            Poništi
+          </button>
+        </div>
       )}
     </aside>
   );
-};
+});

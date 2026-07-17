@@ -8,6 +8,7 @@ import { SaleIntroBanner } from '@/components/catalog/SaleIntroBanner';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import { ProductFilters } from '@/components/catalog/ProductFilters';
 import { MobileFiltersSheet } from '@/components/catalog/MobileFiltersSheet';
+import { ActiveFilterBadges } from '@/components/catalog/ActiveFilterBadges';
 import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
@@ -23,6 +24,7 @@ import {
   type ListingFilters,
 } from '@/lib/listingFilters';
 import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
+import { scheduleScrollAfterFilterApply, scheduleScrollToTop } from '@/lib/scrollToTop';
 import { useSearchParams } from '@/lib/router-compat';
 
 type Props = {
@@ -71,7 +73,7 @@ const SalePage = ({ initialListing }: Props) => {
   );
 
   const scrollListingToTop = useCallback(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    scheduleScrollToTop();
   }, []);
 
   const syncFilterParams = useCallback(
@@ -85,14 +87,14 @@ const SalePage = ({ initialListing }: Props) => {
     [searchParams, setSearchParams],
   );
 
-  const handleFiltersChange = useCallback(
+  const handleFiltersApply = useCallback(
     (next: ListingFilters) => {
       setFilters(next);
       syncFilterParams(next);
       setPage(1);
-      scrollListingToTop();
+      scheduleScrollAfterFilterApply();
     },
-    [scrollListingToTop, syncFilterParams],
+    [syncFilterParams],
   );
 
   const handleFiltersClear = useCallback(() => {
@@ -100,8 +102,17 @@ const SalePage = ({ initialListing }: Props) => {
     setFilters(next);
     syncFilterParams(next);
     setPage(1);
-    scrollListingToTop();
-  }, [scrollListingToTop, syncFilterParams]);
+    scheduleScrollAfterFilterApply();
+  }, [syncFilterParams]);
+
+  const handleFiltersPatch = useCallback(
+    (next: ListingFilters) => {
+      setFilters(next);
+      syncFilterParams(next);
+      setPage(1);
+    },
+    [syncFilterParams],
+  );
 
   useEffect(() => {
     const categorySlug = searchParams.get('kategorija') || undefined;
@@ -209,14 +220,14 @@ const SalePage = ({ initialListing }: Props) => {
       <ListingHero breadcrumbs={breadcrumbs} title={title} />
       <SaleIntroBanner maxDiscount={maxDiscount} />
 
-      <section className="container py-8">
+      <section className="container py-8" data-catalog-listing>
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
           <div className="hidden lg:block">
             <ProductFilters
               attributeGroups={attributeGroups}
               categoryOptions={saleCategoryOptions}
               filters={filters}
-              onChange={handleFiltersChange}
+              onChange={handleFiltersApply}
               onClear={handleFiltersClear}
             />
           </div>
@@ -227,10 +238,18 @@ const SalePage = ({ initialListing }: Props) => {
                 attributeGroups={attributeGroups}
                 categoryOptions={saleCategoryOptions}
                 filters={filters}
-                onChange={handleFiltersChange}
+                onChange={handleFiltersApply}
                 onClear={handleFiltersClear}
               />
             </div>
+
+            <ActiveFilterBadges
+              attributeGroups={attributeGroups}
+              categoryOptions={saleCategoryOptions}
+              filters={filters}
+              onChange={handleFiltersPatch}
+              onClear={handleFiltersClear}
+            />
 
             {!useLiveApi || (!liveSale.isLoading && !liveSale.isError) ? (
               <ListingToolbar

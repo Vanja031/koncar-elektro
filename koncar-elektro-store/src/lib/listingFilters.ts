@@ -334,6 +334,129 @@ export function countActiveFilters(filters: ListingFilters): number {
   return count;
 }
 
+export type ActiveFilterChip = {
+  id: string;
+  label: string;
+  kind: 'priceMin' | 'priceMax' | 'inStock' | 'category' | 'attribute';
+  attributeSlug?: string;
+  termSlug?: string;
+};
+
+function formatFilterPrice(value: number): string {
+  return `${value.toLocaleString('sr-RS')} RSD`;
+}
+
+function resolveAttributeTermLabel(
+  attributeSlug: string,
+  termSlug: string,
+  attributeGroups?: AttributeFilterGroup[],
+): string {
+  const fromGroup = attributeGroups
+    ?.find((g) => g.slug === attributeSlug)
+    ?.options.find((o) => o.slug === termSlug)?.label;
+  if (fromGroup) return fromGroup;
+  const fromWc = getAttributeFilterOptions(attributeSlug).find((o) => o.slug === termSlug)?.label;
+  return fromWc ?? termSlug;
+}
+
+function resolveAttributeGroupLabel(
+  attributeSlug: string,
+  attributeGroups?: AttributeFilterGroup[],
+): string {
+  const fromGroup = attributeGroups?.find((g) => g.slug === attributeSlug)?.label;
+  if (fromGroup) return fromGroup;
+  return ATTRIBUTE_LABEL_OVERRIDES[attributeSlug]
+    ?? wcAttributes.find((a) => a.slug === attributeSlug)?.name
+    ?? attributeSlug;
+}
+
+/** Human-readable chips for the active listing filters (for badge UI). */
+export function getActiveFilterChips(
+  filters: ListingFilters,
+  options?: {
+    attributeGroups?: AttributeFilterGroup[];
+    categoryOptions?: CategoryFilterOption[];
+  },
+): ActiveFilterChip[] {
+  const chips: ActiveFilterChip[] = [];
+
+  if (filters.categorySlug) {
+    const catLabel =
+      options?.categoryOptions?.find((c) => c.slug === filters.categorySlug)?.label
+      ?? filters.categorySlug;
+    chips.push({
+      id: `category:${filters.categorySlug}`,
+      label: catLabel,
+      kind: 'category',
+    });
+  }
+
+  if (filters.inStockOnly) {
+    chips.push({
+      id: 'inStock',
+      label: 'Na stanju',
+      kind: 'inStock',
+    });
+  }
+
+  for (const [attributeSlug, termSlugs] of Object.entries(filters.attributes ?? {})) {
+    if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(attributeSlug)) continue;
+    const groupLabel = resolveAttributeGroupLabel(attributeSlug, options?.attributeGroups);
+    for (const termSlug of termSlugs ?? []) {
+      const termLabel = resolveAttributeTermLabel(
+        attributeSlug,
+        termSlug,
+        options?.attributeGroups,
+      );
+      chips.push({
+        id: `attr:${attributeSlug}:${termSlug}`,
+        label: `${groupLabel}: ${termLabel}`,
+        kind: 'attribute',
+        attributeSlug,
+        termSlug,
+      });
+    }
+  }
+
+  if (filters.priceMin != null && filters.priceMin > 0) {
+    chips.push({
+      id: 'priceMin',
+      label: `Od ${formatFilterPrice(filters.priceMin)}`,
+      kind: 'priceMin',
+    });
+  }
+  if (filters.priceMax != null && filters.priceMax > 0) {
+    chips.push({
+      id: 'priceMax',
+      label: `Do ${formatFilterPrice(filters.priceMax)}`,
+      kind: 'priceMax',
+    });
+  }
+
+  return chips;
+}
+
+export function removeActiveFilterChip(
+  filters: ListingFilters,
+  chip: ActiveFilterChip,
+): ListingFilters {
+  switch (chip.kind) {
+    case 'priceMin':
+      return { ...filters, priceMin: undefined };
+    case 'priceMax':
+      return { ...filters, priceMax: undefined };
+    case 'inStock':
+      return { ...filters, inStockOnly: undefined };
+    case 'category':
+      return { ...filters, categorySlug: undefined, attributes: undefined };
+    case 'attribute':
+      if (!chip.attributeSlug || !chip.termSlug) return filters;
+      return toggleAttributeTerm(filters, chip.attributeSlug, chip.termSlug, false);
+    default:
+      return filters;
+  }
+}
+
 /** WC category slug to send to the Store API. */
 export function resolveFilterCategorySlug(filters: ListingFilters): string | undefined {
   return filters.categorySlug;

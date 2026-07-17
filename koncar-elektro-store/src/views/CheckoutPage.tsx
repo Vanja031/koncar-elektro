@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Navigate } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { Breadcrumbs } from '@/components/catalog/Breadcrumbs';
@@ -10,8 +11,11 @@ import { ROUTES } from '@/lib/catalogUrls';
 
 const CheckoutPage = () => {
   const { lines } = useCart();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (lines.length === 0) {
+  // While submitting we clear the cart before leaving — don't bounce to /korpa
+  // or the thank-you page never loads.
+  if (lines.length === 0 && !isSubmitting) {
     return <Navigate to={ROUTES.cart} replace />;
   }
 
@@ -33,9 +37,9 @@ const CheckoutPage = () => {
         </div>
 
         <div className="cart-page-grid">
-          <CheckoutForm />
+          <CheckoutForm isSubmitting={isSubmitting} onSubmittingChange={setIsSubmitting} />
           <div className="checkout-summary-sticky">
-            <CheckoutSummary />
+            <CheckoutSummary isSubmitting={isSubmitting} />
           </div>
         </div>
       </section>

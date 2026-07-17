@@ -8,6 +8,7 @@ import { ListingHero } from '@/components/catalog/ListingHero';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import { ProductFilters } from '@/components/catalog/ProductFilters';
 import { MobileFiltersSheet } from '@/components/catalog/MobileFiltersSheet';
+import { ActiveFilterBadges } from '@/components/catalog/ActiveFilterBadges';
 import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { getDiscountPercent } from '@/data/koncarProducts';
@@ -22,6 +23,7 @@ import {
   type ListingFilters,
 } from '@/lib/listingFilters';
 import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
+import { scheduleScrollAfterFilterApply, scheduleScrollToTop } from '@/lib/scrollToTop';
 import { featuredBrands } from '@/data/homepage';
 
 /** WC term names are often ALL CAPS (e.g. "MAKITA") — prettify for display. */
@@ -50,7 +52,24 @@ const SearchPage = () => {
   );
 
   const scrollListingToTop = useCallback(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    scheduleScrollToTop();
+  }, []);
+
+  const handleFiltersApply = useCallback((next: ListingFilters) => {
+    setFilters(next);
+    setPage(1);
+    scheduleScrollAfterFilterApply();
+  }, []);
+
+  const handleFiltersClear = useCallback(() => {
+    setFilters(emptyListingFilters());
+    setPage(1);
+    scheduleScrollAfterFilterApply();
+  }, []);
+
+  const handleFiltersPatch = useCallback((next: ListingFilters) => {
+    setFilters(next);
+    setPage(1);
   }, []);
 
   useEffect(() => {
@@ -217,22 +236,14 @@ const SearchPage = () => {
     <ShopLayout>
       <ListingHero breadcrumbs={breadcrumbs} title={title} />
 
-      <section className="container py-8">
+      <section className="container py-8" data-catalog-listing>
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
           <div className="hidden lg:block">
             <ProductFilters
               attributeGroups={attributeGroups}
               filters={filters}
-              onChange={(next) => {
-                setFilters(next);
-                setPage(1);
-                scrollListingToTop();
-              }}
-              onClear={() => {
-                setFilters(emptyListingFilters());
-                setPage(1);
-                scrollListingToTop();
-              }}
+              onChange={handleFiltersApply}
+              onClear={handleFiltersClear}
             />
           </div>
 
@@ -241,18 +252,17 @@ const SearchPage = () => {
               <MobileFiltersSheet
                 attributeGroups={attributeGroups}
                 filters={filters}
-                onChange={(next) => {
-                  setFilters(next);
-                  setPage(1);
-                  scrollListingToTop();
-                }}
-                onClear={() => {
-                  setFilters(emptyListingFilters());
-                  setPage(1);
-                  scrollListingToTop();
-                }}
+                onChange={handleFiltersApply}
+                onClear={handleFiltersClear}
               />
             </div>
+
+            <ActiveFilterBadges
+              attributeGroups={attributeGroups}
+              filters={filters}
+              onChange={handleFiltersPatch}
+              onClear={handleFiltersClear}
+            />
 
             {hasSearchContext && !liveSearch.isLoading && !liveSearch.isError && products.length > 0 && (
               <ListingToolbar

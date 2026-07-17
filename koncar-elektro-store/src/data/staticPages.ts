@@ -39,6 +39,10 @@ const toTelHref = (phone: string) => `tel:+${toE164Digits(phone)}`;
 const toViberHref = (phone: string) =>
   `viber://chat?number=%2B${toE164Digits(phone)}`;
 
+/** Opens a WhatsApp chat with the given number (mobile / desktop / web). */
+const toWhatsAppHref = (phone: string) =>
+  `https://wa.me/${toE164Digits(phone)}`;
+
 export const brand = {
   whyChooseTitle: `Zašto kupci biraju ${companyInfo.name}?`,
   aboutIntro: `${companyInfo.name} je specijalizovana prodavnica profesionalnih i hobi alata, elektromaterijala, rasvete i solarne opreme. U ponudi imamo proizvode vodećih svetskih proizvođača — od električnih i akumulatorskih alata do kompresora, kosačica i opreme za elektro instalacije.`,
@@ -50,6 +54,7 @@ export const contactChannels = {
   primaryPhoneHref: toTelHref(companyInfo.phones[0]),
   secondaryPhoneHref: toTelHref(companyInfo.phones[1]),
   viberHref: toViberHref(companyInfo.phones[0]),
+  whatsappHref: toWhatsAppHref(companyInfo.phones[0]),
   email: companyInfo.email,
   emailHref: `mailto:${companyInfo.email}`,
   addressShort: companyInfo.address.city,

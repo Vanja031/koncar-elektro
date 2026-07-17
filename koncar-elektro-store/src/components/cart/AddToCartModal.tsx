@@ -127,14 +127,14 @@ export const AddToCartModal = () => {
 
             {isUnavailable ? (
               <div className="add-to-cart-modal-actions">
-                <button type="button" onClick={closeAddedModal} className="add-to-cart-modal-btn-secondary">
-                  <ArrowRight className="w-4 h-4 shrink-0" />
-                  Nastavi kupovinu
-                </button>
                 <a href={contactChannels.primaryPhoneHref} className="add-to-cart-modal-btn-primary">
                   <Phone className="w-4 h-4 shrink-0" />
                   Pozovite nas
                 </a>
+                <button type="button" onClick={closeAddedModal} className="add-to-cart-modal-btn-secondary">
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  Nastavi kupovinu
+                </button>
               </div>
             ) : (
               <div className="add-to-cart-modal-actions">

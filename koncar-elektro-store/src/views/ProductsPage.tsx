@@ -7,6 +7,7 @@ import { ListingHero } from '@/components/catalog/ListingHero';
 import { CatalogProductCard } from '@/components/catalog/CatalogProductCard';
 import { ProductFilters } from '@/components/catalog/ProductFilters';
 import { MobileFiltersSheet } from '@/components/catalog/MobileFiltersSheet';
+import { ActiveFilterBadges } from '@/components/catalog/ActiveFilterBadges';
 import { SubcategoryChips } from '@/components/catalog/SubcategoryChips';
 import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
@@ -37,6 +38,7 @@ import { markTopBestsellers } from '@/lib/catalogCardHelpers';
 import { buildListingHighlightChips } from '@/lib/listingHighlightChips';
 import { useSubcategoryProductImages } from '@/hooks/api/useSubcategoryProductImages';
 import { useLiveSaleCount } from '@/hooks/api/useLiveCatalog';
+import { scheduleScrollAfterFilterApply, scheduleScrollToTop } from '@/lib/scrollToTop';
 
 type Props = {
   categorySlug?: string;
@@ -59,7 +61,7 @@ const ProductsPage = ({
   const { getCategoryById, isLive: navLive } = useNavigationMenu();
 
   const scrollListingToTop = useCallback(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    scheduleScrollToTop();
   }, []);
 
   const goToPage = useCallback(
@@ -88,20 +90,24 @@ const ProductsPage = ({
     [scrollListingToTop],
   );
 
-  const handleFiltersChange = useCallback(
-    (next: ListingFilters) => {
-      setFilters(next);
-      setPage(1);
-      scrollListingToTop();
-    },
-    [scrollListingToTop],
-  );
+  /** Apply / Poništi from filter panel — update + scroll (mobile: below hero). */
+  const handleFiltersApply = useCallback((next: ListingFilters) => {
+    setFilters(next);
+    setPage(1);
+    scheduleScrollAfterFilterApply();
+  }, []);
 
   const handleFiltersClear = useCallback(() => {
     setFilters(emptyListingFilters());
     setPage(1);
-    scrollListingToTop();
-  }, [scrollListingToTop]);
+    scheduleScrollAfterFilterApply();
+  }, []);
+
+  /** Badge X — update filters without jumping the page. */
+  const handleFiltersPatch = useCallback((next: ListingFilters) => {
+    setFilters(next);
+    setPage(1);
+  }, []);
 
   const parentData = isParentListingRoute(categorySlug, parentSlug, listingSlug)
     ? getParentListing(categorySlug, parentSlug)
@@ -427,13 +433,13 @@ const ProductsPage = ({
         />
       )}
 
-      <section className="container py-8">
+      <section className="container py-8" data-catalog-listing>
         <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr] gap-8 items-start">
           <div className="hidden lg:block">
             <ProductFilters
               attributeGroups={attributeGroups}
               filters={filters}
-              onChange={handleFiltersChange}
+              onChange={handleFiltersApply}
               onClear={handleFiltersClear}
             />
           </div>
@@ -443,10 +449,17 @@ const ProductsPage = ({
               <MobileFiltersSheet
                 attributeGroups={attributeGroups}
                 filters={filters}
-                onChange={handleFiltersChange}
+                onChange={handleFiltersApply}
                 onClear={handleFiltersClear}
               />
             </div>
+
+            <ActiveFilterBadges
+              attributeGroups={attributeGroups}
+              filters={filters}
+              onChange={handleFiltersPatch}
+              onClear={handleFiltersClear}
+            />
 
             {!liveProducts.isLoading && !liveProducts.isError && (
               <ListingToolbar

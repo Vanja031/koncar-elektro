@@ -563,8 +563,35 @@
   .catalog-filters-price {
     @apply flex items-center gap-2;
   }
+  .catalog-filters-price-wrap {
+    @apply space-y-2.5;
+  }
   .catalog-filters-price-input {
     @apply w-full border border-border rounded-md px-2.5 py-2 text-xs outline-none bg-white focus:border-primary focus:ring-1 focus:ring-primary/20;
+  }
+  .catalog-filters-actions {
+    @apply flex flex-col gap-2 mt-4 pt-4 border-t border-border;
+  }
+  .catalog-filters-action {
+    @apply w-full disabled:opacity-40 disabled:pointer-events-none;
+  }
+  .catalog-filters-action--apply {
+    @apply btn-navy;
+  }
+  .catalog-filters-action--clear {
+    @apply btn-yellow;
+  }
+  .catalog-active-filters {
+    @apply flex flex-wrap items-center gap-2 mb-4;
+  }
+  .catalog-active-filters-list {
+    @apply flex flex-wrap items-center gap-2 min-w-0;
+  }
+  .catalog-active-filter-badge {
+    @apply inline-flex items-center gap-1.5 max-w-full rounded-md border border-primary/20 bg-primary/[0.06] px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 hover:border-primary/35 transition-colors;
+  }
+  .catalog-active-filters-clear {
+    @apply text-xs font-semibold text-muted-foreground hover:text-primary hover:underline shrink-0;
   }
   .catalog-filters-mobile-trigger {
     @apply inline-flex items-center gap-2 border border-border rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm hover:border-primary/30 hover:bg-secondary/40 transition-all;
@@ -1010,19 +1037,19 @@
     @apply flex items-start gap-2.5 text-sm text-foreground/90;
   }
   .product-warranty-extension {
-    @apply mt-3 flex items-center gap-2.5 w-full p-2 rounded-md border border-[hsl(210_45%_88%)] bg-[hsl(210_55%_97%)] transition-colors hover:border-primary/25;
+    @apply mt-4 flex items-center gap-3.5 w-full p-3.5 sm:p-4 rounded-lg border border-[hsl(210_45%_88%)] bg-[hsl(210_55%_97%)] transition-colors hover:border-primary/25 hover:bg-[hsl(210_55%_96%)];
   }
   .product-warranty-extension-img {
-    @apply w-10 h-10 object-contain shrink-0;
+    @apply w-16 h-16 sm:w-[4.5rem] sm:h-[4.5rem] object-contain shrink-0;
   }
   .product-warranty-extension-copy {
-    @apply flex flex-col gap-0.5 min-w-0 text-left;
+    @apply flex flex-col gap-1 min-w-0 text-left flex-1;
   }
   .product-warranty-extension-label {
-    @apply inline-flex items-center gap-1.5 text-[11px] font-display font-bold uppercase tracking-wide text-primary leading-snug;
+    @apply inline-flex items-center gap-2 text-sm sm:text-base font-display font-bold uppercase tracking-wide text-primary leading-snug;
   }
   .product-warranty-extension-hint {
-    @apply text-[10px] text-muted-foreground leading-snug line-clamp-2;
+    @apply text-xs sm:text-sm text-muted-foreground leading-snug;
   }
 
   .product-purchase-card {
@@ -2043,4 +2070,145 @@
   .auth-page-switch-link {
     @apply inline-flex items-center gap-1 font-semibold text-primary hover:underline;
   }
+
+  /* Sonner toasts — top-right, branded */
+  .koncar-toast {
+    @apply !relative !flex !w-full !items-center !gap-3 !overflow-hidden !rounded-xl !border !bg-white !py-3 !pl-3 !pr-10 !font-sans !text-foreground;
+    border-color: hsl(var(--border)) !important;
+    box-shadow:
+      0 10px 28px -6px hsl(220 75% 22% / 0.18),
+      0 2px 8px -2px hsl(220 75% 22% / 0.1) !important;
+  }
+  .koncar-toast-icon-slot {
+    @apply !m-0 !flex !h-9 !w-9 !shrink-0 !items-center !justify-center !self-center;
+  }
+  .koncar-toast-icon {
+    @apply flex h-9 w-9 items-center justify-center rounded-full text-[1.05rem] leading-none;
+  }
+  .koncar-toast-icon svg {
+    @apply block h-[1.05rem] w-[1.05rem];
+  }
+  .koncar-toast-icon--success {
+    @apply bg-emerald-100 text-emerald-700;
+  }
+  .koncar-toast-icon--error {
+    @apply bg-red-100 text-red-700;
+  }
+  .koncar-toast-icon--info {
+    @apply bg-primary/10 text-primary;
+  }
+  .koncar-toast-title {
+    @apply !font-display !text-sm !font-bold !leading-snug !text-foreground;
+  }
+  .koncar-toast-description {
+    @apply !mt-0.5 !text-xs !leading-relaxed !text-muted-foreground;
+  }
+  .koncar-toast--success {
+    @apply !border-emerald-300 !bg-emerald-50;
+  }
+  .koncar-toast--success .koncar-toast-title {
+    @apply !text-emerald-900;
+  }
+  .koncar-toast--success .koncar-toast-description {
+    @apply !text-emerald-800/80;
+  }
+  .koncar-toast--error {
+    @apply !border-red-300 !bg-red-50;
+  }
+  .koncar-toast--error .koncar-toast-title {
+    @apply !text-red-900;
+  }
+  .koncar-toast--error .koncar-toast-description {
+    @apply !text-red-800/80;
+  }
+  .koncar-toast-close {
+    @apply !absolute !left-auto !right-2.5 !top-1/2 !z-[1] !flex !h-7 !w-7 !-translate-y-1/2 !translate-x-0 !items-center !justify-center !rounded-none !border-0 !bg-transparent !p-0 !text-muted-foreground !opacity-100 !shadow-none;
+    transition: color 0.15s ease, opacity 0.15s ease !important;
+  }
+  .koncar-toast-close:hover {
+    @apply !border-0 !bg-transparent !text-foreground !opacity-100;
+  }
+  .koncar-toast--success .koncar-toast-close {
+    @apply !border-0 !bg-transparent !text-emerald-800/70;
+  }
+  .koncar-toast--success .koncar-toast-close:hover {
+    @apply !border-0 !bg-transparent !text-emerald-950;
+  }
+  .koncar-toast--error .koncar-toast-close {
+    @apply !border-0 !bg-transparent !text-red-800/70;
+  }
+  .koncar-toast--error .koncar-toast-close:hover {
+    @apply !border-0 !bg-transparent !text-red-950;
+  }
+}
+
+/*
+ * Tight flex stack (avoids Sonner's huge translateY gaps) + modern enter/exit motion.
+ */
+.koncar-toaster[data-sonner-toaster],
+[data-sonner-toaster].koncar-toaster {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  height: auto !important;
+  width: min(356px, calc(100vw - 32px)) !important;
+  right: 16px !important;
+  top: 16px !important;
+  --gap: 6px !important;
+}
+.koncar-toaster[data-sonner-toaster] [data-sonner-toast],
+[data-sonner-toaster].koncar-toaster [data-sonner-toast] {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  height: auto !important;
+  width: 100% !important;
+  margin: 0 !important;
+  /* Kill Sonner stack math; drive motion via --y + transition */
+  --lift: 0 !important;
+  --offset: 0px !important;
+  --lift-amount: 0px !important;
+  --y: translate3d(110%, 0, 0) scale(0.96) !important;
+  transform: var(--y) !important;
+  opacity: 0 !important;
+  transition:
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.32s ease,
+    max-height 0.32s ease,
+    margin 0.32s ease,
+    padding 0.32s ease !important;
+}
+.koncar-toaster[data-sonner-toaster] [data-sonner-toast][data-mounted='true'],
+[data-sonner-toaster].koncar-toaster [data-sonner-toast][data-mounted='true'] {
+  --y: translate3d(0, 0, 0) scale(1) !important;
+  opacity: 1 !important;
+}
+.koncar-toaster[data-sonner-toaster] [data-sonner-toast][data-removed='true'],
+[data-sonner-toaster].koncar-toaster [data-sonner-toast][data-removed='true'] {
+  --y: translate3d(40%, -6px, 0) scale(0.96) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.koncar-toaster[data-sonner-toaster] [data-sonner-toast]::after,
+[data-sonner-toaster].koncar-toaster [data-sonner-toast]::after {
+  display: none !important;
+}
+[data-sonner-toast] [data-close-button].koncar-toast-close,
+[data-sonner-toast] button[data-close-button] {
+  position: absolute !important;
+  left: unset !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  inset-inline-start: unset !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-sonner-toast] [data-close-button] svg {
+  width: 14px !important;
+  height: 14px !important;
 }

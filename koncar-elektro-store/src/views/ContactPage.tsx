@@ -1,19 +1,41 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { useRef } from 'react';
+import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { toast } from 'sonner';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
 import { companyInfo, contactChannels, contactContent } from '@/data/staticPages';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const ContactPage = () => {
   const { breadcrumbs, title, subtitle, formIntro } = contactContent;
-  const [submitted, setSubmitted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const name = String(data.get('name') ?? '').trim();
+    const email = String(data.get('email') ?? '').trim();
+    const message = String(data.get('message') ?? '').trim();
+
+    if (!name || !email || !message) {
+      toast.error('Popunite obavezna polja', {
+        description: 'Ime, email i poruka su obavezni.',
+      });
+      return;
+    }
+    if (!EMAIL_PATTERN.test(email)) {
+      toast.error('Neispravan email', {
+        description: 'Proverite format adrese (npr. ime@primer.rs).',
+      });
+      return;
+    }
+
     formRef.current?.reset();
-    setSubmitted(true);
+    toast.success('Poruka je poslata!', {
+      description: 'Javićemo vam se u najkraćem mogućem roku.',
+    });
   };
 
   const contactCards = [
@@ -119,23 +141,18 @@ const ContactPage = () => {
           </h2>
           <p className="text-sm text-muted-foreground mb-6">{formIntro}</p>
 
-          {submitted && (
-            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 flex items-center gap-3 mb-5">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="font-display font-bold text-emerald-800 text-sm">Poruka je poslata!</p>
-                <p className="text-xs text-emerald-700">Javićemo vam se u najkraćem mogućem roku.</p>
-              </div>
-            </div>
-          )}
-
-          <form ref={formRef} className="space-y-4 flex-1 flex flex-col" onSubmit={handleSubmit}>
+          <form
+            ref={formRef}
+            className="space-y-4 flex-1 flex flex-col"
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <div className="grid sm:grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-xs font-semibold text-foreground mb-1.5 block">Ime i prezime</span>
                 <input
                   type="text"
-                  required
+                  name="name"
                   className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                 />
               </label>
@@ -143,6 +160,7 @@ const ContactPage = () => {
                 <span className="text-xs font-semibold text-foreground mb-1.5 block">Telefon</span>
                 <input
                   type="tel"
+                  name="phone"
                   className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                 />
               </label>
@@ -151,14 +169,14 @@ const ContactPage = () => {
               <span className="text-xs font-semibold text-foreground mb-1.5 block">E-mail</span>
               <input
                 type="email"
-                required
+                name="email"
                 className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
               />
             </label>
             <label className="block flex-1 flex flex-col">
               <span className="text-xs font-semibold text-foreground mb-1.5 block">Poruka</span>
               <textarea
-                required
+                name="message"
                 rows={5}
                 className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none resize-y min-h-[7rem] flex-1 focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
               />

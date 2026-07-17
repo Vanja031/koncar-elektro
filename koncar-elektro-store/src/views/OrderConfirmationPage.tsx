@@ -1,18 +1,35 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Link, Navigate } from '@/lib/router-compat';
 import { CheckCircle2 } from 'lucide-react';
 import { ShopLayout } from '@/components/layout/ShopLayout';
 import { Breadcrumbs } from '@/components/catalog/Breadcrumbs';
 import { formatPrice } from '@/data/homepage';
-import { getPlacedOrder, paymentMethodLabel } from '@/lib/order';
+import { getPlacedOrder, paymentMethodLabel, type PlacedOrder } from '@/lib/order';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
 
 const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
 
 const OrderConfirmationPage = () => {
-  const order = getPlacedOrder();
+  const [order, setOrder] = useState<PlacedOrder | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setOrder(getPlacedOrder());
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return (
+      <ShopLayout>
+        <section className="container py-16 text-center text-sm text-muted-foreground">
+          Učitavanje potvrde…
+        </section>
+      </ShopLayout>
+    );
+  }
 
   if (!order) {
     return <Navigate to="/" replace />;

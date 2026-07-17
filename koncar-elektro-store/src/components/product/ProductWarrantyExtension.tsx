@@ -17,7 +17,7 @@ export const ProductWarrantyExtension = ({ brand }: Props) => {
       <span className="product-warranty-extension-copy">
         <span className="product-warranty-extension-label">
           {offer.label}
-          {offer.external && <ExternalLink className="w-3 h-3 shrink-0 opacity-70" aria-hidden />}
+          {offer.external && <ExternalLink className="w-4 h-4 shrink-0 opacity-70" aria-hidden />}
         </span>
         <span className="product-warranty-extension-hint">{offer.hint}</span>
       </span>

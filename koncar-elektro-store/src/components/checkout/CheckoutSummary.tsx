@@ -1,10 +1,14 @@
-import { Lock, Truck } from 'lucide-react';
+import { Lock, Truck, Loader2 } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
 import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 
-export const CheckoutSummary = () => {
+type Props = {
+  isSubmitting?: boolean;
+};
+
+export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
   const { lines, subtotal, subtotalRegular, savings, shipping, total } = useCart();
   const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const hasSavings = savings > 0;
@@ -63,8 +67,20 @@ export const CheckoutSummary = () => {
         </p>
       )}
 
-      <button type="submit" form={CHECKOUT_FORM_ID} className="checkout-submit-btn mt-5 hidden lg:block">
-        Završi porudžbinu
+      <button
+        type="submit"
+        form={CHECKOUT_FORM_ID}
+        className="checkout-submit-btn mt-5 hidden lg:block"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <span className="inline-flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Obrađujemo…
+          </span>
+        ) : (
+          'Završi porudžbinu'
+        )}
       </button>
 
       <div className="cart-summary-payments">

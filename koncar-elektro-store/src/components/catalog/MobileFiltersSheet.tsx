@@ -1,4 +1,6 @@
-import { useState } from 'react';
+'use client';
+
+import { useRef, useState } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import {
   Sheet,
@@ -7,7 +9,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { ProductFilters } from '@/components/catalog/ProductFilters';
+import {
+  ProductFilters,
+  type ProductFiltersHandle,
+} from '@/components/catalog/ProductFilters';
 import {
   countActiveFilters,
   type AttributeFilterGroup,
@@ -31,7 +36,17 @@ export const MobileFiltersSheet = ({
   categoryOptions,
 }: Props) => {
   const [open, setOpen] = useState(false);
+  const filtersRef = useRef<ProductFiltersHandle>(null);
   const activeCount = countActiveFilters(filters);
+
+  const handleApply = () => {
+    filtersRef.current?.apply();
+    setOpen(false);
+  };
+
+  const handleClear = () => {
+    filtersRef.current?.clear();
+  };
 
   return (
     <>
@@ -63,7 +78,7 @@ export const MobileFiltersSheet = ({
               {activeCount > 0 && (
                 <button
                   type="button"
-                  onClick={onClear}
+                  onClick={handleClear}
                   className="catalog-filters-clear shrink-0"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden />
@@ -80,7 +95,9 @@ export const MobileFiltersSheet = ({
 
           <div className="flex-1 min-h-0 overflow-y-auto koncar-scrollbar px-5">
             <ProductFilters
+              ref={filtersRef}
               variant="drawer"
+              showActions={false}
               attributeGroups={attributeGroups}
               categoryOptions={categoryOptions}
               filters={filters}
@@ -90,17 +107,19 @@ export const MobileFiltersSheet = ({
           </div>
 
           <SheetFooter className="catalog-filters-sheet-footer shrink-0 border-t border-border p-4 gap-2 sm:flex-col sm:space-x-0">
-            {activeCount > 0 && (
-              <button
-                type="button"
-                onClick={onClear}
-                className="w-full border border-border rounded py-2.5 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
-              >
-                Očisti filtere
-              </button>
-            )}
-            <button type="button" onClick={() => setOpen(false)} className="btn-navy w-full text-sm">
-              Prikaži rezultate
+            <button
+              type="button"
+              onClick={handleApply}
+              className="catalog-filters-action catalog-filters-action--apply"
+            >
+              Primeni
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="catalog-filters-action catalog-filters-action--clear"
+            >
+              Poništi
             </button>
           </SheetFooter>
         </SheetContent>
