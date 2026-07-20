@@ -1,7 +1,6 @@
 import { Link } from '@/lib/router-compat';
 import { Lock, Truck } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
-import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
@@ -10,7 +9,6 @@ const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-o
 
 export const CartSummary = () => {
   const { subtotal, subtotalRegular, savings, shipping, total, itemCount } = useCart();
-  const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const hasSavings = savings > 0;
 
   return (
@@ -28,17 +26,15 @@ export const CartSummary = () => {
           </dd>
         </div>
         <div className="cart-summary-row">
-          <dt>{shipping.label}</dt>
-          <dd>{shipping.isFree ? 'Besplatno' : formatPrice(shipping.cost)}</dd>
+          <dt>Dostava</dt>
+          <dd>{formatPrice(shipping.cost)}</dd>
         </div>
       </dl>
 
-      {!shipping.isFree && remainingForFree > 0 && (
-        <p className="cart-summary-hint">
-          <Truck className="w-4 h-4 shrink-0 text-primary" />
-          Dodajte još <strong>{formatPrice(remainingForFree)}</strong> za besplatnu dostavu
-        </p>
-      )}
+      <p className="cart-summary-hint">
+        <Truck className="w-4 h-4 shrink-0 text-primary" />
+        <span>{shipping.label}</span>
+      </p>
 
       <div className="cart-summary-total">
         <span>Ukupno</span>

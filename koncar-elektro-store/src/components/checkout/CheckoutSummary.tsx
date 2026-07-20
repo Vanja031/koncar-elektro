@@ -1,6 +1,5 @@
-import { Lock, Truck, Loader2 } from 'lucide-react';
+import { Loader2, Lock, Minus, Plus, Truck, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
-import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
 import { useCart } from '@/context/CartContext';
 import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 
@@ -9,8 +8,7 @@ type Props = {
 };
 
 export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
-  const { lines, subtotal, subtotalRegular, savings, shipping, total } = useCart();
-  const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const { lines, subtotal, subtotalRegular, savings, shipping, total, setQuantity, removeItem } = useCart();
   const hasSavings = savings > 0;
 
   return (
@@ -21,13 +19,44 @@ export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
         {lines.map((line) => (
           <li key={line.productId} className="checkout-summary-item">
             <div className="checkout-summary-thumb">
-              <img src={line.image} alt="" className="max-h-full max-w-full object-contain" />
-              <span className="checkout-summary-qty">{line.quantity}</span>
+              <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-foreground line-clamp-2 leading-snug">{line.name}</p>
+            <div className="checkout-summary-item-body">
+              <div className="checkout-summary-item-head">
+                <p className="checkout-summary-item-name">{line.name}</p>
+                <button
+                  type="button"
+                  onClick={() => removeItem(line.productId)}
+                  className="checkout-summary-remove"
+                  aria-label={`Ukloni ${line.name} iz korpe`}
+                  disabled={isSubmitting}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="checkout-summary-item-foot">
+                <div className="checkout-summary-quantity" aria-label="Količina">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(line.productId, line.quantity - 1)}
+                    aria-label="Smanji količinu"
+                    disabled={isSubmitting}
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span aria-live="polite">{line.quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(line.productId, line.quantity + 1)}
+                    aria-label="Povećaj količinu"
+                    disabled={isSubmitting}
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+                <span className="checkout-summary-item-price">{formatPrice(line.lineTotal)}</span>
+              </div>
             </div>
-            <span className="text-sm font-medium text-foreground shrink-0">{formatPrice(line.lineTotal)}</span>
           </li>
         ))}
       </ul>
@@ -44,16 +73,14 @@ export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
         </div>
         <div className="cart-summary-row">
           <dt>Dostava</dt>
-          <dd>{shipping.isFree ? 'Besplatno' : formatPrice(shipping.cost)}</dd>
+          <dd>{formatPrice(shipping.cost)}</dd>
         </div>
       </dl>
 
-      {!shipping.isFree && remainingForFree > 0 && (
-        <p className="cart-summary-hint">
-          <Truck className="w-4 h-4 shrink-0 text-primary" />
-          Dodajte još <strong>{formatPrice(remainingForFree)}</strong> za besplatnu dostavu
-        </p>
-      )}
+      <p className="cart-summary-hint">
+        <Truck className="w-4 h-4 shrink-0 text-primary" />
+        <span>{shipping.label}</span>
+      </p>
 
       <div className="cart-summary-total">
         <span>Ukupno</span>

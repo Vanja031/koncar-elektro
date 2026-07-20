@@ -8,9 +8,7 @@ import { Breadcrumbs } from '@/components/catalog/Breadcrumbs';
 import { formatPrice } from '@/data/homepage';
 import { getPlacedOrder, paymentMethodLabel, type PlacedOrder } from '@/lib/order';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
-import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
-
-const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
+import { ROUTES } from '@/lib/catalogUrls';
 
 const OrderConfirmationPage = () => {
   const [order, setOrder] = useState<PlacedOrder | null>(null);
@@ -87,7 +85,7 @@ const OrderConfirmationPage = () => {
           </div>
 
           <div className="checkout-confirmation-actions">
-            <Link to={browseUrl} className="btn-yellow px-8 py-3">
+            <Link to="/" className="btn-yellow px-8 py-3">
               Nastavi kupovinu
             </Link>
           </div>

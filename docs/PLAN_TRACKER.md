@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 07.07.2026. (Nedelja 3 zatvorena)
+**Poslednje ažuriranje trackera:** 17.07.2026. (Nedelja 5 zatvorena)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 4 |
-| **Sledeći korak** | ISR za proizvode (4.10) + JSON-LD schema (6.3–6.5) |
+| **Aktivna nedelja** | Nedelja 5 zatvorena — prelazak na Nedelju 6 |
+| **Sledeći korak** | Nedelja 6: JSON-LD (6.3–6.5); kartica (6.1–6.2) kad stignu smernice banke |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -42,9 +42,9 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Faza | Nedelje | Završeno | U toku | Preostalo |
 |------|---------|----------|--------|-----------|
-| Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 3 | 0 | 1 nedelja |
-| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 0 | 0 | 4 nedelje |
-| **Ukupno** | **8** | **3** | **0** | **5** |
+| Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 4 | 0 | 0 nedelja |
+| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 1 | 0 | 3 nedelje |
+| **Ukupno** | **8** | **5** | **0** | **3** |
 
 ---
 
@@ -53,7 +53,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | # | Tačka | Status | Datum | Napomena |
 |---|-------|--------|-------|----------|
 | P1 | Inicijalni React dizajn stranice postoji — faza dizajna se skraćuje na finalizaciju | `[x]` | — | `koncar-elektro-store/`, `koncarelektro-landing.html` |
-| P2 | Migracija sa postojeće WooCommerce prodavnice — podaci, kategorije, atributi, slug-ovi iz aktuelne baze | `[~]` | 06.07.2026. | Live Store API na listingu, PDP, početnoj, pretrazi; korpa/checkout još mock |
+| P2 | Migracija sa postojeće WooCommerce prodavnice — podaci, kategorije, atributi, slug-ovi iz aktuelne baze | `[~]` | 16.07.2026. | Katalog live; checkout BFF spreman (live tek uz `WC_LIVE_CHECKOUT=true`) |
 | P3 | Klijent obezbeđuje WP admin pristup + hosting/DNS + Google Search Console + GA | `[x]` | 22.06.2026. | Pristup primljen |
 | P4 | Očuvanje SEO-a i svih putanja je prioritet #1 — URL adrese ostaju identične | `[x]` | 02.07.2026. | Routing mapa + WC putanje u staging app (`docs/url-routing-map.md`) |
 
@@ -171,15 +171,15 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
 | 4.1 | Postavka Next.js 14 (App Router, SSR/SSG) | `[x]` | 07.07.2026. | `app/` rute 1:1, `src/views/`, router-compat, `npm run dev` → Next |
-| 4.2 | Globalni layout | `[~]` | 07.07.2026. | `app/layout.tsx` + `Providers` (Query, Cart, Toaster) |
-| 4.3 | Header | `[~]` | 07.07.2026. | Postojeći `SiteHeader` u view komponentama |
-| 4.4 | Footer | `[~]` | 07.07.2026. | Postojeći `SiteFooter` |
-| 4.5 | Navigacija | `[~]` | 07.07.2026. | Mega menu + mobilna nav — portovano |
-| 4.6 | Početna stranica | `[~]` | 07.07.2026. | `app/page.tsx` → `Index.tsx` + live sekcije |
-| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[~]` | 07.07.2026. | `app/product-category/[[...slug]]` |
-| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[~]` | 07.07.2026. | `app/prodavnica/[...segments]` |
-| 4.9 | Povezivanje sa REST API-jem | `[~]` | 07.07.2026. | `NEXT_PUBLIC_USE_LIVE_API`, rewrite `/wp-json` |
-| 4.10 | ISR za 5.000+ proizvoda | `[ ]` | | |
+| 4.2 | Globalni layout | `[x]` | 07.07.2026. | `app/layout.tsx` + `Providers` (Query, Cart, Toaster) |
+| 4.3 | Header | `[x]` | 07.07.2026. | `SiteHeader` u `ShopLayout`/view komponentama |
+| 4.4 | Footer | `[x]` | 07.07.2026. | `SiteFooter` u `ShopLayout`/view komponentama |
+| 4.5 | Navigacija | `[x]` | 07.07.2026. | Mega menu + mobilna nav — live WC kategorije preko `useNavigationMenu` |
+| 4.6 | Početna stranica | `[x]` | 07.07.2026. | `app/page.tsx` → `Index.tsx` + live sekcije |
+| 4.7 | Dinamičke rute za kategorije po postojećim slug-ovima | `[x]` | 07.07.2026. | `app/product-category/[[...slug]]` |
+| 4.8 | Dinamičke rute za proizvode po postojećim slug-ovima | `[x]` | 07.07.2026. | `app/prodavnica/[...segments]` |
+| 4.9 | Povezivanje sa REST API-jem | `[x]` | 07.07.2026. | `NEXT_PUBLIC_USE_LIVE_API`, rewrite `/wp-json` |
+| 4.10 | ISR za 5.000+ proizvoda | `[x]` | 16.07.2026. | `generateStaticParams` pre-renderuje bestseleri+akcija (~40, `src/lib/isr/staticParams.ts`); ostatak ide na `dynamicParams` on-demand + `revalidate` keš — bez dodatnog opterećenja live sajta na build-u |
 | 4.11 | Per-page meta tagovi: title | `[x]` | 07.07.2026. | `generateMetadata` + `seo-baseline-index.json` (5.649 URL-ova) |
 | 4.12 | Per-page meta tagovi: description | `[x]` | 07.07.2026. | Baseline ili generisani opis gde nedostaje |
 | 4.13 | Per-page meta tagovi: canonical | `[x]` | 07.07.2026. | Uvek `https://koncarelektro.rs/...` (bez `?page_id=`) |
@@ -191,8 +191,8 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |-------------|--------|-------|----------|
 | Odobren dizajn | `[x]` | 07.07.2026. | Nedelja 2 zatvorena |
 | URL routing mapa (1:1) | `[x]` | 07.07.2026. | `docs/url-routing-map.md` + Vite rute |
-| Funkcionalan REST API sa pravim podacima | `[~]` | 06.07.2026. | Read path kompletan; write (korpa/checkout) nedelja 5 |
-| Jezgro sajta na stagingu (početna, kategorije, proizvodi) | `[~]` | 06.07.2026. | Radi lokalno + Vercel sa live API; Next.js/ISR još ne |
+| Funkcionalan REST API sa pravim podacima | `[~]` | 16.07.2026. | Read path kompletan (uklj. ISR); write (korpa/checkout) nedelja 5 |
+| Jezgro sajta na stagingu (početna, kategorije, proizvodi) | `[x]` | 16.07.2026. | Next.js App Router + ISR na proizvodima/kategorijama/akciji na Vercelu |
 
 ---
 
@@ -207,15 +207,15 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 5.1 | Napredni filteri — brend | `[~]` | 06.07.2026. | Osnovni brend filter na listingu/pretrazi (checkbox); napredni atributi → 5.3 |
-| 5.2 | Napredni filteri — cena | `[x]` | 06.07.2026. | `min_price` / `max_price` na listingu i pretrazi |
-| 5.3 | Napredni filteri — atributi | `[ ]` | | Dostupnost (`in_stock`) urađena u N3; ostali atributi kasnije |
+| 5.1 | Napredni filteri — brend | `[x]` | 17.07.2026. | Checkbox + draft/Primeni; badge sa X; redosled liste ne skače |
+| 5.2 | Napredni filteri — cena | `[x]` | 17.07.2026. | Od/Do + Primeni (ne na svaki keystroke); badge-ovi |
+| 5.3 | Napredni filteri — atributi | `[x]` | 17.07.2026. | Faceti iz Store API (`useListingAttributeGroups`); dostupnost + atributi; draft/Primeni |
 | 5.5 | Live pretraga | `[x]` | 06.07.2026. | Header desktop + mobilni modal, `/pretraga` |
-| 5.6 | Korpa | `[ ]` | | |
-| 5.7 | Kompletan checkout flow | `[ ]` | | |
-| 5.8 | Sticky kontakti | `[ ]` | | |
-| 5.9 | Callback forma | `[ ]` | | |
-| 5.10 | WhatsApp / Viber dugme | `[ ]` | | |
+| 5.6 | Korpa | `[x]` | 16.07.2026. | Lokalna korpa (snapshot) + sync u WC tek na checkout submit preko BFF |
+| 5.7 | Kompletan checkout flow | `[x]` | 17.07.2026. | Live WC order (COD/BACS); Test Test override; zahvala; toast validacija; kartica blokirana |
+| 5.8 | Sticky kontakti | `[x]` | 16.07.2026. | Proširivo dugme „Stručna pomoć" → Viber / WhatsApp / telefon |
+| 5.9 | Callback forma | `[x]` | 17.07.2026. | Nije potrebna posebno — pokriveno kontakt formom + sticky poziv; zatvoreno po dogovoru |
+| 5.10 | WhatsApp / Viber dugme | `[x]` | 16.07.2026. | Deo istog proširivog sticky widgeta (5.8) |
 
 ---
 
@@ -354,37 +354,29 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 06.07.2026. | — | Listing UX: sort, filteri (brend/cena/dostupnost), mobilni filter drawer, live hub/listing slike | `MobileFiltersSheet`, `subcategoryImages.ts` |
 | 06.07.2026. | — | `/najprodavanije`, početna carousel usklađen sa akcijom, kompaktan badge | `BestSellersPage`, `ProductCard` bestseller variant |
 | 07.07.2026. | — | Nedelja 4 start: Next.js 14 migracija (4.1) — App Router, sve rute 1:1, build prolazi | Vite zamenjen; `npm run dev:vite` za legacy |
+| 16.07.2026. | — | Nedelja 4 zatvorena: ISR za proizvode (4.10) — `generateStaticParams` pre-renderuje bestseleri+akcija (~40), ostatak `dynamicParams` on-demand + revalidate keš; 4.2–4.9 potvrđene kao završene u kodu; lokalni build prošao (55/55 stranica) | Mesec 1 kompletan; prelazak na Nedelju 5 (korpa/checkout) |
+| 17.07.2026. | — | Nedelja 5 zatvorena: e-commerce (korpa/checkout/filteri/sticky/toast); 5.9 callback zatvoren po dogovoru (nije potreban) | Prelazak na Nedelju 6 |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 4
+### Sada — Nedelja 6 (Nedelja 5 zatvorena 17.07.2026.)
 
-**Prioritet 1 — ISR + schema**
-- ISR plan i implementacija za 5.000+ proizvoda (4.10)
+**Prioritet 1 — SEO tehnički sloj (može odmah)**
 - JSON-LD: Product, BreadcrumbList, Organization (6.3–6.5)
 
-**Završeno u 4.11–4.14 (07.07.2026.)**
-- `generateMetadata` na svim rutama
-- Izvor: `docs/crawl/seo-baseline.csv` → `src/data/seo-baseline-index.json`
-- Canonical uvek na `koncarelektro.rs`; korpa/checkout `noindex`
+**Prioritet 2 — Plaćanje (čeka banku)**
+- Kartično plaćanje + test transakcija (6.1–6.2)
 
-**Završeno u 4.1 (07.07.2026.)**
-- Next.js 14 App Router (`app/`), `trailingSlash: true`, WP API rewrite
-- `src/views/` (bivši `src/pages/`), `src/lib/router-compat.tsx`
-- Env: `NEXT_PUBLIC_*` (vidi `.env.example`)
+**Ostalo u Nedelji 6**
+- Sitemap, robots.txt, GA4/GTM, cookie consent (6.6–6.10)
 
-**Odloženo po dogovoru**
-- Recenzije (mock ostaje)
-- `/brend/` archive stranice
-- Korpa + checkout iz Store API POST (Nedelja 5) — klijentska korpa sa snapshot-om radi
-
-**QA alati (Nedelja 3, završeno)**
-```bash
-npm run audit:wc-slugs
-npm run audit:seo-baseline   # svaki 10. URL iz seo-baseline.csv
-```
+**Završeno — Nedelja 5 (17.07.2026.)**
+- Filteri (brend/cena/atributi) sa draft → Primeni / Poništi + badge-ovi
+- Live pretraga, korpa, checkout (COD/BACS, Test Test, zahvala)
+- Sticky Viber/WhatsApp/telefon; kontakt toast
+- 5.9 callback: nije potreban posebno (kontakt + sticky dovoljni)
 
 ---
 

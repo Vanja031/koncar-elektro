@@ -1,4 +1,5 @@
-export const FREE_SHIPPING_THRESHOLD = 15_000;
+export const SHIPPING_COST = 400;
+export const SHIPPING_CARRIER = 'Post Express / AKS';
 
 export type ShippingQuote = {
   cost: number;
@@ -8,27 +9,13 @@ export type ShippingQuote = {
   hint?: string;
 };
 
-/** Automatski obračun dostave na osnovu težine i vrednosti korpe. */
-export const calculateShipping = (subtotal: number, totalWeightKg: number): ShippingQuote => {
-  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
-    return {
-      cost: 0,
-      isFree: true,
-      totalWeightKg,
-      label: 'Besplatna dostava',
-      hint: `Porudžbine preko ${FREE_SHIPPING_THRESHOLD.toLocaleString('sr-RS')} RSD`,
-    };
-  }
-
-  const base = 390;
-  const perKg = 70;
-  const cost = Math.round(base + Math.max(0, totalWeightKg - 1) * perKg);
-
+/** Fiksna cena dostave za sve porudžbine. */
+export const calculateShipping = (_subtotal: number, totalWeightKg: number): ShippingQuote => {
   return {
-    cost,
+    cost: SHIPPING_COST,
     isFree: false,
     totalWeightKg,
-    label: 'Dostava kurirskom službom',
+    label: `Kurirska služba: ${SHIPPING_CARRIER}`,
     hint: 'Isporuka 1–2 radna dana',
   };
 };

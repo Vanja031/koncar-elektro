@@ -4,7 +4,7 @@ import { formatPrice } from '@/data/homepage';
 import { contactChannels } from '@/data/staticPages';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { SocialIcon } from '@/components/home/SocialIcon';
-import { FREE_SHIPPING_THRESHOLD } from '@/lib/shipping';
+import { SHIPPING_CARRIER, SHIPPING_COST } from '@/lib/shipping';
 import type { ProductDetail } from '@/data/productDetail';
 
 type Props = {
@@ -43,7 +43,9 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
           </div>
           <div className="product-purchase-shipping-row">
             <Package className="w-4 h-4 text-primary shrink-0" />
-            <span>Besplatna dostava preko <strong>{FREE_SHIPPING_THRESHOLD.toLocaleString('sr-RS')} din.</strong></span>
+            <span>
+              Dostava <strong>{SHIPPING_COST.toLocaleString('sr-RS')} din.</strong> — {SHIPPING_CARRIER}
+            </span>
           </div>
           <div className="product-purchase-shipping-row product-purchase-shipping-row--return">
             <RotateCcw className="w-4 h-4 shrink-0" />
