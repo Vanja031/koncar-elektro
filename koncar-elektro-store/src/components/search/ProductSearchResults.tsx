@@ -9,6 +9,7 @@ import { searchKoncarProducts } from '@/data/koncarProducts';
 import { getProductUrl } from '@/data/productDetail';
 import { getSearchUrl } from '@/lib/catalogUrls';
 import { BrandMark } from '@/components/brand/BrandMark';
+import { ProductImage } from '@/components/product/ProductImage';
 
 type Props = {
   query: string;
@@ -110,15 +111,13 @@ export const ProductSearchResults = ({
                   onClick={onResultClick}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors"
                 >
-                  <div className="w-14 h-14 shrink-0 flex items-center justify-center bg-secondary/40 rounded border border-border/60">
-                    {product.image ? (
-                      <img
-                        src={product.image}
-                        alt=""
-                        className="max-h-full max-w-full object-contain p-1"
-                        loading="lazy"
-                      />
-                    ) : null}
+                  <div className="w-14 h-14 shrink-0 flex items-center justify-center bg-secondary/40 rounded border border-border/60 overflow-hidden">
+                    <ProductImage
+                      src={product.image}
+                      alt=""
+                      className="max-h-full max-w-full object-contain p-1"
+                      placeholderClassName="w-full h-full bg-transparent"
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
                     <BrandMark brand={product.brand} size="xs" />

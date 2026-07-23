@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { ProductImage, hasProductImage } from './ProductImage';
 import { ProductImageLightbox } from './ProductImageLightbox';
 
 /** Product video thumb — enable when WC/video URL is wired */
@@ -13,7 +14,12 @@ type Props = {
 };
 
 export const ProductGallery = ({ images, name, discount }: Props) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: images.length > 1, align: 'start' });
+  const galleryImages = images.filter(hasProductImage);
+  const hasRealImages = galleryImages.length > 0;
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: galleryImages.length > 1,
+    align: 'start',
+  });
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
@@ -43,7 +49,7 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
           <span className="product-gallery-discount">-{discount}%</span>
         )}
 
-        {images.length > 1 && (
+        {galleryImages.length > 1 && (
           <>
             <button type="button" onClick={goPrev} className="product-gallery-arrow product-gallery-arrow--left" aria-label="Prethodna slika">
               <ChevronLeft className="w-5 h-5" />
@@ -56,29 +62,37 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
 
         <div className="product-gallery-viewport" ref={emblaRef}>
           <div className="product-gallery-track">
-            {images.map((img, i) => (
-              <div key={`${img}-${i}`} className="product-gallery-slide">
-                <button
-                  type="button"
-                  className="product-gallery-image-wrap w-full"
-                  onClick={() => setLightboxOpen(true)}
-                  aria-label="Uvećaj sliku"
-                >
-                  <img src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" />
-                </button>
+            {(hasRealImages ? galleryImages : ['']).map((img, i) => (
+              <div key={`${img || 'placeholder'}-${i}`} className="product-gallery-slide">
+                {hasRealImages ? (
+                  <button
+                    type="button"
+                    className="product-gallery-image-wrap w-full"
+                    onClick={() => setLightboxOpen(true)}
+                    aria-label="Uvećaj sliku"
+                  >
+                    <ProductImage src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" />
+                  </button>
+                ) : (
+                  <div className="product-gallery-image-wrap w-full">
+                    <ProductImage src="" alt={name} className="product-gallery-image" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
 
-        <span className="product-gallery-zoom-hint">
-          <ZoomIn className="w-4 h-4" />
-        </span>
+        {hasRealImages && (
+          <span className="product-gallery-zoom-hint">
+            <ZoomIn className="w-4 h-4" />
+          </span>
+        )}
       </div>
 
-      {lightboxOpen && (
+      {lightboxOpen && hasRealImages && (
         <ProductImageLightbox
-          images={images}
+          images={galleryImages}
           name={name}
           initialIndex={activeIndex}
           onClose={() => setLightboxOpen(false)}
@@ -86,17 +100,17 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
       )}
 
       <div className="product-gallery-thumbs" role="tablist" aria-label="Slike proizvoda">
-        {images.map((img, i) => (
+        {(hasRealImages ? galleryImages : ['']).map((img, i) => (
           <button
-            key={`${img}-${i}`}
+            key={`${img || 'placeholder'}-${i}`}
             type="button"
             role="tab"
             aria-selected={i === activeIndex}
-            aria-label={`Slika ${i + 1}`}
-            onClick={() => emblaApi?.scrollTo(i)}
+            aria-label={hasRealImages ? `Slika ${i + 1}` : 'Nema slike'}
+            onClick={() => hasRealImages && emblaApi?.scrollTo(i)}
             className={`product-gallery-thumb ${i === activeIndex ? 'product-gallery-thumb--active' : ''}`}
           >
-            <img src={img} alt="" className="max-h-full max-w-full object-contain" />
+            <ProductImage src={img} alt="" className="max-h-full max-w-full object-contain" />
           </button>
         ))}
         {SHOW_PRODUCT_VIDEO_THUMB && (

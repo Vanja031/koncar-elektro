@@ -53,7 +53,14 @@ function buildBreadcrumbs(product: WcStoreProduct): BreadcrumbItem[] {
 
 function buildDeclaration(product: WcStoreProduct): ProductDeclarationRow[] {
   const rows: ProductDeclarationRow[] = [];
-  const proizvodjac = getAttributeValue(product, 'Proizvodjac', 'Proizvođač');
+  const proizvodjac = getAttributeValue(
+    product,
+    'Proizvodjac',
+    'Proizvođač',
+    'Brend',
+    'pa_brend',
+    'pa_proizvodjac',
+  );
   const uvoznik = getAttributeValue(product, 'Uvoznik');
   const zemlja = getAttributeValue(product, 'Zemlja porekla');
 

@@ -3,6 +3,13 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/** WP origin for /wp-json proxy — staging or live via .env `WP_REWRITE_ORIGIN`. */
+const wpRewriteOrigin = (
+  process.env.WP_REWRITE_ORIGIN ||
+  process.env.NEXT_PUBLIC_WP_API_URL?.replace(/\/wp-json\/?$/, '') ||
+  'https://koncarelektro.rs'
+).replace(/\/$/, '');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
@@ -10,7 +17,7 @@ const nextConfig = {
     return [
       {
         source: '/wp-json/:path*',
-        destination: 'https://koncarelektro.rs/wp-json/:path*',
+        destination: `${wpRewriteOrigin}/wp-json/:path*`,
       },
     ];
   },
@@ -20,6 +27,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'koncarelektro.rs',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'testing.cleannikki.com',
         pathname: '/**',
       },
     ],

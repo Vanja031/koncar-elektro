@@ -66,7 +66,16 @@ function toRelevanceSource(product: WcStoreProduct) {
   return {
     name: product.name,
     sku: product.sku,
-    brand: getAttributeValue(product, 'Proizvodjač', 'Proizvođač', 'Proizvodjac', BRAND_ATTRIBUTE_SLUG),
+    brand: getAttributeValue(
+      product,
+      'Proizvodjač',
+      'Proizvođač',
+      'Proizvodjac',
+      'Brend',
+      BRAND_ATTRIBUTE_SLUG,
+      'pa_brend',
+      'pa_proizvodjac',
+    ),
     categories: product.categories?.map((c) => c.name),
   };
 }

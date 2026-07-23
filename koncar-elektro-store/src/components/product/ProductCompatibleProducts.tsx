@@ -3,6 +3,7 @@ import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
 import { getProductUrl } from '@/data/productDetail';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { ProductImage } from '@/components/product/ProductImage';
 
 type Props = {
   products: ProductDetail[];
@@ -18,7 +19,7 @@ export const ProductCompatibleProducts = ({ products }: Props) => {
         {products.map((p) => (
           <article key={p.id} className="product-compatible-card">
             <Link to={getProductUrl(p.id)} className="product-compatible-media">
-              <img src={p.image} alt={p.name} loading="lazy" />
+              <ProductImage src={p.image} alt={p.name} />
             </Link>
             <div className="product-compatible-body">
               <Link to={getProductUrl(p.id)} className="product-compatible-name">

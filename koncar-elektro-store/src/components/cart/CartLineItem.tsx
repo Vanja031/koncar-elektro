@@ -3,6 +3,7 @@ import { Minus, Plus, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import type { ResolvedCartLine } from '@/context/CartContext';
 import { BrandMark } from '@/components/brand/BrandMark';
+import { ProductImage } from '@/components/product/ProductImage';
 
 type Props = {
   line: ResolvedCartLine;
@@ -15,7 +16,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
     {/* Desktop */}
     <div className="cart-line-desktop hidden md:flex">
       <Link to={line.url} className="cart-line-media">
-        <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
+        <ProductImage src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" placeholderClassName="rounded" />
       </Link>
 
       <div className="cart-line-body">
@@ -72,7 +73,7 @@ export const CartLineItem = ({ line, onQuantityChange, onRemove }: Props) => (
     <div className="cart-line-mobile md:hidden">
       <div className="cart-line-mobile-head">
         <Link to={line.url} className="cart-line-mobile-media">
-          <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
+          <ProductImage src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" placeholderClassName="rounded" />
         </Link>
 
         <div className="cart-line-mobile-info">

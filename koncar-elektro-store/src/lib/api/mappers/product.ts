@@ -40,7 +40,10 @@ function extractBrand(product: WcStoreProduct): string {
     'Proizvodjač',
     'Proizvođač',
     'Proizvodjac',
+    'Brend',
     BRAND_ATTRIBUTE_SLUG,
+    'pa_brend',
+    'pa_proizvodjac',
   );
   if (fromAttr) return fromAttr;
 
@@ -117,7 +120,16 @@ export function extractProdavnicaPath(product: WcStoreProduct): string {
 }
 
 export function extractSpecsFromAttributes(product: WcStoreProduct): string[] {
-  const skip = new Set(['proizvodjac', 'uvoznik', 'zemlja porekla', 'pa_proizvodjac']);
+  const skip = new Set([
+    'proizvodjac',
+    'uvoznik',
+    'zemlja porekla',
+    'brend',
+    'pa_proizvodjac',
+    'pa_brend',
+    'pa_uvoznik',
+    'pa_zemlja-porekla',
+  ]);
   return (product.attributes ?? [])
     .filter((a) => {
       const key = normalizeAttrKey(a.name);

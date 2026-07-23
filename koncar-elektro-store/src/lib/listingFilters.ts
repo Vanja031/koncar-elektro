@@ -2,7 +2,10 @@ import { wcAttributes } from '@/data/wcAttributes';
 import type { WcStoreAttributeCount } from '@/lib/api/wc-store/products';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
 
-export const BRAND_ATTRIBUTE_SLUG = 'pa_proizvodjac';
+/** Prefer staging `pa_brend`; fall back to live `pa_proizvodjac`. */
+export const BRAND_ATTRIBUTE_SLUG = wcAttributes.some((a) => a.slug === 'pa_brend')
+  ? 'pa_brend'
+  : 'pa_proizvodjac';
 
 /** Never expose these as shop filters (declaration / empty / noise). */
 export const HIDDEN_FILTER_ATTRIBUTE_SLUGS = new Set([
@@ -15,18 +18,30 @@ export const HIDDEN_FILTER_ATTRIBUTE_SLUGS = new Set([
 export const ATTRIBUTE_FILTER_ORDER = [
   BRAND_ATTRIBUTE_SLUG,
   'pa_snaga',
+  'pa_napon',
+  'pa_kapacitet-baterije',
   'pa_kapacitet-baterija',
+  'pa_jacina-udarca',
   'pa_energija-udarca',
+  'pa_obrtni-moment',
+  'pa_broj-obrtaja',
+  'pa_broj-udaraca',
   'pa_precnik-lista',
+  'pa_precnik-busenja',
+  'pa_tezina',
+  'pa_radni-pritisak',
+  'pa_maksimalni-pritisak',
   'pa_pritisak',
   'pa_konjska-snaga',
   'pa_dimenzija-trake',
+  'pa_dimenzije',
   'pa_boja',
-  'pa_tezina',
 ] as const;
 
 const ATTRIBUTE_LABEL_OVERRIDES: Record<string, string> = {
   [BRAND_ATTRIBUTE_SLUG]: 'Brend',
+  pa_proizvodjac: 'Brend',
+  pa_brend: 'Brend',
 };
 
 export type ListingFilters = {
@@ -48,7 +63,6 @@ export type AttributeFilterGroup = {
   slug: string;
   label: string;
   options: AttributeFilterOption[];
-  searchable: boolean;
 };
 
 /** @deprecated Use AttributeFilterOption */
@@ -105,11 +119,32 @@ export function getFacetTaxonomies(): string[] {
     .filter((slug) => slug !== BRAND_ATTRIBUTE_SLUG);
 }
 
+/**
+ * Sort filter options the way a shopper expects: numeric values (e.g. "800W",
+ * "10V", "1,5 Ah") in ascending numeric order, falling back to alphabetical
+ * for options with no leading number (or equal numbers). Plain `localeCompare`
+ * treats these as strings and produces nonsense like `10.8V, 1000V, 100V, 10V`.
+ */
+function sortAttributeOptions(options: AttributeFilterOption[]): AttributeFilterOption[] {
+  const leadingNumber = (label: string): number | null => {
+    const match = label.trim().match(/-?\d+(?:[.,]\d+)?/);
+    if (!match) return null;
+    return Number(match[0].replace(',', '.'));
+  };
+
+  return [...options].sort((a, b) => {
+    const numA = leadingNumber(a.label);
+    const numB = leadingNumber(b.label);
+    if (numA != null && numB != null && numA !== numB) return numA - numB;
+    if (numA != null && numB == null) return -1;
+    if (numA == null && numB != null) return 1;
+    return a.label.localeCompare(b.label, 'sr');
+  });
+}
+
 export function getAttributeFilterOptions(attributeSlug: string): AttributeFilterOption[] {
   const attr = wcAttributes.find((a) => a.slug === attributeSlug);
-  return (
-    attr?.terms.map((t) => ({ label: t.name, slug: t.slug })) ?? []
-  ).sort((a, b) => a.label.localeCompare(b.label, 'sr'));
+  return sortAttributeOptions(attr?.terms.map((t) => ({ label: t.name, slug: t.slug })) ?? []);
 }
 
 export function getBrandFilterOptions(): AttributeFilterOption[] {
@@ -192,13 +227,14 @@ export function buildAttributeFilterGroups(
 ): AttributeFilterGroup[] {
   const selected = selectedAttributes ?? {};
   const filterable = getFilterableWcAttributes();
-  const bySlug = new Map(filterable.map((a) => [a.slug, a]));
+  const bySlug = new Map<string, (typeof filterable)[number]>(
+    filterable.map((a) => [a.slug, a]),
+  );
+  const order: readonly string[] = ATTRIBUTE_FILTER_ORDER;
 
-  const orderedSlugs = [
-    ...ATTRIBUTE_FILTER_ORDER.filter((slug) => bySlug.has(slug)),
-    ...filterable
-      .map((a) => a.slug)
-      .filter((slug) => !(ATTRIBUTE_FILTER_ORDER as readonly string[]).includes(slug)),
+  const orderedSlugs: string[] = [
+    ...order.filter((slug) => bySlug.has(slug)),
+    ...filterable.map((a) => a.slug).filter((slug) => !order.includes(slug)),
   ];
 
   const groups: AttributeFilterGroup[] = [];
@@ -222,12 +258,12 @@ export function buildAttributeFilterGroups(
       if (narrowed.length > 0) {
         options = narrowed;
       } else {
-        options = [...seen]
-          .map((termSlug) => {
+        options = sortAttributeOptions(
+          [...seen].map((termSlug) => {
             const match = getAttributeFilterOptions(slug).find((o) => o.slug === termSlug);
             return { label: match?.label ?? termSlug, slug: termSlug };
-          })
-          .sort((a, b) => a.label.localeCompare(b.label, 'sr'));
+          }),
+        );
       }
     } else if (!isBrand && selectedSlugs.length > 0 && !seen?.size) {
       options = options.filter((o) => selectedSlugs.includes(o.slug));
@@ -245,7 +281,6 @@ export function buildAttributeFilterGroups(
       slug,
       label: getAttributeLabel(slug),
       options,
-      searchable: options.length > 10,
     });
   }
 

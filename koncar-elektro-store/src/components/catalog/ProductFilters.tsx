@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Collapsible,
@@ -136,49 +136,23 @@ function AttributeOptionsList({
   onChange: (filters: ListingFilters) => void;
   variant: string;
 }) {
-  const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(OPTION_PAGE_SIZE);
   const selectedSet = useMemo(
     () => new Set(getSelectedAttributeSlugs(filters, group.slug)),
     [filters, group.slug],
   );
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return group.options;
-    return group.options.filter((o) => o.label.toLowerCase().includes(q));
-  }, [group.options, query]);
-
-  const visible = filtered.slice(0, limit);
-  const hasMore = filtered.length > limit;
+  const visible = group.options.slice(0, limit);
+  const hasMore = group.options.length > limit;
 
   useEffect(() => {
     setLimit(OPTION_PAGE_SIZE);
-  }, [query, group.slug]);
+  }, [group.slug]);
 
   return (
     <div className="catalog-filters-options">
-      {group.searchable && (
-        <div className="relative mb-1">
-          <Search
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none"
-            aria-hidden
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Pretraži ${group.label.toLowerCase()}...`}
-            className="catalog-filters-search"
-            aria-label={`Pretraži ${group.label}`}
-          />
-        </div>
-      )}
-
       {visible.length === 0 ? (
-        <p className="text-xs text-muted-foreground py-1">
-          Nema rezultata{query.trim() ? ` za „${query.trim()}”` : ''}.
-        </p>
+        <p className="text-xs text-muted-foreground py-1">Nema opcija.</p>
       ) : (
         visible.map((opt) => {
           const selected = selectedSet.has(opt.slug);
@@ -205,7 +179,7 @@ function AttributeOptionsList({
           onClick={() => setLimit((n) => n + OPTION_PAGE_SIZE)}
           className="catalog-filters-more"
         >
-          Prikaži još ({filtered.length - limit})
+          Prikaži još ({group.options.length - limit})
         </button>
       )}
     </div>

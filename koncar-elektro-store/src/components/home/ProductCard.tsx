@@ -4,6 +4,7 @@ import { formatPrice, type Product } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { ManufacturerRow } from '@/components/brand/BrandMark';
+import { ProductImage } from '@/components/product/ProductImage';
 
 type Props = {
   product: Product;
@@ -33,7 +34,7 @@ export const ProductCard = ({ product, rank, bestseller, bestsellerCompact }: Pr
         </div>
       )}
       <Link to={productUrl} className="product-card-media block">
-        <img src={product.image} alt={product.name} loading="lazy" />
+        <ProductImage src={product.image} alt={product.name} />
       </Link>
       <div className="p-3 flex flex-col gap-1.5 flex-1 border-t border-border">
         <ManufacturerRow brand={product.brand} size="xs" />

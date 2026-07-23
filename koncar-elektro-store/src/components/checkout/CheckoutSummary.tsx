@@ -2,6 +2,7 @@ import { Loader2, Lock, Minus, Plus, Truck, X } from 'lucide-react';
 import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';
 import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
+import { ProductImage } from '@/components/product/ProductImage';
 
 type Props = {
   isSubmitting?: boolean;
@@ -19,7 +20,7 @@ export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
         {lines.map((line) => (
           <li key={line.productId} className="checkout-summary-item">
             <div className="checkout-summary-thumb">
-              <img src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" />
+              <ProductImage src={line.image} alt={line.name} className="max-h-full max-w-full object-contain" placeholderClassName="rounded" />
             </div>
             <div className="checkout-summary-item-body">
               <div className="checkout-summary-item-head">

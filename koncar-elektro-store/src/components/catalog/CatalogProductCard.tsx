@@ -5,6 +5,7 @@ import { getCatalogProductUrl } from '@/lib/productUrls';
 import { getDiscountPercent } from '@/data/koncarProducts';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { ManufacturerRow } from '@/components/brand/BrandMark';
+import { ProductImage } from '@/components/product/ProductImage';
 import type { CatalogProductCardProduct } from '@/data/catalogListing';
 
 type Props = {
@@ -41,7 +42,7 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
       </button>
 
       <Link to={productUrl} className={isList ? 'catalog-product-card-media--list' : 'catalog-product-card-media'}>
-        <img src={product.image} alt={product.name} loading="lazy" />
+        <ProductImage src={product.image} alt={product.name} />
       </Link>
 
       <div className={isList ? 'catalog-product-card-body--list' : 'catalog-product-card-body'}>
@@ -59,11 +60,6 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
               />
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
-          </div>
-          <div className="catalog-product-card-specs">
-            {(product.specs ?? []).map((spec) => (
-              <span key={spec} className="catalog-spec-chip">{spec}</span>
-            ))}
           </div>
         </div>
 
