@@ -21,6 +21,7 @@ import {
   countActiveFilters,
   getSelectedAttributeSlugs,
   toggleAttributeTerm,
+  BRAND_ATTRIBUTE_SLUG,
   type AttributeFilterGroup,
   type CategoryFilterOption,
   type ListingFilters,
@@ -45,6 +46,9 @@ export type ProductFiltersHandle = {
 };
 
 const OPTION_PAGE_SIZE = 20;
+
+/** Accordion sections open by default — everything else starts collapsed. */
+const DEFAULT_OPEN_SECTIONS = new Set(['availability', 'price', BRAND_ATTRIBUTE_SLUG]);
 
 function parsePrice(raw: string): number | undefined {
   if (!raw.trim()) return undefined;
@@ -204,7 +208,16 @@ export const ProductFilters = forwardRef<ProductFiltersHandle, Props>(function P
   const [draft, setDraft] = useState<ListingFilters>(filters);
   const [priceDraft, setPriceDraft] = useState(() => priceInputsFromFilters(filters));
 
-  const isSectionOpen = (id: string) => openSections[id] ?? true;
+  const isSectionOpen = (id: string) => openSections[id] ?? DEFAULT_OPEN_SECTIONS.has(id);
+
+  const brandGroup = useMemo(
+    () => attributeGroups.find((g) => g.slug === BRAND_ATTRIBUTE_SLUG),
+    [attributeGroups],
+  );
+  const otherAttributeGroups = useMemo(
+    () => attributeGroups.filter((g) => g.slug !== BRAND_ATTRIBUTE_SLUG),
+    [attributeGroups],
+  );
 
   // Sync draft when applied filters change from outside (badges, clear, URL).
   useEffect(() => {
@@ -355,23 +368,24 @@ export const ProductFilters = forwardRef<ProductFiltersHandle, Props>(function P
         </div>
       </FilterSection>
 
-      {attributeGroups.map((group) => (
+      {brandGroup && (
         <FilterSection
-          key={group.slug}
-          id={group.slug}
-          title={group.label}
-          open={isSectionOpen(group.slug)}
-          onOpenChange={(open) => setOpenSections((prev) => ({ ...prev, [group.slug]: open }))}
-          activeCount={getSelectedAttributeSlugs(draft, group.slug).length}
+          id={brandGroup.slug}
+          title={brandGroup.label}
+          open={isSectionOpen(brandGroup.slug)}
+          onOpenChange={(open) =>
+            setOpenSections((prev) => ({ ...prev, [brandGroup.slug]: open }))
+          }
+          activeCount={getSelectedAttributeSlugs(draft, brandGroup.slug).length}
         >
           <AttributeOptionsList
-            group={group}
+            group={brandGroup}
             filters={draft}
             onChange={setDraft}
             variant={variant}
           />
         </FilterSection>
-      ))}
+      )}
 
       <FilterSection
         id="price"
@@ -424,6 +438,24 @@ export const ProductFilters = forwardRef<ProductFiltersHandle, Props>(function P
           />
         </div>
       </FilterSection>
+
+      {otherAttributeGroups.map((group) => (
+        <FilterSection
+          key={group.slug}
+          id={group.slug}
+          title={group.label}
+          open={isSectionOpen(group.slug)}
+          onOpenChange={(open) => setOpenSections((prev) => ({ ...prev, [group.slug]: open }))}
+          activeCount={getSelectedAttributeSlugs(draft, group.slug).length}
+        >
+          <AttributeOptionsList
+            group={group}
+            filters={draft}
+            onChange={setDraft}
+            variant={variant}
+          />
+        </FilterSection>
+      ))}
 
       {showActions && (
         <div className="catalog-filters-actions">
