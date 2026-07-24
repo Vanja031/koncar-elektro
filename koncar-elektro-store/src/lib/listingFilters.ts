@@ -112,11 +112,9 @@ export function getFilterableWcAttributes() {
   );
 }
 
-/** Taxonomies to request facet counts for (excludes brand — always shown). */
+/** Taxonomies to request facet counts for (including brand). */
 export function getFacetTaxonomies(): string[] {
-  return getFilterableWcAttributes()
-    .map((a) => a.slug)
-    .filter((slug) => slug !== BRAND_ATTRIBUTE_SLUG);
+  return getFilterableWcAttributes().map((a) => a.slug);
 }
 
 /**
@@ -217,9 +215,9 @@ export function collectAttributeFacetsFromCounts(
 
 /**
  * Build filter groups for the current listing.
- * - Brand is always included when we have global options.
- * - Other attributes only when present in facets (or already selected).
+ * - Only attributes that appear on products in this listing (or are already selected).
  * - Options are narrowed to terms that exist in the listing context.
+ * - While facets are still loading (`undefined`), only actively selected attrs show.
  */
 export function buildAttributeFilterGroups(
   facets: AttributeFacetMap | undefined,
@@ -244,15 +242,13 @@ export function buildAttributeFilterGroups(
 
     const selectedSlugs = selected[slug] ?? [];
     const seen = facets?.[slug];
-    const isBrand = slug === BRAND_ATTRIBUTE_SLUG;
 
-    // Brand: always available. Other attrs: only if seen in context or actively selected.
-    // While facets are loading (undefined), only brand (+ active selections) show.
-    if (!isBrand && !seen?.size && selectedSlugs.length === 0) continue;
+    // Hide attribute groups with no products in this listing (unless user already selected them).
+    if (!seen?.size && selectedSlugs.length === 0) continue;
 
     let options = getAttributeFilterOptions(slug);
 
-    if (!isBrand && seen && seen.size > 0) {
+    if (seen && seen.size > 0) {
       const allow = new Set<string>([...seen, ...selectedSlugs]);
       const narrowed = options.filter((o) => allow.has(o.slug));
       if (narrowed.length > 0) {
@@ -265,7 +261,7 @@ export function buildAttributeFilterGroups(
           }),
         );
       }
-    } else if (!isBrand && selectedSlugs.length > 0 && !seen?.size) {
+    } else if (selectedSlugs.length > 0) {
       options = options.filter((o) => selectedSlugs.includes(o.slug));
     }
 

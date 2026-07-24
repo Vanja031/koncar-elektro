@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getStoreAttributeCounts } from '@/lib/api/wc-store/products';
 import { useLiveApi } from '@/lib/api/config';
 import {
-  BRAND_ATTRIBUTE_SLUG,
   buildAttributeFilterGroups,
   collectAttributeFacetsFromCounts,
   getFacetTaxonomies,
@@ -19,7 +18,7 @@ export type ListingFacetContext = {
 
 /**
  * Derives which attribute filters are relevant for the current listing via
- * Store API collection-data counts (e.g. snaga on aku alat, not empty taxonomies).
+ * Store API collection-data counts — only attrs/terms that exist on matching products.
  */
 export function useListingAttributeGroups(
   context: ListingFacetContext,
@@ -59,14 +58,16 @@ export function useListingAttributeGroups(
 
   const groups = useMemo(() => {
     if (!useLiveApi || !hasContext) {
-      return buildAttributeFilterGroups(
-        { [BRAND_ATTRIBUTE_SLUG]: new Set(['*']) },
-        filters.attributes,
-      );
+      // No listing context — only keep already-selected attributes visible.
+      return buildAttributeFilterGroups({}, filters.attributes);
     }
 
-    const facets = facetsQuery.isSuccess ? facetsQuery.data : undefined;
-    return buildAttributeFilterGroups(facets, filters.attributes);
+    if (!facetsQuery.isSuccess) {
+      // Loading / error: don't flash the full global attribute dump.
+      return buildAttributeFilterGroups({}, filters.attributes);
+    }
+
+    return buildAttributeFilterGroups(facetsQuery.data, filters.attributes);
   }, [hasContext, facetsQuery.isSuccess, facetsQuery.data, filters.attributes]);
 
   return {

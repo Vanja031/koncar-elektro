@@ -46,9 +46,21 @@ const CategoryPage = ({ programSlug }: Props) => {
   const { data: hubImages } = useSubcategoryProductImages(hubImageSlugs);
 
   const subcategories = useMemo((): SubcategoryItem[] => {
-    const base =
-      isLive && liveSubcategories.length > 0 ? liveSubcategories : staticData?.subcategories ?? [];
+    // Live API: never show static mock productCount values.
+    if (useLiveApi) {
+      if (!isLive || liveSubcategories.length === 0) return [];
+      return liveSubcategories.map((item) => ({
+        ...item,
+        image: resolveSubcategoryImage(
+          item.wcSlug ?? toWcParentSlug(item.slug),
+          item.slug,
+          hubImages,
+          item.image,
+        ),
+      }));
+    }
 
+    const base = staticData?.subcategories ?? [];
     return base.map((item) => ({
       ...item,
       image: resolveSubcategoryImage(
@@ -58,7 +70,7 @@ const CategoryPage = ({ programSlug }: Props) => {
         item.image,
       ),
     }));
-  }, [isLive, liveSubcategories, staticData?.subcategories, hubImages]);
+  }, [useLiveApi, isLive, liveSubcategories, staticData?.subcategories, hubImages]);
 
   const bestSellerCategory =
     slug === 'alati' ? undefined : programToWcSlug(slug);

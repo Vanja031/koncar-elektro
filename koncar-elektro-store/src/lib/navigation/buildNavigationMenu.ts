@@ -5,8 +5,9 @@ import type { WcStoreCategory } from '@/lib/api/types/wc-store';
 import {
   MEGA_MENU_PARENT_SLUG,
   OTHER_PROGRAM_SLUGS,
+  getWcCategoryListingUrl,
 } from '@/lib/catalogUrls';
-import { programToWcSlug, toWcParentSlug } from '@/lib/wcSlugs';
+import { programToWcSlug, toWcParentSlug, wcParentSlugCandidates } from '@/lib/wcSlugs';
 
 export function resolveWcParentSlug(def: NavigationMenuDef): string {
   if (def.wcParentSlug) return def.wcParentSlug;
@@ -15,6 +16,25 @@ export function resolveWcParentSlug(def: NavigationMenuDef): string {
     return programToWcSlug(internal);
   }
   return toWcParentSlug(internal);
+}
+
+/** Find a WC category by trying preferred remaps then staging/live aliases. */
+export function findWcCategoryBySlugCandidates(
+  allCategories: WcStoreCategory[],
+  candidates: string[],
+): WcStoreCategory | undefined {
+  for (const slug of candidates) {
+    const found = allCategories.find((c) => c.slug === slug);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+export function findWcParentByInternalSlug(
+  internalSlug: string,
+  allCategories: WcStoreCategory[],
+): WcStoreCategory | undefined {
+  return findWcCategoryBySlugCandidates(allCategories, wcParentSlugCandidates(internalSlug));
 }
 
 function mapWcChild(
@@ -36,8 +56,15 @@ function buildMenuCategory(
   def: NavigationMenuDef,
   allCategories: WcStoreCategory[],
 ): MegaMenuCategory {
-  const wcParentSlug = resolveWcParentSlug(def);
-  const parent = allCategories.find((c) => c.slug === wcParentSlug);
+  const preferredSlug = resolveWcParentSlug(def);
+  const parent = def.wcParentSlug
+    ? allCategories.find((c) => c.slug === def.wcParentSlug)
+    : findWcCategoryBySlugCandidates(
+        allCategories,
+        OTHER_PROGRAM_SLUGS.has(def.id)
+          ? [preferredSlug, def.id]
+          : wcParentSlugCandidates(MEGA_MENU_PARENT_SLUG[def.id] ?? def.id),
+      );
 
   let subcategories: MegaMenuSubcategory[] = [];
 
@@ -70,6 +97,34 @@ export function buildNavigationMenu(
   return defs.map((def) => buildMenuCategory(def, allCategories));
 }
 
+/** Direct WC children of an internal parent hub — real counts, no static menu. */
+export function getLiveParentSubcategoryChips(
+  internalParentSlug: string,
+  allCategories: WcStoreCategory[],
+): {
+  slug: string;
+  label: string;
+  count: number;
+  image?: string;
+  href: string;
+  parentWcSlug: string;
+}[] {
+  const parent = findWcParentByInternalSlug(internalParentSlug, allCategories);
+  if (!parent) return [];
+
+  return allCategories
+    .filter((c) => c.parent === parent.id)
+    .sort((a, b) => a.name.localeCompare(b.name, 'sr'))
+    .map((child) => ({
+      slug: child.slug,
+      label: child.name,
+      count: child.count,
+      image: child.image?.src || undefined,
+      parentWcSlug: parent.slug,
+      href: getWcCategoryListingUrl(parent.slug, child.slug),
+    }));
+}
+
 /** Mega-menu hubs usable as sale-page category filters (skips synthetic multi-parent groups). */
 export function getSaleCategoryFilterOptions(): { id: string; label: string; wcSlug: string }[] {
   return [...alatiMenuDefs, ...otherProgramMenuDefs]
@@ -97,8 +152,23 @@ function alatiRootCategories(allCategories: WcStoreCategory[]): WcStoreCategory[
       const slugSet = new Set(def.wcChildSlugs);
       allCategories.filter((c) => slugSet.has(c.slug)).forEach(add);
     } else {
-      add(allCategories.find((c) => c.slug === resolveWcParentSlug(def)));
+      const internal = MEGA_MENU_PARENT_SLUG[def.id] ?? def.id;
+      add(
+        def.wcParentSlug
+          ? allCategories.find((c) => c.slug === def.wcParentSlug)
+          : findWcParentByInternalSlug(internal, allCategories),
+      );
     }
+  }
+
+  // Hub parents that are on /proizvodi but not in the mega-menu sidebar defs.
+  for (const internal of [
+    'aparati-za-varenje',
+    'poljoprivredni-program',
+    'oprema-za-dvoriste',
+    'agregati',
+  ]) {
+    add(findWcParentByInternalSlug(internal, allCategories));
   }
 
   return roots;
@@ -158,8 +228,17 @@ export function findWcCategoryByMenuId(
 ): WcStoreCategory | undefined {
   const def = [...alatiMenuDefs, ...otherProgramMenuDefs].find((d) => d.id === menuId);
   if (!def) return undefined;
-  const slug = resolveWcParentSlug(def);
-  return allCategories.find((c) => c.slug === slug);
+  if (def.wcParentSlug) {
+    return allCategories.find((c) => c.slug === def.wcParentSlug);
+  }
+  const internal = MEGA_MENU_PARENT_SLUG[def.id] ?? def.id;
+  if (OTHER_PROGRAM_SLUGS.has(def.id)) {
+    return findWcCategoryBySlugCandidates(allCategories, [
+      programToWcSlug(internal),
+      internal,
+    ]);
+  }
+  return findWcParentByInternalSlug(internal, allCategories);
 }
 
 /** Reverse lookup: internal parent slug → mega menu id. */

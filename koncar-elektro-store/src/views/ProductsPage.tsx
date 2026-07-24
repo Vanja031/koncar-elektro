@@ -24,7 +24,11 @@ import {
   isParentListingRoute,
   resolveMegaMenuSubcategoryUrl,
 } from '@/lib/catalogUrls';
-import { findMenuIdByParentSlug } from '@/lib/navigation/buildNavigationMenu';
+import {
+  findMenuIdByParentSlug,
+  findWcParentByInternalSlug,
+  getLiveParentSubcategoryChips,
+} from '@/lib/navigation/buildNavigationMenu';
 import { slugify } from '@/lib/slugify';
 import type { ListingSort } from '@/lib/listingSort';
 import {
@@ -58,7 +62,8 @@ const ProductsPage = ({
   const [perPage, setPerPage] = useState<ListingPerPage>(24);
   const [sort, setSort] = useState<ListingSort>('bestsellers');
   const [filters, setFilters] = useState<ListingFilters>(emptyListingFilters());
-  const { getCategoryById, isLive: navLive } = useNavigationMenu();
+  const { getCategoryById, isLive: navLive, allCategories, isLoading: navLoading } =
+    useNavigationMenu();
 
   const scrollListingToTop = useCallback(() => {
     scheduleScrollToTop();
@@ -117,23 +122,45 @@ const ProductsPage = ({
   const parentMenuId = parentData ? findMenuIdByParentSlug(parentSlug) : undefined;
   const parentLiveMenu = parentMenuId ? getCategoryById(parentMenuId) : undefined;
 
-  const parentChipSources = useMemo(() => {
-    if (!isParentRoute) return [];
-    if (navLive && parentLiveMenu?.subcategories.length) {
+  /** Always prefer WC children + real counts when live catalog is available. */
+  const liveParentChips = useMemo(() => {
+    if (!useLiveApi || !isParentRoute || !allCategories?.length) return undefined;
+    const fromWc = getLiveParentSubcategoryChips(parentSlug, allCategories);
+    if (fromWc.length) return fromWc;
+    if (parentLiveMenu?.subcategories.length) {
       return parentLiveMenu.subcategories
         .filter((sub) => sub.slug)
-        .map((sub) => ({ label: sub.label, slug: sub.slug! }));
+        .map((sub) => ({
+          slug: sub.slug!,
+          label: sub.label,
+          count: sub.count ?? 0,
+          image: sub.image,
+          href: resolveMegaMenuSubcategoryUrl(parentMenuId!, sub),
+          parentWcSlug: sub.parentWcSlug ?? toWcParentSlug(parentSlug),
+        }));
     }
-    // Hub categories not wired into the mega menu (e.g. Poljoprivredni program, Oprema za
-    // dvorište) render their subcategory chips from the static fallback list — still fetch
-    // each one's real first-product photo instead of showing the same category placeholder.
-    if (parentData?.chips.length) {
+    return [];
+  }, [
+    useLiveApi,
+    isParentRoute,
+    allCategories,
+    parentSlug,
+    parentLiveMenu,
+    parentMenuId,
+  ]);
+
+  const parentChipSources = useMemo(() => {
+    if (!isParentRoute) return [];
+    if (liveParentChips?.length) {
+      return liveParentChips.map((c) => ({ label: c.label, slug: c.slug }));
+    }
+    if (!useLiveApi && parentData?.chips.length) {
       return parentData.chips
         .filter((c) => c.slug && c.slug !== 'svi-proizvodi')
         .map((c) => ({ label: c.label, slug: c.slug! }));
     }
     return [];
-  }, [isParentRoute, navLive, parentLiveMenu, parentData]);
+  }, [isParentRoute, liveParentChips, useLiveApi, parentData]);
 
   const parentChipImages = useSubcategoryProductImages(parentChipSources);
 
@@ -146,7 +173,15 @@ const ProductsPage = ({
   const wcCategorySlug =
     !parentData && listingData ? resolveListingCategorySlug(parentSlug, listingSlug) : undefined;
 
-  const parentWcSlug = parentData ? toWcParentSlug(parentSlug) : undefined;
+  const resolvedParentWc = useMemo(() => {
+    if (!parentData) return undefined;
+    if (allCategories?.length) {
+      return findWcParentByInternalSlug(parentSlug, allCategories)?.slug;
+    }
+    return toWcParentSlug(parentSlug);
+  }, [parentData, allCategories, parentSlug]);
+
+  const parentWcSlug = resolvedParentWc;
 
   useEffect(() => {
     setPage(1);
@@ -178,7 +213,22 @@ const ProductsPage = ({
   });
 
   const liveListingChips = useMemo(() => {
-    if (!navLive || !listingData) return undefined;
+    if (!useLiveApi || !listingData) return undefined;
+
+    if (allCategories?.length) {
+      const siblings = getLiveParentSubcategoryChips(parentSlug, allCategories);
+      if (siblings.length) {
+        return siblings.map((sub) => ({
+          slug: sub.slug,
+          label: sub.label,
+          count: sub.count,
+          image: sub.image,
+          href: sub.href,
+        }));
+      }
+    }
+
+    if (!navLive) return undefined;
     const menuId = findMenuIdByParentSlug(parentSlug);
     const liveMenu = menuId ? getCategoryById(menuId) : undefined;
     if (!liveMenu?.subcategories.length) return undefined;
@@ -190,15 +240,26 @@ const ProductsPage = ({
       image: sub.image,
       href: resolveMegaMenuSubcategoryUrl(menuId!, sub),
     }));
-  }, [navLive, listingData, parentSlug, getCategoryById]);
+  }, [useLiveApi, listingData, allCategories, parentSlug, navLive, getCategoryById]);
 
-  const listingParentWcSlug =
-    categorySlug === 'alati' ? toWcParentSlug(parentSlug) : programToWcSlug(parentSlug);
+  const listingParentWcSlug = useMemo(() => {
+    if (categorySlug === 'alati') {
+      if (allCategories?.length) {
+        return (
+          findWcParentByInternalSlug(parentSlug, allCategories)?.slug ??
+          toWcParentSlug(parentSlug)
+        );
+      }
+      return toWcParentSlug(parentSlug);
+    }
+    return programToWcSlug(parentSlug);
+  }, [categorySlug, parentSlug, allCategories]);
 
   const saleCountQuery = useLiveSaleCount(useLiveApi ? listingParentWcSlug : undefined);
 
   const subcategoryImageSources = useMemo(() => {
-    const siblings = liveListingChips ?? listingData?.chips ?? [];
+    // Live API: never fall back to static catalogListing chips (fake counts).
+    const siblings = liveListingChips ?? (!useLiveApi ? listingData?.chips : undefined) ?? [];
     return siblings
       .filter((c) => c.slug)
       .map((c) => ({
@@ -206,12 +267,12 @@ const ProductsPage = ({
         slug: c.slug,
         image: c.image,
       }));
-  }, [liveListingChips, listingData?.chips]);
+  }, [liveListingChips, useLiveApi, listingData?.chips]);
 
   const subcategoryImages = useSubcategoryProductImages(subcategoryImageSources);
 
   const highlightChips = useMemo(() => {
-    const siblings = liveListingChips ?? listingData?.chips ?? [];
+    const siblings = liveListingChips ?? (!useLiveApi ? listingData?.chips : undefined) ?? [];
     if (!siblings.length) return [];
 
     const imageMap = subcategoryImages.data ?? {};
@@ -227,6 +288,7 @@ const ProductsPage = ({
     );
   }, [
     liveListingChips,
+    useLiveApi,
     listingData?.chips,
     listingParentWcSlug,
     saleCountQuery.data,
@@ -234,26 +296,23 @@ const ProductsPage = ({
   ]);
 
   if (parentData) {
-    const isLiveChips =
-      navLive && Boolean(parentLiveMenu) && (parentLiveMenu?.subcategories.length ?? 0) > 0;
     const chipImagesSettled = !parentChipImages.isPending && !parentChipImages.isFetching;
-    const chips = isLiveChips
-      ? parentLiveMenu!.subcategories.map((sub) => ({
-          slug: sub.slug ?? slugify(sub.label),
-          label: sub.label,
-          count: sub.count ?? 0,
-          image: sub.slug ? parentChipImages.data?.[sub.slug] : undefined,
-          href: resolveMegaMenuSubcategoryUrl(parentMenuId!, sub),
-        }))
-      : parentData.chips.map((c) => ({
-          ...c,
-          // Dok se prava slika proizvoda učitava, ne prikazuj statičnu sliku kategorije kao
-          // privremenu zamenu (npr. Poljoprivredni program/Oprema za dvorište bi "flashovali"
-          // sliku matične kategorije) — sačekaj loader, isto kao kod kategorija iz live menija.
-          image:
-            (c.slug && parentChipImages.data?.[c.slug]) ||
-            (chipImagesSettled ? c.image : undefined),
-        }));
+    const chips =
+      liveParentChips?.map((c) => ({
+        slug: c.slug,
+        label: c.label,
+        count: c.count,
+        href: c.href,
+        image: parentChipImages.data?.[c.slug] || (chipImagesSettled ? c.image : undefined),
+      })) ??
+      (!useLiveApi
+        ? parentData.chips.map((c) => ({
+            ...c,
+            image:
+              (c.slug && parentChipImages.data?.[c.slug]) ||
+              (chipImagesSettled ? c.image : undefined),
+          }))
+        : []);
 
     const bestSellers = useLiveApi ? (parentBestSellers.data?.products ?? []) : [];
     const firstChipHref = chips[0]?.href;
@@ -268,7 +327,11 @@ const ProductsPage = ({
             getCategoryHubHeroDescription(parentSlug, parentData.title)
           }
         />
-        {chips.length > 0 ? (
+        {useLiveApi && navLoading ? (
+          <div className="container py-6">
+            <CatalogStateMessage variant="loading" />
+          </div>
+        ) : chips.length > 0 ? (
           <SubcategoryChips
             chips={chips}
             title={parentData.sectionTitle}
@@ -276,7 +339,7 @@ const ProductsPage = ({
             description=""
             imagesLoading={!chipImagesSettled}
           />
-        ) : (
+        ) : useLiveApi ? (
           <div className="container py-6">
             <CatalogStateMessage
               variant="empty"
@@ -284,7 +347,7 @@ const ProductsPage = ({
               description="Za ovu kategoriju trenutno nema dostupnih kategorija u prodavnici."
             />
           </div>
-        )}
+        ) : null}
         {useLiveApi ? (
           parentBestSellers.isLoading ? (
             <div className="container py-8">

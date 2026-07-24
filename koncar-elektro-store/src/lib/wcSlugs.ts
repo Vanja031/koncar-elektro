@@ -9,6 +9,15 @@ const INTERNAL_TO_WC_PARENT: Record<string, string> = {
   'potrosni-materijal': 'pribor',
 };
 
+/**
+ * Extra WC slugs to try when the preferred remap is missing (e.g. staging vs live).
+ * Preferred remap from INTERNAL_TO_WC_PARENT is always tried first.
+ */
+const WC_PARENT_SLUG_FALLBACKS: Record<string, string[]> = {
+  'kosacice-i-trimeri': ['kosacice-i-trimeri'],
+  'potrosni-materijal': ['pribor-i-potrosni-materijal'],
+};
+
 /** WC parent slugs that match internal slug 1:1 (no remap entry needed). */
 const WC_DIRECT_ALATI_PARENTS = [
   'elektricni-alat',
@@ -22,6 +31,15 @@ const WC_DIRECT_ALATI_PARENTS = [
 const WC_TO_INTERNAL_PARENT: Record<string, string> = Object.fromEntries(
   Object.entries(INTERNAL_TO_WC_PARENT).map(([internal, wc]) => [wc, internal]),
 );
+
+// Staging/live may use the unmapped slug while INTERNAL_TO_WC_PARENT points at a rename.
+for (const [internal, fallbacks] of Object.entries(WC_PARENT_SLUG_FALLBACKS)) {
+  for (const slug of fallbacks) {
+    if (!(slug in WC_TO_INTERNAL_PARENT)) {
+      WC_TO_INTERNAL_PARENT[slug] = internal;
+    }
+  }
+}
 
 const PROGRAM_TO_WC: Record<string, string> = {
   elektromaterijal: 'elektromaterijal-i-oprema',
@@ -43,10 +61,22 @@ export const PROGRAM_WC_SLUGS = new Set(Object.values(PROGRAM_TO_WC));
 export const WC_ALATI_PARENT_SLUGS = new Set<string>([
   ...Object.values(INTERNAL_TO_WC_PARENT),
   ...WC_DIRECT_ALATI_PARENTS,
+  ...Object.values(WC_PARENT_SLUG_FALLBACKS).flat(),
 ]);
 
 export const toWcParentSlug = (internalSlug: string): string =>
   INTERNAL_TO_WC_PARENT[internalSlug] ?? internalSlug;
+
+/**
+ * Ordered WC parent slug candidates for an internal hub slug.
+ * Prefer the production remap, then staging/live aliases, then the internal slug itself.
+ */
+export function wcParentSlugCandidates(internalSlug: string): string[] {
+  const preferred = toWcParentSlug(internalSlug);
+  const program = PROGRAM_TO_WC[internalSlug];
+  const fallbacks = WC_PARENT_SLUG_FALLBACKS[internalSlug] ?? [];
+  return [...new Set([preferred, program, ...fallbacks, internalSlug].filter(Boolean) as string[])];
+}
 
 export const toInternalParentSlug = (wcSlug: string): string =>
   WC_TO_INTERNAL_PARENT[wcSlug] ?? wcSlug;
