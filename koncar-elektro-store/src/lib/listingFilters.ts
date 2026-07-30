@@ -12,6 +12,14 @@ export const HIDDEN_FILTER_ATTRIBUTE_SLUGS = new Set([
   'pa_uvoznik',
   'pa_zemlja-porekla',
   'pa_potenciometar',
+  'pa_dimenzije',
+  'pa_broj-hodova',
+  'pa_frekvencija',
+  'pa_nivo-vibracija',
+  'pa_rezervoar-ulja',
+  'pa_duzina-kabla',
+  'pa_duzina-creva',
+  'pa_ip-zastita',
 ]);
 
 /** Preferred display order for attribute filter sections. */
@@ -34,7 +42,6 @@ export const ATTRIBUTE_FILTER_ORDER = [
   'pa_pritisak',
   'pa_konjska-snaga',
   'pa_dimenzija-trake',
-  'pa_dimenzije',
   'pa_boja',
 ] as const;
 
