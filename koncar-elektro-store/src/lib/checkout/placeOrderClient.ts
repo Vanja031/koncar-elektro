@@ -102,3 +102,44 @@ export async function placeOrderViaApi(payload: CheckoutSubmitPayload): Promise<
 
   return { api: data as CheckoutApiSuccess, placed };
 }
+
+export type CardPaymentStartPayload = {
+  items: Array<{ productId: number; quantity: number }>;
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  customerNote: string;
+};
+
+/** Kicks off a RaiAccept card payment: creates the WC order, returns the hosted-page redirect URL. */
+export async function startCardPayment(
+  payload: CardPaymentStartPayload,
+): Promise<{ paymentRedirectURL: string }> {
+  const response = await fetch('/api/payments/raiaccept/start', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as {
+    paymentRedirectURL?: string;
+  } & CheckoutApiError;
+
+  if (!response.ok) {
+    throw new CheckoutClientError(
+      data.message || 'Kartično plaćanje nije uspelo.',
+      response.status,
+      data.code,
+    );
+  }
+
+  if (!data.paymentRedirectURL) {
+    throw new CheckoutClientError('Nedostaje link ka stranici za plaćanje.', 502, 'missing_redirect');
+  }
+
+  return { paymentRedirectURL: data.paymentRedirectURL };
+}

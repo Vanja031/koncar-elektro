@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 17.07.2026. (Nedelja 5 zatvorena)
+**Poslednje ažuriranje trackera:** 05.08.2026. (Nedelja 6 — kartično plaćanje RaiAccept implementirano; čeka sandbox kredencijale + test)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 5 zatvorena — prelazak na Nedelju 6 |
-| **Sledeći korak** | Nedelja 6: JSON-LD (6.3–6.5); kartica (6.1–6.2) kad stignu smernice banke |
+| **Aktivna nedelja** | Nedelja 6 — RaiAccept kartica ožičena (05.08.2026.); preostaje sandbox test (6.2) + GTM ID |
+| **Sledeći korak** | Klijent: Sandbox API Credentials iz RaiAccept portala + MB/PIB za check listu; zatim test transakcije (6.2). GTM Container ID kad stigne (6.9) |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -43,8 +43,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Faza | Nedelje | Završeno | U toku | Preostalo |
 |------|---------|----------|--------|-----------|
 | Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 4 | 0 | 0 nedelja |
-| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 1 | 0 | 3 nedelje |
-| **Ukupno** | **8** | **5** | **0** | **3** |
+| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 1 | 1 | 2 nedelje |
+| **Ukupno** | **8** | **5** | **1** | **2** |
 
 ---
 
@@ -217,23 +217,34 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 5.9 | Callback forma | `[x]` | 17.07.2026. | Nije potrebna posebno — pokriveno kontakt formom + sticky poziv; zatvoreno po dogovoru |
 | 5.10 | WhatsApp / Viber dugme | `[x]` | 16.07.2026. | Deo istog proširivog sticky widgeta (5.8) |
 
+**Dodatni fix-evi posle formalnog zatvaranja Nedelje 5 (20.07.–30.07.2026.):**
+
+| Tema | Status | Datum | Napomena |
+|------|--------|-------|----------|
+| Shipping kalkulacija | `[x]` | 20.07.2026. | Popravke u `shipping.ts`, `CartSummary`, `CheckoutSummary`, `ProductPurchaseCard`; dodat `shipping.test.ts` |
+| Staging environment | `[x]` | 23.07.2026. | Staging WP host (`testing.cleannikki.com`) povezan; uvezen `proizvodi-woocommerce-staging.csv` (pun katalog za staging) |
+| CORS fix za API config | `[x]` | 23.07.2026. | `wpApiBase` uvek same-origin `/wp-json` rewrite (i dev i prod/Vercel) — izbegnut CORS problem sa WC Store API koji ne emituje `Access-Control-Allow-Origin` |
+| Filteri — UX raspored | `[x]` | 23.07.2026. | Brend filter izdvojen i prikazan prvi/podrazumevano otvoren; ostali atributi ispod, podrazumevano zatvoreni (`ProductFilters.tsx`) |
+| Filteri — uklonjeni mock podaci | `[x]` | 24.07.2026. | `CategoryPage`/`ProductsPage` sada 100% na live WC podacima; fix u `useCategoryPageLive`, `useListingAttributeGroups`, `buildNavigationMenu`, `wcSlugs` |
+| Filteri — skrivanje nekorisnih atributa | `[x]` | 30.07.2026. | Dodati u `HIDDEN_FILTER_ATTRIBUTE_SLUGS`: dimenzije, broj hodova, frekvencija, nivo vibracija, rezervoar ulja, dužina kabla/creva, IP zaštita — previše šuma za filter UI |
+
 ---
 
 ## Nedelja 6 — Plaćanje i tehnički SEO sloj
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 6.1 | Integracija kartičnog plaćanja sa bankom | `[ ]` | | Zavisi od banke |
-| 6.2 | Test transakcije na stagingu | `[ ]` | | |
-| 6.3 | Schema markup — Product | `[ ]` | | |
-| 6.4 | Schema markup — BreadcrumbList | `[ ]` | | |
-| 6.5 | Schema markup — Organization | `[ ]` | | |
-| 6.6 | XML sitemap generator | `[ ]` | | |
-| 6.7 | robots.txt | `[ ]` | | |
-| 6.8 | GA4 ecommerce | `[ ]` | | |
-| 6.9 | GTM (Google Tag Manager) | `[ ]` | | |
-| 6.10 | GDPR / cookie consent usklađen sa propisima | `[ ]` | | |
-| 6.11 | Mapiranje 301 redirect-a samo za neizbežne izmene putanja (cilj: 0) | `[ ]` | | |
+| 6.1 | Integracija kartičnog plaćanja sa bankom | `[x]` | 05.08.2026. | RaiAccept Code integration (REST API) — redirect flow, automatska realizacija. BFF: `/api/payments/raiaccept/{start,status,webhook}`; WC order pending → RaiAccept session; reconcile po WC order id. Compliance: logoi banke/3DS, stranice uslovi/plaćanje/odustajanje/reklamacije/dostava |
+| 6.2 | Test transakcije na stagingu | `[!]` | | Čeka Sandbox API Credentials od klijenta (RaiAccept portal) + `WC_LIVE_CHECKOUT` na stagingu |
+| 6.3 | Schema markup — Product | `[x]` | 05.08.2026. | `buildProductJsonLd` — cena/valuta/dostupnost/rating; ubačeno u `app/prodavnica/[...segments]/page.tsx` |
+| 6.4 | Schema markup — BreadcrumbList | `[x]` | 05.08.2026. | PDP (iz `product.breadcrumbs`) + kategorija stranice; `buildBreadcrumbJsonLd` u `src/lib/seo/jsonld.ts` |
+| 6.5 | Schema markup — Organization | `[x]` | 05.08.2026. | + `WebSite` (sitelinks search box) globalno u `app/layout.tsx`, iz `companyInfo` |
+| 6.6 | XML sitemap generator | `[x]` | 05.08.2026. | `app/sitemap.ts` — generiše se iz `seo-baseline-index.json` (5.649 URL-ova, isti skup kao Nedelja 1 crawl) |
+| 6.7 | robots.txt | `[x]` | 05.08.2026. | `app/robots.ts` — zamenio statički `public/robots.txt`; dodat `Sitemap:` + disallow za korpa/checkout/login/api, zadržana pravila po botu |
+| 6.8 | GA4 ecommerce | `[~]` | 05.08.2026. | Measurement ID dobijen (`G-2HJ9BTPBK7`) i uveden u staging `.env`; `view_item`/`add_to_cart`/`begin_checkout`/`purchase` ožičeni. Namerno još neaktivno — `NEXT_PUBLIC_ANALYTICS_LIVE=false` dok radimo na proizvodima; pali se tek na go-live (samo Vercel Production), + kod odbija da radi van `koncarelektro.rs` domena kao dodatna kočnica |
+| 6.9 | GTM (Google Tag Manager) | `[ ]` | | Klijent odložio — dodaje se kasnije; loader već postoji u kodu (`NEXT_PUBLIC_GTM_ID`), samo čeka Container ID |
+| 6.10 | GDPR / cookie consent usklađen sa propisima | `[x]` | 05.08.2026. | Redizajniran banner (mini naslov, prirodniji tekst, dugmad Prihvati/Odbij u donjem desnom uglu kartice, u stilu sajta) + `ConsentContext` (localStorage); analitika tek posle pristanka; dodata `/politika-privatnosti` stranica (nedostajala je — URL parity gap iz starog sajta) |
+| 6.11 | Mapiranje 301 redirect-a samo za neizbežne izmene putanja (cilj: 0) | `[ ]` | | Nema zahtevanih izmena putanja do sada — ostaje 0 po planu |
 
 **Milestone (kraj Nedelje 6):** Uspešna test transakcija kartičnog plaćanja na stagingu.
 
@@ -310,7 +321,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |------|-----|--------|-------|---------|
 | Kraj Nedelje 1 | URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Slanje klijentu odloženo |
 | Kraj Nedelje 2 | Finalni dizajn + URL routing mapa | `[x]` | 07.07.2026. | Nedelja 2 kompletno zatvorena |
-| Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[ ]` | | |
+| Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[!]` | | Integracija gotova (6.1); čeka sandbox kredencijale za 6.2 |
 | Kraj Nedelje 7 | Potvrđen 1:1 SEO i URL parity na stagingu | `[ ]` | | |
 | Nedelja 8 | Uplata 50%, lansiranje, predaja koda | `[ ]` | | |
 
@@ -356,27 +367,58 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 07.07.2026. | — | Nedelja 4 start: Next.js 14 migracija (4.1) — App Router, sve rute 1:1, build prolazi | Vite zamenjen; `npm run dev:vite` za legacy |
 | 16.07.2026. | — | Nedelja 4 zatvorena: ISR za proizvode (4.10) — `generateStaticParams` pre-renderuje bestseleri+akcija (~40), ostatak `dynamicParams` on-demand + revalidate keš; 4.2–4.9 potvrđene kao završene u kodu; lokalni build prošao (55/55 stranica) | Mesec 1 kompletan; prelazak na Nedelju 5 (korpa/checkout) |
 | 17.07.2026. | — | Nedelja 5 zatvorena: e-commerce (korpa/checkout/filteri/sticky/toast); 5.9 callback zatvoren po dogovoru (nije potreban) | Prelazak na Nedelju 6 |
+| 20.07.2026. | — | Popravke shipping kalkulacije (cart/checkout summary, purchase card) + test | Tačniji obračun dostave pre nastavka na Nedelju 6 |
+| 23.07.2026. | — | Staging environment povezan (testing.cleannikki.com) + pun CSV katalog uvezen; CORS fix — API uvek ide preko same-origin `/wp-json` rewrite | Staging sada radi sa realnim podacima bez CORS problema |
+| 23.07.2026. | — | Filteri redizajnirani: brend izdvojen i otvoren podrazumevano, ostali atributi ispod zatvoreni | Bolji UX na listing/kategorija stranicama |
+| 24.07.2026. | — | Uklonjeni svi mock podaci iz CategoryPage/ProductsPage — potpuno na live WC podacima | Filteri i navigacija sada 100% konzistentni sa produkcijom |
+| 30.07.2026. | — | Dodatni atributi skriveni iz filter UI (dimenzije, frekvencija, IP zaštita, itd.) — previše šuma za korisnika | Čistiji filter panel; formalni ulazak u Nedelju 6 |
+| 05.08.2026. | — | Nedelja 6 — SEO tehnički sloj: JSON-LD Product/BreadcrumbList/Organization/WebSite, XML sitemap (`app/sitemap.ts`, 5.649 URL), robots.txt (`app/robots.ts`, zamenio statički fajl) | 6.3–6.7 zatvoreni |
+| 05.08.2026. | — | GDPR cookie consent banner + `/politika-privatnosti` stranica (nedostajala je na novom sajtu — URL parity gap zatvoren) | 6.10 zatvoren |
+| 05.08.2026. | — | GA4/GTM infrastruktura ožičena iza consent-a (`view_item`, `add_to_cart`, `begin_checkout`, `purchase`) — neaktivna dok klijent ne dostavi Measurement ID / Container ID | 6.8–6.9 spremni za aktivaciju, ne blokiraju ostatak Nedelje 6 |
+| 05.08.2026. | — | `npm run build` prošao (18/18 stranica); staging okruženje nije bilo problem — API sloj već razdvojen preko env promenljive | Potvrđeno da rad na WP stagingu ne remeti Nedelju 6 |
+| 05.08.2026. | — | Klijent dostavio GA4 Measurement ID (`G-2HJ9BTPBK7`); GTM odložen za kasnije. ID uveden u staging `.env` sa `NEXT_PUBLIC_ANALYTICS_LIVE=false` — namerno ugašeno da test/staging saobraćaj ne uđe u pravi GA4 nalog dok se sređuju proizvodi | 6.8 tehnički gotov, čeka samo go-live da se "upali" |
+| 05.08.2026. | — | Cookie consent banner redizajniran po zahtevu klijenta: mini naslov "Poštujemo vašu privatnost", prirodniji tekst, dugmad Prihvati/Odbij premeštena u donji desni ugao kartice, veća/šira kartica na desktopu | 6.10 vizuelno usaglašen sa dizajnom sajta — klijent potvrdio da je dizajn odličan |
+| 05.08.2026. | — | Kartično plaćanje (6.1): RaiAccept REST API (Code integration) — redirect + automatska realizacija; BFF start/status/webhook; WC order pending + meta `_raiaccept_order_id`; compliance stranice + Raiffeisen/3DS logoi | 6.1 zatvoren; 6.2 čeka Sandbox API Credentials od klijenta |
+| 05.08.2026. | — | WC REST v3 ključevi prebačeni na server-only `WC_CONSUMER_KEY`/`SECRET` (bez `NEXT_PUBLIC_`) | Bezbednosni fix — write kredencijali više ne ulaze u browser bundle |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 6 (Nedelja 5 zatvorena 17.07.2026.)
+### Sada — Nedelja 6 (Nedelja 5 zatvorena 17.07.2026.; dodatni fix-evi do 30.07.2026.)
 
-**Prioritet 1 — SEO tehnički sloj (može odmah)**
-- JSON-LD: Product, BreadcrumbList, Organization (6.3–6.5)
+**Prioritet 1 — čeka klijenta (blokira test)**
+- RaiAccept Sandbox API Credentials (portal → API Credentials → New) → `RAIACCEPT_USERNAME` / `RAIACCEPT_PASSWORD` u `.env.local`
+- MB, PIB i šifra delatnosti za E-commerce check listu (polja u `companyInfo.registry`)
+- GTM Container ID — klijent odložio (6.9)
 
-**Prioritet 2 — Plaćanje (čeka banku)**
-- Kartično plaćanje + test transakcija (6.1–6.2)
+**Preostalo da uradimo mi (kad stignu kredencijali)**
+- 6.2 — sandbox test transakcije (Visa/Mastercard/DinaCard uspešna + odbijena + cancel)
+- Na dan go-live-a: `NEXT_PUBLIC_ANALYTICS_LIVE=true` na Vercel Production (jedina promena za 6.8)
+- 6.11 — mapiranje 301 redirect-a ostaje otvoreno kao stavka za proveru pred kraj (cilj i dalje 0)
 
-**Ostalo u Nedelji 6**
-- Sitemap, robots.txt, GA4/GTM, cookie consent (6.6–6.10)
+**Završeno — Kartično plaćanje (05.08.2026.)**
+- RaiAccept Code integration: auth → create order → payment session → redirect; webhook + status reconcile
+- Checkout: kartica omogućena, checkbox Uslovi kupovine, `/placanje-odjava/rezultat`
+- Brendiranje: Raiffeisen + Visa Secure + Mastercard ID Check (odvojeni od kartica)
+- Compliance stranice: `/uslovi-kupovine`, `/nacin-placanja`, `/pravo-na-odustajanje`, `/reklamacije`, `/nacini-isporuke`
+
+**Završeno — SEO tehnički sloj + GDPR (05.08.2026.)**
+- JSON-LD: Product (cena/dostupnost/rating), BreadcrumbList (PDP + kategorije), Organization + WebSite (6.3–6.5)
+- XML sitemap iz baseline indeksa (5.649 URL), robots.txt sa disallow za korpa/checkout/login (6.6–6.7)
+- Cookie consent banner — redizajniran (mini naslov, prirodniji tekst, dugmad Prihvati/Odbij u donjem desnom uglu) + nova `/politika-privatnosti` stranica (6.10)
+- GA4 infra + ecommerce eventi (view_item/add_to_cart/begin_checkout/purchase); pravi Measurement ID uveden, ali namerno ugašen do go-live-a (6.8)
 
 **Završeno — Nedelja 5 (17.07.2026.)**
 - Filteri (brend/cena/atributi) sa draft → Primeni / Poništi + badge-ovi
 - Live pretraga, korpa, checkout (COD/BACS, Test Test, zahvala)
 - Sticky Viber/WhatsApp/telefon; kontakt toast
 - 5.9 callback: nije potreban posebno (kontakt + sticky dovoljni)
+
+**Završeno — naknadni fix-evi (20.07.–30.07.2026., pre formalnog starta N6)**
+- Shipping kalkulacija ispravljena + test
+- Staging environment sa punim katalogom (CSV import) + CORS fix na API config
+- Filteri: brend izdvojen/otvoren podrazumevano, mock podaci uklonjeni (100% live), skriveni nekorisni atributi
 
 ---
 

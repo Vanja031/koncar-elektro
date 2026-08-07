@@ -6,8 +6,10 @@
  * is NOT replaced and returns undefined client-side — so keep these literal.
  */
 const ENV = {
-  WC_CONSUMER_KEY: process.env.NEXT_PUBLIC_WC_CONSUMER_KEY ?? '',
-  WC_CONSUMER_SECRET: process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET ?? '',
+  // Server-only on purpose — these are WooCommerce REST v3 admin credentials
+  // (can create/edit/delete orders & products). Never prefix with NEXT_PUBLIC_.
+  WC_CONSUMER_KEY: process.env.WC_CONSUMER_KEY ?? '',
+  WC_CONSUMER_SECRET: process.env.WC_CONSUMER_SECRET ?? '',
   USE_LIVE_API: process.env.NEXT_PUBLIC_USE_LIVE_API ?? '',
 } as const;
 

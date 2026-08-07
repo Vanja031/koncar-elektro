@@ -5,8 +5,10 @@ export type FaqEntry = { question: string; answer: string };
 
 export const companyInfo = {
   name: 'Končar Elektro',
-  legalName: 'KONČAR ELEKTRO',
+  /** Pun naziv pravnog lica (sa starog sajta / APR). */
+  legalName: 'KONČAR ELEKTRO Ivana Stanković PR',
   tagline: 'Prodaja alata i mašina renomiranih brendova',
+  website: 'https://koncarelektro.rs',
   address: {
     street: 'Stanoja Glavaša br. 4',
     city: 'Leskovac',
@@ -16,6 +18,14 @@ export const companyInfo = {
   },
   phones: ['061 65 444 90', '060 676 72 50'],
   email: 'kontakt@koncarelektro.com',
+  bankAccount: '165000700908591735',
+  /** Registry data — Raiffeisen E-commerce check lista. */
+  registry: {
+    mb: '65100312',
+    pib: '110964817',
+    activity: 'Trgovina na malo ostalim proizvodima u specijalizovanim prodavnicama',
+    activityCode: '4778',
+  },
   supportHours: [
     { day: 'Ponedeljak – Petak', hours: '08:00 – 20:00' },
     { day: 'Subota', hours: '08:00 – 16:00' },
@@ -177,4 +187,6 @@ export const footerLinkRoutes: Record<string, string> = {
   Garancija: '/reklamacije',
   'Česta pitanja': ROUTES.faq,
   'O nama': ROUTES.about,
+  'Uslovi korišćenja': '/uslovi-kupovine',
+  'Politika privatnosti': '/politika-privatnosti',
 };

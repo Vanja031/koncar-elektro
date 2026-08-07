@@ -1649,6 +1649,51 @@
     box-shadow: var(--shadow-navy-soft);
   }
 
+  /* Cookie consent — compact floating card, bottom-left (contact widget owns bottom-right) */
+  .cookie-consent {
+    @apply fixed inset-x-3 bottom-3 z-[70] flex items-start gap-3 rounded-xl border border-border bg-card p-4 sm:inset-x-auto sm:left-6 sm:bottom-6 sm:max-w-lg sm:gap-4 sm:p-6;
+    box-shadow: var(--shadow-navy-menu);
+    animation: cookie-consent-in 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes cookie-consent-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .cookie-consent-icon {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/15 text-primary sm:h-12 sm:w-12;
+  }
+  .cookie-consent-icon svg {
+    @apply sm:h-6 sm:w-6;
+  }
+  .cookie-consent-body {
+    @apply flex flex-col gap-2 min-w-0 sm:gap-2.5;
+  }
+  .cookie-consent-title {
+    @apply font-display text-sm font-bold uppercase tracking-wide text-primary sm:text-base;
+  }
+  .cookie-consent-text {
+    @apply text-[13px] leading-relaxed text-muted-foreground sm:text-sm sm:leading-relaxed;
+  }
+  .cookie-consent-link {
+    @apply font-medium text-primary underline underline-offset-2 hover:text-primary/80;
+  }
+  .cookie-consent-actions {
+    @apply mt-1 flex items-center justify-end gap-2 sm:mt-2 sm:gap-3;
+  }
+  .cookie-consent-btn-ghost {
+    @apply rounded-md border border-border px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:px-4 sm:py-2.5 sm:text-sm;
+  }
+  .cookie-consent-btn-accept {
+    @apply inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground transition-all hover:brightness-105 sm:px-5 sm:py-2.5 sm:text-sm;
+    box-shadow: var(--shadow-navy-soft);
+  }
+
   /* Add to cart — out-of-stock variant */
   .add-to-cart-modal--unavailable .add-to-cart-modal-timer-bar {
     @apply bg-amber-500;
@@ -1675,6 +1720,37 @@
   }
   .footer-payment-cards li {
     @apply bg-white border-border;
+  }
+
+  /* Bank / 3D Secure badges (Raiffeisen branding requirements) */
+  .bank-security-badges {
+    @apply flex flex-wrap items-center gap-3;
+  }
+  .bank-security-badges-link {
+    @apply inline-flex items-center justify-center rounded transition-opacity hover:opacity-80;
+  }
+  .bank-security-badges-img {
+    /* Bank instruction: min 60px, max 155px */
+    height: 40px;
+    width: auto;
+    max-width: 155px;
+    min-width: 60px;
+    object-fit: contain;
+  }
+  .bank-security-badges-img--bank {
+    height: 36px;
+  }
+  .bank-security-badges-sep {
+    @apply hidden sm:inline-block w-px h-8 bg-border shrink-0;
+  }
+  .bank-security-badges--dark .bank-security-badges-sep {
+    @apply bg-white/20;
+  }
+  .bank-security-badges-secure {
+    @apply flex flex-wrap items-center gap-3 list-none m-0 p-0;
+  }
+  .bank-security-badges--checkout {
+    @apply mt-3 pt-3 border-t border-border;
   }
 
   /* Checkout */
@@ -1731,6 +1807,18 @@
   }
   .checkout-payment-note {
     @apply text-sm text-muted-foreground bg-secondary/40 border border-border rounded-md p-3 mt-4;
+  }
+  .checkout-terms-field {
+    @apply mt-4;
+  }
+  .checkout-terms-label {
+    @apply flex items-start gap-2.5 text-xs text-muted-foreground leading-relaxed cursor-pointer;
+  }
+  .checkout-terms-label input[type='checkbox'] {
+    @apply mt-0.5 w-4 h-4 shrink-0 accent-primary cursor-pointer;
+  }
+  .checkout-terms-label a {
+    @apply text-primary underline hover:no-underline;
   }
   .checkout-submit-btn {
     @apply w-full rounded-lg bg-accent text-accent-foreground font-display font-bold

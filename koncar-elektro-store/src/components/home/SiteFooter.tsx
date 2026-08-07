@@ -5,11 +5,11 @@ import {
 } from 'lucide-react';
 import {
   categoryHighlights, valueProps, footerServiceLinks, footerInfoLinks,
-  paymentBanks,
 } from '@/data/homepage';
 import { brand, companyInfo, contactChannels, footerLinkRoutes } from '@/data/staticPages';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
+import { BankSecurityBadges } from '@/components/payment/BankSecurityBadges';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { SocialLinks } from './SocialLinks';
 import { FaIcon, trustIcons, footerIcons } from './FaIcon';
@@ -219,17 +219,14 @@ export const SiteFooter = () => (
     </div>
 
     <div className="border-t border-white/10 bg-[#0c1a33]">
-      <div className="container py-3">
+      <div className="container py-3 space-y-3">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="text-[11px] text-white/45 uppercase tracking-widest font-semibold shrink-0">
             Načini plaćanja
           </p>
           <PaymentCardIcons size="sm" className="footer-payment-cards" />
-          <span className="hidden sm:inline w-px h-6 bg-white/20" aria-hidden />
-          {paymentBanks.map((p) => (
-            <span key={p} className="footer-payment-bank">{p}</span>
-          ))}
         </div>
+        <BankSecurityBadges variant="dark" />
       </div>
     </div>
 

@@ -9,14 +9,37 @@ import { formatPrice } from '@/data/homepage';
 import { getPlacedOrder, paymentMethodLabel, type PlacedOrder } from '@/lib/order';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { ROUTES } from '@/lib/catalogUrls';
+import { trackPurchase } from '@/lib/analytics/gtag';
+
+const PURCHASE_TRACKED_KEY = 'koncar-purchase-tracked';
 
 const OrderConfirmationPage = () => {
   const [order, setOrder] = useState<PlacedOrder | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setOrder(getPlacedOrder());
+    const placed = getPlacedOrder();
+    setOrder(placed);
     setReady(true);
+
+    // Guard against double-firing on refresh — sessionStorage.order also
+    // survives a reload, so track the transaction id once per session.
+    if (placed && sessionStorage.getItem(PURCHASE_TRACKED_KEY) !== placed.id) {
+      trackPurchase({
+        transactionId: placed.id,
+        value: placed.total,
+        shipping: placed.shipping,
+        items: (placed.items ?? []).map((item) => ({
+          item_id: item.id,
+          item_name: item.name,
+          item_brand: item.brand,
+          item_category: item.category,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      });
+      sessionStorage.setItem(PURCHASE_TRACKED_KEY, placed.id);
+    }
   }, []);
 
   if (!ready) {

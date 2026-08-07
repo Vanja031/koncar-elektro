@@ -3,6 +3,7 @@ import { fetchProductPageData } from '@/lib/isr/server';
 import { REVALIDATE_PRODUCT } from '@/lib/isr/revalidate';
 import { getStaticProductParams } from '@/lib/isr/staticParams';
 import { metadataForProduct } from '@/lib/seo/metadata';
+import { buildBreadcrumbJsonLd, buildProductJsonLd, jsonLdScriptProps } from '@/lib/seo/jsonld';
 import ProductPage from '@/views/ProductPage';
 
 type Props = { params: { segments: string[] } };
@@ -33,7 +34,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProdavnicaPage({ params }: Props) {
   const segments = params.segments ?? [];
   const slug = segments[segments.length - 1] ?? '';
+  const pathname = `/prodavnica/${segments.join('/')}/`;
   const { product, related } = await fetchProductPageData(slug);
 
-  return <ProductPage initialProduct={product} initialRelated={related} />;
+  return (
+    <>
+      {product && (
+        <script
+          {...jsonLdScriptProps([
+            buildProductJsonLd(product, pathname),
+            buildBreadcrumbJsonLd(product.breadcrumbs),
+          ])}
+        />
+      )}
+      <ProductPage initialProduct={product} initialRelated={related} />
+    </>
+  );
 }

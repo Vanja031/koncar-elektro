@@ -132,7 +132,5 @@ export const footerInfoLinks = [
   'O nama', 'Blog', 'Uslovi korišćenja', 'Politika privatnosti', 'Politika kolačića',
 ];
 
-export const paymentBanks = ['Banca Intesa', 'OTP banka'];
-
 export const googleReviewsUrl =
   'https://www.google.com/search?q=koncar+elektro&oq=koncar+elektro&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTINCAEQLhivARjHARiABDIHCAIQABiABDIHCAMQABiABDIICAQQABgWGB4yBggFEEUYPDIGCAYQRRg8MgYIBxBFGDzSAQgxNTU2ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8#lrd=0x475583737055cdff:0xa172113ad40886fe,1,,,,';

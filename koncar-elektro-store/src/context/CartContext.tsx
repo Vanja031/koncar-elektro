@@ -13,6 +13,7 @@ import { calculateShipping } from '@/lib/shipping';
 import { formatPrice } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartModal } from '@/components/cart/AddToCartModal';
+import { trackAddToCart } from '@/lib/analytics/gtag';
 
 const STORAGE_KEY = 'koncar-cart-v2';
 
@@ -153,6 +154,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       });
       return;
     }
+
+    trackAddToCart({
+      item_id: snapshot.id,
+      item_name: snapshot.name,
+      item_brand: snapshot.brand,
+      item_category: snapshot.category,
+      price: snapshot.price,
+      quantity,
+    });
 
     setProducts((current) => ({ ...current, [snapshot.id]: snapshot }));
     setItems((current) => {

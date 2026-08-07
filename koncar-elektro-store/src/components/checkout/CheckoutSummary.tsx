@@ -3,12 +3,20 @@ import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';
 import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 import { ProductImage } from '@/components/product/ProductImage';
+import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
+import { BankSecurityBadges } from '@/components/payment/BankSecurityBadges';
 
 type Props = {
   isSubmitting?: boolean;
+  acceptTerms: boolean;
+  onAcceptTermsChange: (accepted: boolean) => void;
 };
 
-export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
+export const CheckoutSummary = ({
+  isSubmitting = false,
+  acceptTerms,
+  onAcceptTermsChange,
+}: Props) => {
   const { lines, subtotal, subtotalRegular, savings, shipping, total, setQuantity, removeItem } = useCart();
   const hasSavings = savings > 0;
 
@@ -111,11 +119,38 @@ export const CheckoutSummary = ({ isSubmitting = false }: Props) => {
         )}
       </button>
 
+      <div className="checkout-terms-field hidden lg:block">
+        <label htmlFor="checkout-accept-terms" className="checkout-terms-label">
+          <input
+            id="checkout-accept-terms"
+            type="checkbox"
+            checked={acceptTerms}
+            onChange={(e) => onAcceptTermsChange(e.target.checked)}
+            disabled={isSubmitting}
+            required
+            form={CHECKOUT_FORM_ID}
+          />
+          <span>
+            Prihvatam{' '}
+            <a href="/uslovi-kupovine" target="_blank" rel="noopener noreferrer">
+              Uslove kupovine
+            </a>{' '}
+            i upoznat/a sam sa{' '}
+            <a href="/pravo-na-odustajanje" target="_blank" rel="noopener noreferrer">
+              pravom na odustajanje
+            </a>
+            .
+          </span>
+        </label>
+      </div>
+
       <div className="cart-summary-payments">
         <p className="cart-summary-secure">
           <Lock className="w-3.5 h-3.5" />
           Sigurna kupovina
         </p>
+        <PaymentCardIcons size="sm" className="mt-3" />
+        <BankSecurityBadges variant="light" className="bank-security-badges--checkout" />
       </div>
     </aside>
   );

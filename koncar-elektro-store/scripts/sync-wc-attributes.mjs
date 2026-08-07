@@ -20,7 +20,7 @@ function loadEnv() {
       if (m) process.env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
     }
   } catch {
-    console.warn('No .env file — set NEXT_PUBLIC_WC_CONSUMER_KEY/SECRET');
+    console.warn('No .env file — set WC_CONSUMER_KEY/SECRET');
   }
 }
 
@@ -30,9 +30,16 @@ const BASE =
   process.env.NEXT_PUBLIC_WP_API_URL ||
   process.env.VITE_WP_API_URL ||
   'https://koncarelektro.rs/wp-json';
-const CK = process.env.NEXT_PUBLIC_WC_CONSUMER_KEY || process.env.VITE_WC_CONSUMER_KEY || '';
+const CK =
+  process.env.WC_CONSUMER_KEY ||
+  process.env.NEXT_PUBLIC_WC_CONSUMER_KEY ||
+  process.env.VITE_WC_CONSUMER_KEY ||
+  '';
 const CS =
-  process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET || process.env.VITE_WC_CONSUMER_SECRET || '';
+  process.env.WC_CONSUMER_SECRET ||
+  process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET ||
+  process.env.VITE_WC_CONSUMER_SECRET ||
+  '';
 
 if (!CK || !CS) {
   console.error('Missing WC consumer key/secret in .env');

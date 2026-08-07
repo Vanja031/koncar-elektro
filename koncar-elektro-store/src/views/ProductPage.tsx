@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, useParams } from '@/lib/router-compat';
 import { ShopLayout } from '@/components/layout/ShopLayout';
@@ -20,6 +20,7 @@ import type { ProductDetail } from '@/data/productDetail';
 import type { CatalogProduct } from '@/data/catalogListing';
 import { useLiveProduct, useLiveRelatedProducts } from '@/hooks/api/useLiveCatalog';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
+import { trackViewItem } from '@/lib/analytics/gtag';
 
 type Props = {
   initialProduct?: ProductDetail | null;
@@ -42,6 +43,19 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
     product?.id,
     initialRelated,
   );
+
+  useEffect(() => {
+    if (!product) return;
+    trackViewItem({
+      item_id: product.id,
+      item_name: product.name,
+      item_brand: product.brand,
+      item_category: product.category,
+      price: product.price,
+    });
+    // Fire once per product view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   if (!useLiveApi) {
     return (

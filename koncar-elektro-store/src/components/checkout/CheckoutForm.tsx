@@ -7,14 +7,14 @@ import { toast } from 'sonner';
 import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
+import { BankSecurityBadges } from '@/components/payment/BankSecurityBadges';
 import {
-  CARD_PAYMENT_UNAVAILABLE_MESSAGE,
   paymentMethodLabel,
   paymentMethodOrder,
   savePlacedOrder,
   type PaymentMethod,
 } from '@/lib/order';
-import { CheckoutClientError, placeOrderViaApi } from '@/lib/checkout/placeOrderClient';
+import { CheckoutClientError, placeOrderViaApi, startCardPayment } from '@/lib/checkout/placeOrderClient';
 import { ROUTES } from '@/lib/catalogUrls';
 
 export const CHECKOUT_FORM_ID = 'checkout-form';
@@ -54,9 +54,16 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type Props = {
   isSubmitting?: boolean;
   onSubmittingChange?: (busy: boolean) => void;
+  acceptTerms: boolean;
+  onAcceptTermsChange: (accepted: boolean) => void;
 };
 
-export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props) => {
+export const CheckoutForm = ({
+  isSubmitting = false,
+  onSubmittingChange,
+  acceptTerms,
+  onAcceptTermsChange,
+}: Props) => {
   const navigate = useNavigate();
   const { lines, subtotal, shipping, total, itemCount, clearCart } = useCart();
   const [form, setForm] = useState<FormState>(initialForm);
@@ -66,9 +73,6 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
   };
 
   const validate = (): string | null => {
-    if (form.paymentMethod === 'card') {
-      return CARD_PAYMENT_UNAVAILABLE_MESSAGE;
-    }
     if (!form.email.trim() || !EMAIL_PATTERN.test(form.email.trim())) {
       return 'Unesite ispravnu email adresu.';
     }
@@ -80,6 +84,7 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
       return 'Unesite kompletnu adresu za dostavu.';
     }
     if (lines.length === 0) return 'Korpa je prazna.';
+    if (!acceptTerms) return 'Potvrdite da prihvatate Uslove kupovine.';
     return null;
   };
 
@@ -96,6 +101,25 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
     onSubmittingChange?.(true);
 
     try {
+      if (form.paymentMethod === 'card') {
+        // Full-page redirect to the RaiAccept hosted payment form — the cart
+        // is intentionally NOT cleared here so a failed/cancelled payment
+        // leaves the shopper with their cart intact to retry.
+        const { paymentRedirectURL } = await startCardPayment({
+          items: lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          address: form.address.trim(),
+          city: form.city.trim(),
+          postalCode: form.postalCode.trim(),
+          customerNote: form.note.trim(),
+        });
+        window.location.assign(paymentRedirectURL);
+        return;
+      }
+
       const { placed } = await placeOrderViaApi({
         items: lines.map((line) => ({
           productId: line.productId,
@@ -116,7 +140,17 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
         itemCount,
       });
 
-      savePlacedOrder(placed);
+      savePlacedOrder({
+        ...placed,
+        items: lines.map((line) => ({
+          id: line.productId,
+          name: line.name,
+          brand: line.brand,
+          category: undefined,
+          price: line.price,
+          quantity: line.quantity,
+        })),
+      });
       // Navigate first; keep isSubmitting=true so CheckoutPage doesn't redirect
       // to empty cart before the thank-you route mounts.
       navigate(ROUTES.checkoutThanks);
@@ -284,8 +318,9 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
           {form.paymentMethod === 'cod' && 'Plaćanje gotovinom kuriru prilikom preuzimanja.'}
           {form.paymentMethod === 'card' && (
             <>
-              <span className="text-red-700 font-medium">{CARD_PAYMENT_UNAVAILABLE_MESSAGE}</span>
-              <PaymentCardIcons size="sm" className="mt-3 opacity-50" />
+              Bićete preusmereni na stranicu banke za unos podataka o kartici.
+              <PaymentCardIcons size="sm" className="mt-3" />
+              <BankSecurityBadges variant="light" className="bank-security-badges--checkout" />
             </>
           )}
           {form.paymentMethod === 'bank' && 'Instrukcije za uplatu stižu na email nakon potvrde.'}
@@ -295,7 +330,7 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
       <button
         type="submit"
         className="checkout-submit-btn lg:hidden"
-        disabled={isSubmitting || form.paymentMethod === 'card'}
+        disabled={isSubmitting}
       >
         {isSubmitting ? (
           <>
@@ -306,6 +341,30 @@ export const CheckoutForm = ({ isSubmitting = false, onSubmittingChange }: Props
           <>Završi porudžbinu · {formatPrice(total)}</>
         )}
       </button>
+
+      <div className="checkout-terms-field lg:hidden">
+        <label htmlFor="checkout-accept-terms-mobile" className="checkout-terms-label">
+          <input
+            id="checkout-accept-terms-mobile"
+            type="checkbox"
+            checked={acceptTerms}
+            onChange={(e) => onAcceptTermsChange(e.target.checked)}
+            disabled={isSubmitting}
+            required
+          />
+          <span>
+            Prihvatam{' '}
+            <a href="/uslovi-kupovine" target="_blank" rel="noopener noreferrer">
+              Uslove kupovine
+            </a>{' '}
+            i upoznat/a sam sa{' '}
+            <a href="/pravo-na-odustajanje" target="_blank" rel="noopener noreferrer">
+              pravom na odustajanje
+            </a>
+            .
+          </span>
+        </label>
+      </div>
     </form>
   );
 };

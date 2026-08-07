@@ -1,5 +1,14 @@
 export type PaymentMethod = 'cod' | 'card' | 'bank';
 
+export type PlacedOrderItem = {
+  id: number;
+  name: string;
+  brand?: string;
+  category?: string;
+  price: number;
+  quantity: number;
+};
+
 export type PlacedOrder = {
   id: string;
   email: string;
@@ -18,13 +27,12 @@ export type PlacedOrder = {
   mode?: 'live' | 'mock';
   /** Numeric WooCommerce order id when mode is live. */
   wcOrderId?: string;
+  /** Line-item snapshot for the GA4 `purchase` event — cart is cleared right after. */
+  items?: PlacedOrderItem[];
 };
 
-/** Shown when shopper selects card (gateway not wired yet — Week 6). */
-export const CARD_PAYMENT_UNAVAILABLE_MESSAGE = 'Kartčno plaćanje nije još uvek dostupno.';
-
 /** UI payment methods that can actually create a WC order today. */
-export const checkoutEnabledPaymentMethods: PaymentMethod[] = ['cod', 'bank'];
+export const checkoutEnabledPaymentMethods: PaymentMethod[] = ['cod', 'card', 'bank'];
 
 const ORDER_KEY = 'koncar-last-order';
 
