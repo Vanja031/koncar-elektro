@@ -196,6 +196,13 @@ export type WcStoreCollectionData = {
 };
 
 /**
+ * WooCommerce / nginx reject collection-data requests with too many
+ * `calculate_attribute_counts` params (≈30+ taxonomies → HTTP 400). Batch
+ * under that limit and merge — we currently sync ~39 filterable attributes.
+ */
+const ATTRIBUTE_COUNT_TAXONOMY_BATCH = 20;
+
+/**
  * Facet counts for product attributes in the current listing context.
  * Uses Store API `/products/collection-data` (covers the full result set, not just a page sample).
  */
@@ -207,22 +214,33 @@ export async function getStoreAttributeCounts(query: {
 }): Promise<WcStoreAttributeCount[]> {
   if (!query.taxonomies.length) return [];
 
-  const searchParams: Record<string, string | number | boolean | undefined> = {
-    category: query.category,
-    search: query.search,
-    on_sale: query.on_sale ? true : undefined,
-  };
+  const batches: string[][] = [];
+  for (let i = 0; i < query.taxonomies.length; i += ATTRIBUTE_COUNT_TAXONOMY_BATCH) {
+    batches.push(query.taxonomies.slice(i, i + ATTRIBUTE_COUNT_TAXONOMY_BATCH));
+  }
 
-  query.taxonomies.forEach((taxonomy, index) => {
-    searchParams[`calculate_attribute_counts[${index}][taxonomy]`] = taxonomy;
-    searchParams[`calculate_attribute_counts[${index}][query_type]`] = 'or';
-  });
+  const batchResults = await Promise.all(
+    batches.map(async (taxonomies) => {
+      const searchParams: Record<string, string | number | boolean | undefined> = {
+        category: query.category,
+        search: query.search,
+        on_sale: query.on_sale ? true : undefined,
+      };
 
-  const data = await fetchJson<WcStoreCollectionData>(
-    wcStoreApiBase,
-    '/products/collection-data',
-    { searchParams },
+      taxonomies.forEach((taxonomy, index) => {
+        searchParams[`calculate_attribute_counts[${index}][taxonomy]`] = taxonomy;
+        searchParams[`calculate_attribute_counts[${index}][query_type]`] = 'or';
+      });
+
+      const data = await fetchJson<WcStoreCollectionData>(
+        wcStoreApiBase,
+        '/products/collection-data',
+        { searchParams },
+      );
+
+      return data.attribute_counts ?? [];
+    }),
   );
 
-  return data.attribute_counts ?? [];
+  return batchResults.flat();
 }

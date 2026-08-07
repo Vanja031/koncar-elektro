@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 05.08.2026. (Nedelja 6 — kartično plaćanje RaiAccept implementirano; čeka sandbox kredencijale + test)
+**Poslednje ažuriranje trackera:** 07.08.2026. (Nedelja 6 zatvorena — sandbox + Vercel Preview test kartice/pouzeća OK)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 6 — RaiAccept kartica ožičena (05.08.2026.); preostaje sandbox test (6.2) + GTM ID |
-| **Sledeći korak** | Klijent: Sandbox API Credentials iz RaiAccept portala + MB/PIB za check listu; zatim test transakcije (6.2). GTM Container ID kad stigne (6.9) |
+| **Aktivna nedelja** | Nedelja 7 — migracija sadržaja + SEO parity QA (Nedelja 6 zatvorena 07.08.2026.) |
+| **Sledeći korak** | Nedelja 7: sinhronizacija kataloga, statičke stranice, SEO/URL parity vs. baseline. GTM Container ID kad stigne (6.9). Produkcijski RaiAccept tek pred go-live. |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -43,8 +43,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Faza | Nedelje | Završeno | U toku | Preostalo |
 |------|---------|----------|--------|-----------|
 | Mesec 1 — Priprema, SEO audit, jezgro | 1–4 | 4 | 0 | 0 nedelja |
-| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 1 | 1 | 2 nedelje |
-| **Ukupno** | **8** | **5** | **1** | **2** |
+| Mesec 2 — Funkcionalnosti, SEO parity, launch | 5–8 | 2 | 1 | 1 nedelja |
+| **Ukupno** | **8** | **6** | **1** | **1** |
 
 ---
 
@@ -235,7 +235,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
 | 6.1 | Integracija kartičnog plaćanja sa bankom | `[x]` | 05.08.2026. | RaiAccept Code integration (REST API) — redirect flow, automatska realizacija. BFF: `/api/payments/raiaccept/{start,status,webhook}`; WC order pending → RaiAccept session; reconcile po WC order id. Compliance: logoi banke/3DS, stranice uslovi/plaćanje/odustajanje/reklamacije/dostava |
-| 6.2 | Test transakcije na stagingu | `[!]` | | Čeka Sandbox API Credentials od klijenta (RaiAccept portal) + `WC_LIVE_CHECKOUT` na stagingu |
+| 6.2 | Test transakcije na stagingu | `[x]` | 07.08.2026. | Lokalni + Vercel Preview (`develop`): RaiAccept sandbox kartica OK (WC `processing` + `set_paid`); pouzeće OK. Napomena: `$` u RaiAccept lozinci escape na Vercel (`\$` ili kredencijali bez `$`); Preview env mora imati WP/COD/BACS + RaiAccept |
 | 6.3 | Schema markup — Product | `[x]` | 05.08.2026. | `buildProductJsonLd` — cena/valuta/dostupnost/rating; ubačeno u `app/prodavnica/[...segments]/page.tsx` |
 | 6.4 | Schema markup — BreadcrumbList | `[x]` | 05.08.2026. | PDP (iz `product.breadcrumbs`) + kategorija stranice; `buildBreadcrumbJsonLd` u `src/lib/seo/jsonld.ts` |
 | 6.5 | Schema markup — Organization | `[x]` | 05.08.2026. | + `WebSite` (sitelinks search box) globalno u `app/layout.tsx`, iz `companyInfo` |
@@ -250,7 +250,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
-| Uspešna test transakcija na stagingu | `[ ]` | | |
+| Uspešna test transakcija na stagingu | `[x]` | 07.08.2026. | Kartica + pouzeće potvrđeni na Vercel Preview |
 
 ---
 
@@ -321,7 +321,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |------|-----|--------|-------|---------|
 | Kraj Nedelje 1 | URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Slanje klijentu odloženo |
 | Kraj Nedelje 2 | Finalni dizajn + URL routing mapa | `[x]` | 07.07.2026. | Nedelja 2 kompletno zatvorena |
-| Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[!]` | | Integracija gotova (6.1); čeka sandbox kredencijale za 6.2 |
+| Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[x]` | 07.08.2026. | Sandbox + Preview OK; GTM (6.9) i 301 (6.11) ostaju otvoreni / ne blokiraju |
 | Kraj Nedelje 7 | Potvrđen 1:1 SEO i URL parity na stagingu | `[ ]` | | |
 | Nedelja 8 | Uplata 50%, lansiranje, predaja koda | `[ ]` | | |
 
@@ -380,22 +380,30 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 05.08.2026. | — | Cookie consent banner redizajniran po zahtevu klijenta: mini naslov "Poštujemo vašu privatnost", prirodniji tekst, dugmad Prihvati/Odbij premeštena u donji desni ugao kartice, veća/šira kartica na desktopu | 6.10 vizuelno usaglašen sa dizajnom sajta — klijent potvrdio da je dizajn odličan |
 | 05.08.2026. | — | Kartično plaćanje (6.1): RaiAccept REST API (Code integration) — redirect + automatska realizacija; BFF start/status/webhook; WC order pending + meta `_raiaccept_order_id`; compliance stranice + Raiffeisen/3DS logoi | 6.1 zatvoren; 6.2 čeka Sandbox API Credentials od klijenta |
 | 05.08.2026. | — | WC REST v3 ključevi prebačeni na server-only `WC_CONSUMER_KEY`/`SECRET` (bez `NEXT_PUBLIC_`) | Bezbednosni fix — write kredencijali više ne ulaze u browser bundle |
+| 07.08.2026. | — | Reconcile: `set_paid: true` na uspešan RaiAccept `PAID` → WC prikazuje Paid on + Processing | Jasniji status plaćene kartične porudžbine u adminu |
+| 07.08.2026. | — | Sandbox test lokalno OK; Vercel Preview: kartica blokirana zbog `$` u RaiAccept lozinci (env expansion) + COD/BACS disabled na WP dok env/payment metode nisu usklađene | Dijagnostika: Cognito `NotAuthorizedException` / `payment_method_disabled` |
+| 07.08.2026. | — | Vercel Preview: kartica + pouzeće potvrđeni; 6.2 + milestone Nedelje 6 zatvoreni | Nedelja 6 zatvorena; prelazak na Nedelju 7 |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 6 (Nedelja 5 zatvorena 17.07.2026.; dodatni fix-evi do 30.07.2026.)
+### Sada — Nedelja 7 (Nedelja 6 zatvorena 07.08.2026.)
 
-**Prioritet 1 — čeka klijenta (blokira test)**
-- RaiAccept Sandbox API Credentials (portal → API Credentials → New) → `RAIACCEPT_USERNAME` / `RAIACCEPT_PASSWORD` u `.env.local`
-- MB, PIB i šifra delatnosti za E-commerce check listu (polja u `companyInfo.registry`)
-- GTM Container ID — klijent odložio (6.9)
+**Prioritet — razvoj**
+- 7.1–7.5 — finalna sinhronizacija kataloga, atributi, baneri, statičke stranice, blog
+- 7.6–7.10 — SEO/URL parity vs. baseline iz Nedelje 1
+- 7.11–7.12 — performanse / Core Web Vitals
 
-**Preostalo da uradimo mi (kad stignu kredencijali)**
-- 6.2 — sandbox test transakcije (Visa/Mastercard/DinaCard uspešna + odbijena + cancel)
-- Na dan go-live-a: `NEXT_PUBLIC_ANALYTICS_LIVE=true` na Vercel Production (jedina promena za 6.8)
-- 6.11 — mapiranje 301 redirect-a ostaje otvoreno kao stavka za proveru pred kraj (cilj i dalje 0)
+**Ostaje otvoreno iz Nedelje 6 (ne blokira N7)**
+- 6.9 — GTM Container ID (klijent odložio)
+- 6.11 — 301 mapa (cilj i dalje 0; provera pred go-live)
+- Na dan go-live-a: `NEXT_PUBLIC_ANALYTICS_LIVE=true` na Vercel Production (6.8); produkcijski RaiAccept credentials + realne transakcije (8.2)
+
+**Završeno — Nedelja 6 test / deploy (07.08.2026.)**
+- 6.2 sandbox + Vercel Preview: kartica (RaiAccept) i pouzeće OK
+- WC: `processing` + Paid on (`set_paid`); način plaćanja „Kartica (RaiAccept)“
+- Env napomena: RaiAccept password sa `$` escape na Vercel; Preview mora imati WP + payment metode + RaiAccept
 
 **Završeno — Kartično plaćanje (05.08.2026.)**
 - RaiAccept Code integration: auth → create order → payment session → redirect; webhook + status reconcile
