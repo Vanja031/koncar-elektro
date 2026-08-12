@@ -1,7 +1,7 @@
 # SEO parity local audit
 
-Generated: 2026-08-12T08:19:39.006Z  
-Site: `http://localhost:3000`
+Generated: 2026-08-12T10:08:32.750Z  
+Site: `https://koncar-elektro-git-develop-koncar-vanjas-projects-3b3004c6.vercel.app`
 
 ## Summary
 

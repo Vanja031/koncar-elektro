@@ -95,7 +95,7 @@ Vercel 301 za top-level: `vercel.json`
 
 ## Trailing slash
 
-Stari sajt koristi trailing slash (`/kontakt/`). React Router trenutno radi bez slash-a. Pre go-live: uskladiti canonical tagove i eventualno Vercel `trailingSlash: true`.
+Stari sajt koristi trailing slash (`/kontakt/`). Next.js ima `trailingSlash: true` — kanonski URL-ovi se završavaju sa `/`.
 
 ---
 

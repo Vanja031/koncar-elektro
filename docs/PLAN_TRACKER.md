@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 12.08.2026. (Nedelja 7 — performanse: font + image optimizacija)
+**Poslednje ažuriranje trackera:** 12.08.2026. (Nedelja 8 — Preview smoke + go-live runbook)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 8 — finalni QA i go-live priprema |
-| **Sledeći korak** | Vercel Preview smoke (audit na preview URL); Nedelja 8 checklist (DNS, GSC, produkcijsko plaćanje) |
+| **Aktivna nedelja** | Nedelja 8 — go-live priprema |
+| **Sledeći korak** | Ručni QA (8.1) + produkcijski RaiAccept (8.2); DNS tek kad je env zelen |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -67,8 +67,8 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |---|-----------|--------|-------|----------|
 | S1 | URL paritet 1:1 — Next.js routing prati sve postojeće putanje (proizvod, kategorija, statičke, blog) | `[x]` | 02.07.2026. | Vite app na WC putanjama; vidi `docs/url-routing-map.md` |
 | S2 | Snimak pre migracije — crawl svih URL-ova, meta tagova, H1, canonical, structured data, sitemap | `[x]` | 22.06.2026. | `docs/crawl/seo-baseline.csv` — referentna tačka za poređenje |
-| S3 | Parity provera pre lansiranja — svaki stari URL i meta podaci upoređeni sa novom verzijom | `[ ]` | | Pre go-live |
-| S4 | 301 redirect-i samo po izuzetku — podrazumevano nijedan redirect | `[ ]` | | |
+| S3 | Parity provera pre lansiranja — svaki stari URL i meta podaci upoređeni sa novom verzijom | `[x]` | 12.08.2026. | Lokalno + Vercel Preview: static 23/23, sample 155/155 OK |
+| S4 | 301 redirect-i samo po izuzetku — podrazumevano nijedan redirect | `[x]` | 12.08.2026. | Izuzeci u `vercel.json` + `permanentRedirect`: yith-compare, attribute archives, `/placanje` |
 | S5 | Post-launch monitoring — GSC index coverage, crawl greške, zadržavanje rangiranja | `[ ]` | | Prvi dani posle lansiranja |
 
 ---
@@ -244,7 +244,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 6.8 | GA4 ecommerce | `[~]` | 05.08.2026. | Measurement ID dobijen (`G-2HJ9BTPBK7`) i uveden u staging `.env`; `view_item`/`add_to_cart`/`begin_checkout`/`purchase` ožičeni. Namerno još neaktivno — `NEXT_PUBLIC_ANALYTICS_LIVE=false` dok radimo na proizvodima; pali se tek na go-live (samo Vercel Production), + kod odbija da radi van `koncarelektro.rs` domena kao dodatna kočnica |
 | 6.9 | GTM (Google Tag Manager) | `[ ]` | | Klijent odložio — dodaje se kasnije; loader već postoji u kodu (`NEXT_PUBLIC_GTM_ID`), samo čeka Container ID |
 | 6.10 | GDPR / cookie consent usklađen sa propisima | `[x]` | 05.08.2026. | Redizajniran banner (mini naslov, prirodniji tekst, dugmad Prihvati/Odbij u donjem desnom uglu kartice, u stilu sajta) + `ConsentContext` (localStorage); analitika tek posle pristanka; dodata `/politika-privatnosti` stranica (nedostajala je — URL parity gap iz starog sajta) |
-| 6.11 | Mapiranje 301 redirect-a samo za neizbežne izmene putanja (cilj: 0) | `[ ]` | | Nema zahtevanih izmena putanja do sada — ostaje 0 po planu |
+| 6.11 | Mapiranje 301 redirect-a samo za neizbežne izmene putanja (cilj: 0) | `[x]` | 12.08.2026. | Namerni izuzeci: `/yith-compare`, `/snaga|/uvoznik|/zemlja-porekla` → `/pretraga`, `/placanje` → `/placanje-odjava`; trailing-slash varijante u `vercel.json` |
 
 **Milestone (kraj Nedelje 6):** Uspešna test transakcija kartičnog plaćanja na stagingu.
 
@@ -275,8 +275,8 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
-| Potvrđen 1:1 SEO parity na stagingu | `[~]` | 12.08.2026. | Lokalni audit OK; finalna potvrda na Vercel Preview pre go-live |
-| Potvrđen 1:1 URL parity na stagingu | `[~]` | 12.08.2026. | Inventar 5650/5650; HTTP 200/301 smoke na Preview pre DNS-a |
+| Potvrđen 1:1 SEO parity na stagingu | `[x]` | 12.08.2026. | Preview: static 23/23 + parity 155/155 OK |
+| Potvrđen 1:1 URL parity na stagingu | `[x]` | 12.08.2026. | Inventar 5650/5650; Preview HTTP 200 + namerni 301 |
 
 ---
 
@@ -284,10 +284,10 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 8.1 | Finalno testiranje na svim uređajima i browserima | `[ ]` | | |
-| 8.2 | Test plaćanja sa realnim transakcijama | `[ ]` | | |
-| 8.3 | Go-live: prebacivanje DNS / deploy | `[ ]` | | |
-| 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | |
+| 8.1 | Finalno testiranje na svim uređajima i browserima | `[~]` | 12.08.2026. | Preview smoke + runbook `docs/GO_LIVE.md`; ostaje ručni QA telefon/desktop |
+| 8.2 | Test plaćanja sa realnim transakcijama | `[!]` | | Čeka produkcijske RaiAccept credentials; sandbox već OK |
+| 8.3 | Go-live: prebacivanje DNS / deploy | `[ ]` | | Runbook spreman; **ne dirati DNS** dok 8.2 nije zelen |
+| 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | `https://koncarelektro.rs/sitemap.xml` — tek posle DNS-a |
 | 8.5 | Provera 200/301 statusa svih ključnih URL-ova posle lansiranja | `[ ]` | | |
 | 8.6 | Monitoring index coverage-a (GSC) | `[ ]` | | Prvi dani |
 | 8.7 | Monitoring crawl grešaka | `[ ]` | | Prvi dani |
@@ -388,17 +388,28 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 12.08.2026. | — | N7 feature pass: `/proizvodjac/[slug]`, attribute archives → `/pretraga`, wishlist/compare (+ `/yith-compare` 301), `/novosti` | 7.4/7.5 ažurirani; sledeće 7.6–7.10 |
 | 12.08.2026. | — | N7 SEO parity: audit skripte + fix SSR/ISR; 5650 URL inventar + lokalni sample 155/155 OK | Milestone staging QA pre go-live; sledeće 7.11–7.12 |
 | 12.08.2026. | — | N7 performanse (7.11–7.12): `next/font`; LCP prioriteti; **26 statičkih slika PNG→WebP (~23 MB uštede)**; `npm run compress:static-assets` | Nedelja 7 zatvorena; sledeće: Vercel Preview smoke → Nedelja 8 go-live |
+| 12.08.2026. | — | Preview smoke: static 23/23 + parity 155/155 OK na `koncar-elektro-git-develop-…vercel.app`; robots/sitemap 200 | N7 staging milestone zatvoren |
+| 12.08.2026. | — | N8 start: `docs/GO_LIVE.md`; 301 trailing-slash fix (`/placanje/` 404 → 301); `permanentRedirect` umesto 307 | Sledeće: ručni QA 8.1 + produkcijski RaiAccept 8.2 |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 8 (N7 zatvorena 12.08.2026.)
+### Sada — Nedelja 8 (Preview smoke zatvoren 12.08.2026.)
 
-**Prioritet — pre go-live**
-- Vercel Preview smoke — `audit:seo-static-local` + `audit:seo-parity-local` protiv preview URL-a
-- Finalni QA checklist (kartica produkcija, robots.txt, sitemap u GSC)
-- Go-live plan (DNS, env produkcija, monitoring)
+**Prioritet — pre DNS-a**
+- 8.1 — ručni QA na telefonu/desktopu (checklist u `docs/GO_LIVE.md`)
+- 8.2 — produkcijski RaiAccept credentials + jedna realna test transakcija
+- Production env: WP live URL, `WC_CHECKOUT_FORCE_TEST_CUSTOMER=false`, `NEXT_PUBLIC_ANALYTICS_LIVE=true` tek na Production
+
+**Ne sada**
+- 8.3 DNS — tek kad su 8.1 + 8.2 zeleni
+- 8.4 GSC sitemap — tek posle DNS-a
+
+**Završeno — Preview smoke (12.08.2026.)**
+- `audit:seo-static-local` 23/23 OK
+- `audit:seo-parity-local` 155/155 OK
+- `robots.txt` + `sitemap.xml` 200 na Preview
 
 **Završeno — N7 performanse (12.08.2026.)**
 - 7.11–7.12 — `next/font`, LCP prioriteti, lazy loading, 26 slika PNG→WebP (~23 MB), `npm run compress:static-assets`
@@ -416,7 +427,7 @@ Evidentiraj značajne događaje, odluke i blokade.
 
 **Ostaje otvoreno iz Nedelje 6 (ne blokira N7)**
 - 6.9 — GTM Container ID (klijent odložio)
-- 6.11 — 301 mapa (cilj i dalje 0; provera pred go-live)
+- 6.11 — 301 mapa zatvorena (namerni izuzeci + trailing slash)
 - Na dan go-live-a: `NEXT_PUBLIC_ANALYTICS_LIVE=true` na Vercel Production (6.8); produkcijski RaiAccept credentials + realne transakcije (8.2)
 
 **Završeno — Nedelja 6 test / deploy (07.08.2026.)**

@@ -6,8 +6,18 @@
       "permanent": true
     },
     {
+      "source": "/kategorija/alati/",
+      "destination": "/proizvodi/",
+      "permanent": true
+    },
+    {
       "source": "/kategorija/elektromaterijal",
       "destination": "/product-category/elektromaterijal-i-oprema",
+      "permanent": true
+    },
+    {
+      "source": "/kategorija/elektromaterijal/",
+      "destination": "/product-category/elektromaterijal-i-oprema/",
       "permanent": true
     },
     {
@@ -16,8 +26,18 @@
       "permanent": true
     },
     {
+      "source": "/kategorija/rasveta/",
+      "destination": "/product-category/rasveta/",
+      "permanent": true
+    },
+    {
       "source": "/kategorija/solarne",
       "destination": "/product-category/solarne",
+      "permanent": true
+    },
+    {
+      "source": "/kategorija/solarne/",
+      "destination": "/product-category/solarne/",
       "permanent": true
     },
     {
@@ -26,8 +46,18 @@
       "permanent": true
     },
     {
+      "source": "/placanje/",
+      "destination": "/placanje-odjava/",
+      "permanent": true
+    },
+    {
       "source": "/placanje/hvala",
       "destination": "/placanje-odjava/order-received",
+      "permanent": true
+    },
+    {
+      "source": "/placanje/hvala/",
+      "destination": "/placanje-odjava/order-received/",
       "permanent": true
     },
     {
@@ -36,8 +66,18 @@
       "permanent": true
     },
     {
+      "source": "/yith-compare/",
+      "destination": "/uporedite/",
+      "permanent": true
+    },
+    {
       "source": "/snaga/:slug",
       "destination": "/pretraga?attr=pa_snaga&term=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/snaga/:slug/",
+      "destination": "/pretraga/?attr=pa_snaga&term=:slug",
       "permanent": true
     },
     {
@@ -46,8 +86,18 @@
       "permanent": true
     },
     {
+      "source": "/uvoznik/:slug/",
+      "destination": "/pretraga/?attr=pa_uvoznik&term=:slug",
+      "permanent": true
+    },
+    {
       "source": "/zemlja-porekla/:slug",
       "destination": "/pretraga?attr=pa_zemlja-porekla&term=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/zemlja-porekla/:slug/",
+      "destination": "/pretraga/?attr=pa_zemlja-porekla&term=:slug",
       "permanent": true
     }
   ]

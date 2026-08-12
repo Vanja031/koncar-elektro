@@ -12,6 +12,7 @@ Centralna lokacija za plan, izveštaje i referentne snimke iz **nedelja 1–2** 
 | [meta-parity-plan.md](./meta-parity-plan.md) | Plan za title, meta, canonical, JSON-LD |
 | [wp-headless-setup.md](./wp-headless-setup.md) | WP headless + REST/Store API setup (nedelja 3) |
 | [LIVE_SHOP_SAFETY.md](./LIVE_SHOP_SAFETY.md) | **Pravilo:** live shop ne sme biti poremećen do go-live-a |
+| [GO_LIVE.md](./GO_LIVE.md) | Go-live runbook: env, DNS, GSC, plaćanje, rollback |
 
 ## SEO baseline (nedelja 1)
 
