@@ -1,17 +1,17 @@
-import catElektricni from '@/assets/elektricni-alat.png';
-import catAku from '@/assets/aku-alat.png';
-import catRucni from '@/assets/rucni-alat.png';
-import catKompresor from '@/assets/kompresor.png';
+import catElektricni from '@/assets/elektricni-alat.webp';
+import catAku from '@/assets/aku-alat.webp';
+import catRucni from '@/assets/rucni-alat.webp';
+import catKompresor from '@/assets/kompresor.webp';
 import catAgregat from '@/assets/agregat.webp';
-import catKosacica from '@/assets/kosacica.png';
-import catHtz from '@/assets/htz-oprema.png';
-import catTraktor from '@/assets/traktor.png';
-import catVarenje from '@/assets/aparat-za-varenje.png';
-import catDvorishte from '@/assets/oprema-za-dvoriste.png';
-import imgProfesionalni from '@/assets/prefesionalni-alati.png';
-import imgElektromaterijal from '@/assets/elektromaterijal.png';
-import imgRasveta from '@/assets/rasveta.png';
-import imgSolarne from '@/assets/solarne.png';
+import catKosacica from '@/assets/kosacica.webp';
+import catHtz from '@/assets/htz-oprema.webp';
+import catTraktor from '@/assets/traktor.webp';
+import catVarenje from '@/assets/aparat-za-varenje.webp';
+import catDvorishte from '@/assets/oprema-za-dvoriste.webp';
+import imgProfesionalni from '@/assets/prefesionalni-alati.webp';
+import imgElektromaterijal from '@/assets/elektromaterijal.webp';
+import imgRasveta from '@/assets/rasveta.webp';
+import imgSolarne from '@/assets/solarne.webp';
 import {
   getBestSellerProductsFromKoncar,
   getSaleProductsFromKoncar,
@@ -97,27 +97,6 @@ export const categoryHighlights = [
   { title: 'Solarne elektrane', desc: 'Kompletna oprema za domaćinstva i privredu. Ušteda energije i novca.', icon: 'solar' as const, image: imgSolarne },
 ];
 
-export const categoryBanners = [
-  {
-    title: 'Elektromaterijal',
-    desc: 'Kablovi, prekidači, osigurači i sve što vam treba',
-    image: imgElektromaterijal,
-    className: 'bg-primary',
-  },
-  {
-    title: 'Rasveta',
-    desc: 'LED rasveta za svaki prostor i potrebu',
-    image: imgRasveta,
-    className: 'bg-gradient-to-r from-[#5c3218] via-[#8b4e24] to-[#a8622f]',
-  },
-  {
-    title: 'Solarne elektrane',
-    desc: 'Kompletna rešenja za vašu energetsku nezavisnost',
-    image: imgSolarne,
-    className: 'bg-gradient-to-r from-[#143528] via-[#1d4a38] to-[#25634a]',
-  },
-];
-
 export const valueProps = [
   { title: '20+ godina iskustva', desc: 'Dugogodišnje iskustvo i poverenje hiljada zadovoljnih kupaca širom Srbije.' },
   { title: 'Stručna podrška', desc: 'Naš tim stručnjaka uvek tu da vam pomogne pri izboru najboljeg rešenja.' },
@@ -125,11 +104,25 @@ export const valueProps = [
 ];
 
 export const footerServiceLinks = [
-  'Kontakt', 'Dostava', 'Način plaćanja', 'Povrat robe', 'Reklamacije', 'Garancija', 'Česta pitanja',
+  'Kontakt',
+  'Naručivanje',
+  'Dostava',
+  'Način plaćanja',
+  'Povrat robe',
+  'Reklamacije',
+  'Garancija',
+  'Česta pitanja',
 ];
 
 export const footerInfoLinks = [
-  'O nama', 'Blog', 'Uslovi korišćenja', 'Politika privatnosti', 'Politika kolačića',
+  'O nama',
+  'Podaci o firmi',
+  'Novosti',
+  'Lista želja',
+  'Uporedi',
+  'Uslovi korišćenja',
+  'Politika privatnosti',
+  'Politika kolačića',
 ];
 
 export const googleReviewsUrl =

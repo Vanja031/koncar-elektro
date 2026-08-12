@@ -11,8 +11,8 @@ import {
 } from '@/lib/catalogUrls';
 import { PROGRAM_SLUGS } from '@/lib/wcSlugs';
 import { parentSlugToCatalogPrefix } from '@/lib/parentCatalogSlugs';
-import catAku from '@/assets/aku-alat.png';
-import catElektricni from '@/assets/elektricni-alat.png';
+import catAku from '@/assets/aku-alat.webp';
+import catElektricni from '@/assets/elektricni-alat.webp';
 
 import type { Product } from '@/data/homepage';
 

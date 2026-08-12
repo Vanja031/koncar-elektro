@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 07.08.2026. (Nedelja 6 zatvorena — sandbox + Vercel Preview test kartice/pouzeća OK)
+**Poslednje ažuriranje trackera:** 12.08.2026. (Nedelja 7 — performanse: font + image optimizacija)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 7 — migracija sadržaja + SEO parity QA (Nedelja 6 zatvorena 07.08.2026.) |
-| **Sledeći korak** | Nedelja 7: sinhronizacija kataloga, statičke stranice, SEO/URL parity vs. baseline. GTM Container ID kad stigne (6.9). Produkcijski RaiAccept tek pred go-live. |
+| **Aktivna nedelja** | Nedelja 8 — finalni QA i go-live priprema |
+| **Sledeći korak** | Vercel Preview smoke (audit na preview URL); Nedelja 8 checklist (DNS, GSC, produkcijsko plaćanje) |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -258,25 +258,25 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 7.1 | Finalna sinhronizacija 5.000–6.000 proizvoda iz postojeće baze | `[ ]` | | |
-| 7.2 | Mapiranje atributa proizvoda | `[ ]` | | |
-| 7.3 | Kategorijski baneri | `[ ]` | | |
-| 7.4 | Statičke stranice | `[ ]` | | |
-| 7.5 | Blog (ako postoji) | `[ ]` | | |
-| 7.6 | SEO parity provera — meta tagovi vs. snimak iz Nedelje 1 | `[ ]` | | |
-| 7.7 | SEO parity provera — H1 vs. snimak iz Nedelje 1 | `[ ]` | | |
-| 7.8 | SEO parity provera — canonical vs. snimak iz Nedelje 1 | `[ ]` | | |
-| 7.9 | SEO parity provera — structured data vs. snimak iz Nedelje 1 | `[ ]` | | |
-| 7.10 | URL diff izveštaj — potvrda da svaki stari URL ima identičan novi | `[ ]` | | |
-| 7.11 | Optimizacija performansi | `[ ]` | | |
-| 7.12 | Optimizacija Core Web Vitals | `[ ]` | | |
+| 7.1 | Finalna sinhronizacija 5.000–6.000 proizvoda iz postojeće baze | `[x]` | 12.08.2026. | Preskočeno kao sync — staging katalog je unapređen u odnosu na live; ostaje izvor istine do go-live |
+| 7.2 | Mapiranje atributa proizvoda | `[x]` | 12.08.2026. | Već pokriveno (N3/N5 mapper + filteri); dodatni sync nije potreban dok staging vodi |
+| 7.3 | Kategorijski baneri | `[x]` | 12.08.2026. | WP-editable: WC kategorije (naziv/opis/slika); slugovi preko `NEXT_PUBLIC_HOME_BANNER_CATEGORY_SLUGS` |
+| 7.4 | Statičke stranice | `[x]` | 12.08.2026. | Dodato `/podaci-o-firmi`, `/kolacici-cookies`, `/narucivanje`, `/uslovi-koriscenja`; `/uslovi-kupovine` alias; + `/lista-zelja`, `/uporedite` (localStorage), attribute redirects, `/proizvodjac/[slug]` |
+| 7.5 | Blog (ako postoji) | `[x]` | 12.08.2026. | `/novosti` lista iz `wp/v2/posts` + empty state; single post (`/[postname]/`) van opsega |
+| 7.6 | SEO parity provera — meta tagovi vs. snimak iz Nedelje 1 | `[x]` | 12.08.2026. | Statičke 23/23 OK (`audit:seo-static-local`); sample 155 URL GSC+stratified OK (`audit:seo-parity-local`) |
+| 7.7 | SEO parity provera — H1 vs. snimak iz Nedelje 1 | `[x]` | 12.08.2026. | ISR fallback za PDP/listing kad nema client live API; H1 iz ListingHero/ProductBuyBox u SSR |
+| 7.8 | SEO parity provera — canonical vs. snimak iz Nedelje 1 | `[x]` | 12.08.2026. | Canonical `https://koncarelektro.rs/.../` na svim proverenim URL-ovima; taksonomije redirect → `/pretraga` |
+| 7.9 | SEO parity provera — structured data vs. snimak iz Nedelje 1 | `[x]` | 12.08.2026. | Product+Breadcrumb JSON-LD na PDP; BreadcrumbList na kategorijama; Organization/WebSite globalno |
+| 7.10 | URL diff izveštaj — potvrda da svaki stari URL ima identičan novi | `[x]` | 12.08.2026. | `seo-url-gap-report.md`: 5650/5650 covered; lokalni sample audit 155/155 |
+| 7.11 | Optimizacija performansi | `[x]` | 12.08.2026. | `next/font` (eliminisan Google Fonts @import); LCP `fetchpriority=high` + `loading=eager`; lazy ispod folda; **kompresija statičkih slika** — 26 asset-a PNG→WebP (~23 MB uštede, skripta `compress:static-assets`) |
+| 7.12 | Optimizacija Core Web Vitals | `[x]` | 12.08.2026. | Analytics `strategy="afterInteractive"`; hero/kategorije/baneri sada WebP; payment ikone PNG optimize in-place |
 
 **Milestone (kraj Nedelje 7):** Potvrđen 1:1 SEO i URL parity na stagingu pre lansiranja.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
-| Potvrđen 1:1 SEO parity na stagingu | `[ ]` | | |
-| Potvrđen 1:1 URL parity na stagingu | `[ ]` | | |
+| Potvrđen 1:1 SEO parity na stagingu | `[~]` | 12.08.2026. | Lokalni audit OK; finalna potvrda na Vercel Preview pre go-live |
+| Potvrđen 1:1 URL parity na stagingu | `[~]` | 12.08.2026. | Inventar 5650/5650; HTTP 200/301 smoke na Preview pre DNS-a |
 
 ---
 
@@ -383,17 +383,36 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 07.08.2026. | — | Reconcile: `set_paid: true` na uspešan RaiAccept `PAID` → WC prikazuje Paid on + Processing | Jasniji status plaćene kartične porudžbine u adminu |
 | 07.08.2026. | — | Sandbox test lokalno OK; Vercel Preview: kartica blokirana zbog `$` u RaiAccept lozinci (env expansion) + COD/BACS disabled na WP dok env/payment metode nisu usklađene | Dijagnostika: Cognito `NotAuthorizedException` / `payment_method_disabled` |
 | 07.08.2026. | — | Vercel Preview: kartica + pouzeće potvrđeni; 6.2 + milestone Nedelje 6 zatvoreni | Nedelja 6 zatvorena; prelazak na Nedelju 7 |
+| 12.08.2026. | — | N7 start: 7.1/7.2 zatvoreni (staging katalog vodi, sync sa live nije potreban); 7.5 blog van opsega | Fokus na banere + statičke |
+| 12.08.2026. | — | 7.3: homepage baneri iz WC kategorija (fallback na statičke assete); 7.4: statičke stranice usklađene sa baseline URL-ovima | Sledeće: 7.6–7.10 SEO/URL parity |
+| 12.08.2026. | — | N7 feature pass: `/proizvodjac/[slug]`, attribute archives → `/pretraga`, wishlist/compare (+ `/yith-compare` 301), `/novosti` | 7.4/7.5 ažurirani; sledeće 7.6–7.10 |
+| 12.08.2026. | — | N7 SEO parity: audit skripte + fix SSR/ISR; 5650 URL inventar + lokalni sample 155/155 OK | Milestone staging QA pre go-live; sledeće 7.11–7.12 |
+| 12.08.2026. | — | N7 performanse (7.11–7.12): `next/font`; LCP prioriteti; **26 statičkih slika PNG→WebP (~23 MB uštede)**; `npm run compress:static-assets` | Nedelja 7 zatvorena; sledeće: Vercel Preview smoke → Nedelja 8 go-live |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 7 (Nedelja 6 zatvorena 07.08.2026.)
+### Sada — Nedelja 8 (N7 zatvorena 12.08.2026.)
 
-**Prioritet — razvoj**
-- 7.1–7.5 — finalna sinhronizacija kataloga, atributi, baneri, statičke stranice, blog
-- 7.6–7.10 — SEO/URL parity vs. baseline iz Nedelje 1
-- 7.11–7.12 — performanse / Core Web Vitals
+**Prioritet — pre go-live**
+- Vercel Preview smoke — `audit:seo-static-local` + `audit:seo-parity-local` protiv preview URL-a
+- Finalni QA checklist (kartica produkcija, robots.txt, sitemap u GSC)
+- Go-live plan (DNS, env produkcija, monitoring)
+
+**Završeno — N7 performanse (12.08.2026.)**
+- 7.11–7.12 — `next/font`, LCP prioriteti, lazy loading, 26 slika PNG→WebP (~23 MB), `npm run compress:static-assets`
+
+**Završeno — N7 SEO parity (12.08.2026.)**
+- 7.6–7.10 — lokalni audit: statičke 23/23, sample 155/155 (GSC top + proizvodi/kategorije/taksonomije)
+- Skripte: `npm run audit:seo-static-local`, `npm run audit:seo-parity-local`, `npm run audit:seo-url-gap`
+- Fix-evi: ISR SSR za PDP/listing, `/proizvodjac/[slug]/page/[n]`, brand slug fallback, NovostiPage `use client`
+
+**Završeno — N7 sadržaj (12.08.2026.)**
+- 7.1/7.2 — zatvoreno (staging katalog unapređen; sync sa live nije potreban)
+- 7.3 — kategorijski baneri iz WP/WC kategorija (`useHomepageCategoryBanners`)
+- 7.4 — statičke + wishlist/compare + `/proizvodjac` + attribute → `/pretraga`
+- 7.5 — `/novosti` (WP posts lista + empty state; single post van opsega)
 
 **Ostaje otvoreno iz Nedelje 6 (ne blokira N7)**
 - 6.9 — GTM Container ID (klijent odložio)

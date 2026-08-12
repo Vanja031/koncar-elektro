@@ -2,13 +2,13 @@ import {
   Zap, BatteryFull, Wrench, Wind, Ruler, HardHat, Cog, Package,
   Sprout, Plug, Lightbulb, Sun, type LucideIcon,
 } from 'lucide-react';
-import imgElektricni from '@/assets/elektricni-alat.png';
-import imgAku from '@/assets/aku-alat.png';
-import imgRucni from '@/assets/rucni-alat.png';
-import imgKompresor from '@/assets/kompresor.png';
-import imgElektromaterijal from '@/assets/elektromaterijal.png';
-import imgRasveta from '@/assets/rasveta.png';
-import imgSolarne from '@/assets/solarne.png';
+import imgElektricni from '@/assets/elektricni-alat.webp';
+import imgAku from '@/assets/aku-alat.webp';
+import imgRucni from '@/assets/rucni-alat.webp';
+import imgKompresor from '@/assets/kompresor.webp';
+import imgElektromaterijal from '@/assets/elektromaterijal.webp';
+import imgRasveta from '@/assets/rasveta.webp';
+import imgSolarne from '@/assets/solarne.webp';
 import productGeneric from '@/assets/product-generic.jpg';
 
 export type NavigationMenuDef = {

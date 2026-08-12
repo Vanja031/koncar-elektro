@@ -6,8 +6,8 @@ import { InfoPageShell } from '@/components/static/InfoPageShell';
 import { aboutContent, contactChannels } from '@/data/staticPages';
 import { Carousel } from '@/components/home/Carousel';
 import { BrandMark } from '@/components/brand/BrandMark';
-import agentAvatar from '@/assets/agent-avatar.png';
-import heroExpert from '@/assets/hero-expert.png';
+import agentAvatar from '@/assets/agent-avatar.webp';
+import heroExpert from '@/assets/hero-expert.webp';
 
 const highlightConfig = [
   { icon: Trophy,       bg: 'bg-accent',   iconColor: 'text-primary' },

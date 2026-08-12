@@ -4,6 +4,8 @@ import { formatPrice } from '@/data/homepage';
 import type { ProductDetail } from '@/data/productDetail';
 import { contactChannels } from '@/data/staticPages';
 import { ManufacturerRow } from '@/components/brand/BrandMark';
+import { useWishlist } from '@/context/WishlistContext';
+import { useCompare } from '@/context/CompareContext';
 
 type Props = {
   product: ProductDetail;
@@ -12,6 +14,10 @@ type Props = {
 
 export const ProductBuyBox = ({ product, onAdd }: Props) => {
   const [quantity, setQuantity] = useState(1);
+  const { has: inWishlist, toggle: toggleWishlist } = useWishlist();
+  const { has: inCompare, toggle: toggleCompare } = useCompare();
+  const wished = inWishlist(product.id);
+  const compared = inCompare(product.id);
   const discount = product.oldPrice
     ? Math.round(100 - (product.price / product.oldPrice) * 100)
     : 0;
@@ -19,6 +25,21 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
   const scrollToReviews = () => {
     document.getElementById('product-tab-reviews')?.click();
     document.getElementById('product-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const savedProduct = {
+    id: product.id,
+    name: product.name,
+    brand: product.brand,
+    sku: product.sku,
+    image: product.gallery?.[0] ?? product.image,
+    price: product.price,
+    oldPrice: product.oldPrice,
+    inStock: product.inStock,
+    category: product.category,
+    categorySlug: product.categorySlug,
+    slug: product.slug,
+    specs: product.specs,
   };
 
   return (
@@ -116,12 +137,23 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
       </div>
 
       <div className="flex items-center gap-3 mt-4">
-        <button type="button" className="product-secondary-action" aria-label="Dodaj u listu želja">
-          <Heart className="w-4 h-4" />
+        <button
+          type="button"
+          className={`product-secondary-action ${wished ? 'text-primary' : ''}`}
+          aria-label={wished ? 'Ukloni iz liste želja' : 'Dodaj u listu želja'}
+          aria-pressed={wished}
+          onClick={() => toggleWishlist(savedProduct)}
+        >
+          <Heart className={`w-4 h-4 ${wished ? 'fill-current' : ''}`} />
           Lista želja
         </button>
         <label className="product-secondary-action cursor-pointer">
-          <input type="checkbox" className="rounded border-border mr-2" />
+          <input
+            type="checkbox"
+            className="rounded border-border mr-2"
+            checked={compared}
+            onChange={() => toggleCompare(savedProduct)}
+          />
           Uporedi
         </label>
       </div>

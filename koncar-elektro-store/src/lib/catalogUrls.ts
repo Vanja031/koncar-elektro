@@ -25,27 +25,63 @@ export const ROUTES = {
   productCategory: '/product-category',
   prodavnica: '/prodavnica',
   search: '/pretraga',
+  wishlist: '/lista-zelja',
+  compare: '/uporedite',
+  news: '/novosti',
 } as const;
 
-/** Pretraga proizvoda — `q`, opciono `category` (WC slug), `akcija=1` za sniženja u kategoriji, `brend` (pa_proizvodjac slug). */
+/** Old-site attribute archive path → WC attribute taxonomy. */
+export const ATTRIBUTE_ARCHIVE_TAXONOMIES = {
+  snaga: 'pa_snaga',
+  uvoznik: 'pa_uvoznik',
+  'zemlja-porekla': 'pa_zemlja-porekla',
+} as const;
+
+export type AttributeArchiveKey = keyof typeof ATTRIBUTE_ARCHIVE_TAXONOMIES;
+
+/** Pretraga proizvoda — `q`, category, akcija, brend, ili proizvoljan atribut (`attr` + `term`). */
 export function getSearchUrl(params: {
   q?: string;
   category?: string;
   onSale?: boolean;
   brand?: string;
+  /** WC attribute taxonomy slug, e.g. `pa_snaga`. */
+  attribute?: string;
+  /** Term slug within that attribute. */
+  term?: string;
 }): string {
   const sp = new URLSearchParams();
   if (params.q?.trim()) sp.set('q', params.q.trim());
   if (params.category) sp.set('category', params.category);
   if (params.onSale) sp.set('akcija', '1');
   if (params.brand) sp.set('brend', params.brand);
+  if (params.attribute && params.term) {
+    sp.set('attr', params.attribute);
+    sp.set('term', params.term);
+  }
   const qs = sp.toString();
   return qs ? `${ROUTES.search}?${qs}` : ROUTES.search;
 }
 
-/** Svi proizvodi jednog brenda (pa_proizvodjac slug), preko stranice pretrage. */
+/** Dedicated manufacturer archive (SEO path parity with live `/proizvodjac/{slug}`). */
+export function getProizvodjacUrl(brandSlug: string): string {
+  return `/proizvodjac/${brandSlug}`;
+}
+
+/** Svi proizvodi jednog brenda — kanonski `/proizvodjac/{slug}`. */
 export function getBrandProductsUrl(brandSlug: string): string {
-  return getSearchUrl({ brand: brandSlug });
+  return getProizvodjacUrl(brandSlug);
+}
+
+/** Redirect target for old attribute archives (`/snaga/800w` → pretraga sa filterom). */
+export function getAttributeArchiveSearchUrl(
+  archiveKey: AttributeArchiveKey,
+  termSlug: string,
+): string {
+  return getSearchUrl({
+    attribute: ATTRIBUTE_ARCHIVE_TAXONOMIES[archiveKey],
+    term: termSlug,
+  });
 }
 
 /** Default listing when product or category is not found. */

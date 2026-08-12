@@ -4,7 +4,7 @@ import { Link } from '@/lib/router-compat';
 import { GoogleReviews } from '@/components/home/GoogleReviews';
 import { ROUTES } from '@/lib/catalogUrls';
 import { brand, contactChannels } from '@/data/staticPages';
-import agentAvatar from '@/assets/agent-avatar.png';
+import agentAvatar from '@/assets/agent-avatar.webp';
 
 type FaqItem = { question: string; answer: string };
 

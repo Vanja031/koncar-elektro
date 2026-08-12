@@ -1,3 +1,5 @@
+'use client';
+
 import { Star, Heart } from 'lucide-react';
 import { Link } from '@/lib/router-compat';
 import { formatPrice } from '@/data/homepage';
@@ -7,6 +9,8 @@ import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { ManufacturerRow } from '@/components/brand/BrandMark';
 import { ProductImage } from '@/components/product/ProductImage';
 import type { CatalogProductCardProduct } from '@/data/catalogListing';
+import { useWishlist } from '@/context/WishlistContext';
+import { useCompare } from '@/context/CompareContext';
 
 type Props = {
   product: CatalogProductCardProduct;
@@ -20,10 +24,13 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
   const productUrl = getCatalogProductUrl(product);
   const discount = getDiscountPercent(product);
   const onSale = Boolean(product.oldPrice) && discount > 0;
+  const { has: inWishlist, toggle: toggleWishlist } = useWishlist();
+  const { has: inCompare, toggle: toggleCompare } = useCompare();
 
-  // Oba bedža se prikazuju istovremeno kad je proizvod i na popustu i najprodavaniji.
   const showSaleBadge = onSale;
   const showBestsellerBadge = bestsellerBadge || product.bestseller;
+  const wished = inWishlist(product.id);
+  const compared = inCompare(product.id);
 
   return (
     <article
@@ -37,8 +44,18 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
           )}
         </div>
       )}
-      <button type="button" className="catalog-wishlist" aria-label="Dodaj u listu želja">
-        <Heart className="w-4 h-4" />
+      <button
+        type="button"
+        className={`catalog-wishlist ${wished ? 'catalog-wishlist--active' : ''}`}
+        aria-label={wished ? 'Ukloni iz liste želja' : 'Dodaj u listu želja'}
+        aria-pressed={wished}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleWishlist(product);
+        }}
+      >
+        <Heart className={`w-4 h-4 ${wished ? 'fill-current' : ''}`} />
       </button>
 
       <Link to={productUrl} className={isList ? 'catalog-product-card-media--list' : 'catalog-product-card-media'}>
@@ -84,7 +101,12 @@ export const CatalogProductCard = ({ product, view = 'grid', bestsellerBadge = f
             />
           </div>
           <label className="catalog-product-card-compare">
-            <input type="checkbox" className="rounded border-border" />
+            <input
+              type="checkbox"
+              className="rounded border-border"
+              checked={compared}
+              onChange={() => toggleCompare(product)}
+            />
             Uporedi
           </label>
         </div>

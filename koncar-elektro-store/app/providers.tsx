@@ -5,7 +5,9 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Suspense, useState, type ReactNode } from 'react';
 import { CartProvider } from '@/context/CartContext';
+import { CompareProvider } from '@/context/CompareContext';
 import { ConsentProvider } from '@/context/ConsentContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { Analytics } from '@/components/analytics/Analytics';
 import { CookieConsentBanner } from '@/components/consent/CookieConsentBanner';
@@ -25,12 +27,16 @@ export function Providers({ children }: { children: ReactNode }) {
           <Toaster />
           <Sonner />
           <CartProvider>
-            <ScrollToTop />
-            <Suspense fallback={null}>
-              <Analytics />
-            </Suspense>
-            {children}
-            <CookieConsentBanner />
+            <WishlistProvider>
+              <CompareProvider>
+                <ScrollToTop />
+                <Suspense fallback={null}>
+                  <Analytics />
+                </Suspense>
+                {children}
+                <CookieConsentBanner />
+              </CompareProvider>
+            </WishlistProvider>
           </CartProvider>
         </TooltipProvider>
       </ConsentProvider>

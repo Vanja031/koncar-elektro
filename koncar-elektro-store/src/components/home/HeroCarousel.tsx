@@ -70,6 +70,10 @@ export const HeroCarousel = ({ slides, layout = 'desktop' }: Props) => {
           src={s.image}
           alt=""
           draggable={false}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore — fetchpriority is valid HTML but not yet in React types
+          fetchpriority={i === 0 ? 'high' : undefined}
           className={`absolute inset-0 w-full h-full object-cover select-none transition-opacity duration-700 ${
             i === index ? 'opacity-100' : 'opacity-0'
           }`}

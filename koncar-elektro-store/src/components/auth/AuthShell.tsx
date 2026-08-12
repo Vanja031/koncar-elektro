@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import { ShopLayout } from '@/components/layout/ShopLayout';
-import agentAvatar from '@/assets/agent-avatar.png';
+import agentAvatar from '@/assets/agent-avatar.webp';
 import { cn } from '@/lib/utils';
 
 type Benefit = {

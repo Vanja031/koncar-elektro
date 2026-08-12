@@ -35,7 +35,7 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
   const hasServerProduct = initialProduct !== undefined;
 
   const live = useLiveProduct(useLiveApi ? slug : undefined, initialProduct);
-  const product = live.data ?? undefined;
+  const product = live.data ?? initialProduct ?? undefined;
 
   const categorySlug = product?.categorySlug;
   const liveRelated = useLiveRelatedProducts(
@@ -57,7 +57,7 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.id]);
 
-  if (!useLiveApi) {
+  if (!useLiveApi && !initialProduct) {
     return (
       <ShopLayout>
         <CatalogStateMessage variant="unavailable" className="min-h-[50vh]" />
@@ -65,7 +65,7 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
     );
   }
 
-  if (live.isLoading && !hasServerProduct) {
+  if (useLiveApi && live.isLoading && !hasServerProduct) {
     return (
       <ShopLayout>
         <CatalogStateMessage variant="loading" className="min-h-[50vh]" />
@@ -73,7 +73,7 @@ const ProductPage = ({ initialProduct, initialRelated }: Props) => {
     );
   }
 
-  if (live.isError) {
+  if (live.isError && !initialProduct) {
     return (
       <ShopLayout>
         <CatalogStateMessage

@@ -18,6 +18,11 @@
     "audit:wc-slugs": "node scripts/audit-wc-slugs.mjs",
     "audit:seo-baseline": "node scripts/audit-seo-baseline-sample.mjs",
     "sync:wc-attributes": "node scripts/sync-wc-attributes.mjs",
+    "seed:homepage-banners": "node scripts/seed-homepage-banner-categories.mjs",
+    "audit:seo-url-gap": "node scripts/seo-url-gap-inventory.mjs",
+    "audit:seo-static-local": "node scripts/audit-seo-static-local.mjs",
+    "audit:seo-parity-local": "node scripts/audit-seo-parity-local.mjs",
+    "compress:static-assets": "node scripts/compress-static-assets.mjs",
     "build:seo-index": "node scripts/build-seo-baseline-index.mjs",
     "predev": "node scripts/build-seo-baseline-index.mjs",
     "prebuild": "node scripts/build-seo-baseline-index.mjs"

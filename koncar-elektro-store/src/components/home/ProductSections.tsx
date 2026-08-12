@@ -5,10 +5,9 @@ import {
   bestSellerProducts,
   featuredBrands,
   whyChooseItems,
-  categoryBanners,
 } from '@/data/homepage';
 import { brand } from '@/data/staticPages';
-import { getBrandProductsUrl, getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
+import { getBrandProductsUrl, ROUTES } from '@/lib/catalogUrls';
 import { getBrandLogoBySlug } from '@/lib/brandLogos';
 import { getBrandAttributeSlug } from '@/lib/listingFilters';
 import { Carousel } from './Carousel';
@@ -19,21 +18,21 @@ import { PopularCategoriesSection } from './PopularCategoriesSection';
 import { TrustPromoBanners } from './TrustPromoBanners';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { useLiveBestSellers, useLiveSaleProducts } from '@/hooks/api/useLiveCatalog';
+import { useHomepageCategoryBanners } from '@/hooks/api/useHomepageCategoryBanners';
 import { useLiveApi } from '@/lib/api/config';
-import agentAvatar from '@/assets/agent-avatar.png';
-
-const bannerUrls: Record<string, string> = {
-  Elektromaterijal: getTopCategoryUrl('elektromaterijal'),
-  Rasveta: getTopCategoryUrl('rasveta'),
-  'Solarne elektrane': getTopCategoryUrl('solarne'),
-};
+import { fallbackHomepageCategoryBanners } from '@/lib/homepageBanners';
+import agentAvatar from '@/assets/agent-avatar.webp';
 
 export const ProductSections = () => {
   const liveSale = useLiveSaleProducts({ perPage: 12 });
   const liveBestSellers = useLiveBestSellers({ perPage: 12 });
+  const liveBanners = useHomepageCategoryBanners();
 
   const saleItems = useLiveApi ? (liveSale.data?.products ?? []) : saleProducts;
   const bestSellers = useLiveApi ? (liveBestSellers.data?.products ?? []) : bestSellerProducts;
+  const categoryBanners = useLiveApi
+    ? (liveBanners.data ?? fallbackHomepageCategoryBanners)
+    : fallbackHomepageCategoryBanners;
 
   return (
     <>
@@ -152,6 +151,7 @@ export const ProductSections = () => {
         <img
           src={agentAvatar}
           alt="Stručna podrška"
+          loading="lazy"
           className="hidden lg:block absolute right-0 bottom-0 h-[108%] max-w-[min(32vw,420px)] object-contain object-bottom pointer-events-none select-none"
         />
       </section>
@@ -159,8 +159,8 @@ export const ProductSections = () => {
       <section className="container py-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         {categoryBanners.map((b) => (
           <Link
-            key={b.title}
-            to={bannerUrls[b.title] ?? getTopCategoryUrl('alati')}
+            key={b.slug}
+            to={b.href}
             className={`relative rounded-lg overflow-hidden min-h-[9.5rem] flex items-stretch group ${b.className}`}
           >
             <div className="relative z-10 flex-1 p-5 flex flex-col justify-center max-w-[58%]">

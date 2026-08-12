@@ -5,7 +5,7 @@ import { Phone, Mail, MessageSquare } from 'lucide-react';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
 import { StaticFaqAccordion } from '@/components/static/StaticFaqAccordion';
 import { faqPageContent, staticFaqItems, companyInfo, contactChannels } from '@/data/staticPages';
-import agentAvatar from '@/assets/agent-avatar.png';
+import agentAvatar from '@/assets/agent-avatar.webp';
 
 const FaqPage = () => {
   const { breadcrumbs, title, subtitle } = faqPageContent;

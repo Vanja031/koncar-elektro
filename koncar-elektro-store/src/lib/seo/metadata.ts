@@ -143,4 +143,16 @@ export function metadataForCategory(
   });
 }
 
+export function metadataForManufacturer(pathname: string, brandName: string): Metadata {
+  const description = `Ponuda ${brandName} — alati i oprema, brza dostava i garancija. Končar Elektro Leskovac.`;
+  const fromBaseline = metadataFromBaseline(pathname, description);
+  if (fromBaseline) return fromBaseline;
+
+  return buildPageMetadata({
+    pathname,
+    title: categoryTitle(brandName),
+    description,
+  });
+}
+
 export const NOINDEX_FOLLOW: Metadata['robots'] = { index: false, follow: true };

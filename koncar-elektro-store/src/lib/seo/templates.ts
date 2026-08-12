@@ -75,4 +75,62 @@ export const STATIC_FALLBACKS: Record<
     title: `Registracija | ${SITE_NAME}`,
     description: `Kreirajte nalog na ${SITE_NAME}.`,
   },
+  '/podaci-o-firmi/': {
+    title: `Podaci o firmi - ${TITLE_SUFFIX}`,
+    description:
+      'Zvanični podaci o Končar Elektro — PIB, matični broj, adresa, telefon i tekući račun.',
+  },
+  '/kolacici-cookies/': {
+    title: `Kolačići (cookies) - ${TITLE_SUFFIX}`,
+    description:
+      'Politika kolačića na sajtu Končar Elektro — neophodni i analitički kolačići, saglasnost i vaša prava.',
+  },
+  '/narucivanje/': {
+    title: `Naručivanje - ${TITLE_SUFFIX}`,
+    description:
+      'Kako da naručite online ili telefonom u Končar Elektro — korpa, plaćanje i isporuka.',
+  },
+  '/uslovi-koriscenja/': {
+    title: `Uslovi korišćenja - ${TITLE_SUFFIX}`,
+    description:
+      'Uslovi korišćenja i pravila kupovine u online prodavnici Končar Elektro.',
+  },
+  '/uslovi-kupovine/': {
+    title: `Uslovi kupovine - ${TITLE_SUFFIX}`,
+    description:
+      'Uslovi kupovine u online prodavnici Končar Elektro — garancija, reklamacije i privatnost.',
+  },
+  '/politika-privatnosti/': {
+    title: `Politika privatnosti - ${TITLE_SUFFIX}`,
+    description:
+      'Politika privatnosti Končar Elektro — koje podatke prikupljamo i kako ih štitimo.',
+  },
+  '/nacin-placanja/': {
+    title: `Način plaćanja - ${TITLE_SUFFIX}`,
+    description: 'Načini plaćanja u Končar Elektro — kartica, pouzeće i virman.',
+  },
+  '/nacini-isporuke/': {
+    title: `Načini isporuke - ${TITLE_SUFFIX}`,
+    description: 'Dostava i načini isporuke Končar Elektro širom Srbije.',
+  },
+  '/reklamacije/': {
+    title: `Reklamacije - ${TITLE_SUFFIX}`,
+    description: 'Postupak reklamacije i garancije u Končar Elektro.',
+  },
+  '/pravo-na-odustajanje/': {
+    title: `Pravo na odustajanje - ${TITLE_SUFFIX}`,
+    description: 'Pravo na odustajanje od kupovine u roku od 14 dana — Končar Elektro.',
+  },
+  '/novosti/': {
+    title: `Novosti - ${TITLE_SUFFIX}`,
+    description: 'Vesti i obaveštenja iz Končar Elektro prodavnice.',
+  },
+  '/lista-zelja/': {
+    title: `Lista želja - ${TITLE_SUFFIX}`,
+    description: `Sačuvani proizvodi na ${SITE_NAME} — lista želja u ovom pregledaču.`,
+  },
+  '/uporedite/': {
+    title: `Uporedite - ${TITLE_SUFFIX}`,
+    description: `Uporedite proizvode po ceni i specifikacijama na ${SITE_NAME}.`,
+  },
 };

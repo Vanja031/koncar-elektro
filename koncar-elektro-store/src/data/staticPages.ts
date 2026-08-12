@@ -180,6 +180,7 @@ export const staticFaqItems: FaqEntry[] = [
 /** Footer label → route (samo implementirane stranice). */
 export const footerLinkRoutes: Record<string, string> = {
   Kontakt: ROUTES.contact,
+  Naručivanje: '/narucivanje',
   Dostava: '/nacini-isporuke',
   'Način plaćanja': '/nacin-placanja',
   'Povrat robe': '/pravo-na-odustajanje',
@@ -187,6 +188,11 @@ export const footerLinkRoutes: Record<string, string> = {
   Garancija: '/reklamacije',
   'Česta pitanja': ROUTES.faq,
   'O nama': ROUTES.about,
-  'Uslovi korišćenja': '/uslovi-kupovine',
+  'Podaci o firmi': '/podaci-o-firmi',
+  Novosti: ROUTES.news,
+  'Lista želja': ROUTES.wishlist,
+  Uporedi: ROUTES.compare,
+  'Uslovi korišćenja': '/uslovi-koriscenja',
   'Politika privatnosti': '/politika-privatnosti',
+  'Politika kolačića': '/kolacici-cookies',
 };

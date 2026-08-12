@@ -27,17 +27,19 @@ export async function fetchProductPageData(slug: string): Promise<ProductPageDat
 
     let related: CatalogProduct[] = [];
     if (categorySlug) {
-      // Store API's `category` filter wants the leaf term slug, not the full nested path
-      // (e.g. `poljoprivredni-alati-i-oprema/kosacice` → `kosacice`) — otherwise it returns nothing.
-      const siblings = await getStoreProductsServer({
-        category: leafCategorySlug(categorySlug),
-        per_page: 8,
-        orderby: 'popularity',
-      });
-      related = siblings
-        .filter((p) => p.id !== product.id)
-        .slice(0, 6)
-        .map(mapStoreProductToCatalog);
+      try {
+        const siblings = await getStoreProductsServer({
+          category: leafCategorySlug(categorySlug),
+          per_page: 8,
+          orderby: 'popularity',
+        });
+        related = siblings
+          .filter((p) => p.id !== product.id)
+          .slice(0, 6)
+          .map(mapStoreProductToCatalog);
+      } catch {
+        related = [];
+      }
     }
 
     return { product, related };

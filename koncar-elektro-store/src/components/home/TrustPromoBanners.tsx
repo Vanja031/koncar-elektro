@@ -1,8 +1,8 @@
 import { Phone, Check } from 'lucide-react';
 import { contactChannels } from '@/data/staticPages';
-import agentAvatar from '@/assets/agent-avatar.png';
-import promoVan from '@/assets/van.png';
-import garancijaBadge from '@/assets/garancija-badge.png';
+import agentAvatar from '@/assets/agent-avatar.webp';
+import promoVan from '@/assets/van.webp';
+import garancijaBadge from '@/assets/garancija-badge.webp';
 
 export const TrustPromoBanners = () => (
   <section className="container py-6 md:py-8 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -28,6 +28,7 @@ export const TrustPromoBanners = () => (
       <img
         src={agentAvatar}
         alt="Stručna podrška"
+        loading="lazy"
         className="absolute right-0 bottom-0 h-[108%] max-w-[34%] sm:max-w-[42%] md:max-w-[48%] object-contain object-bottom pointer-events-none"
       />
     </div>
@@ -49,6 +50,7 @@ export const TrustPromoBanners = () => (
       <img
         src={promoVan}
         alt="Dostava"
+        loading="lazy"
         className="trust-promo-van-img"
       />
     </div>
@@ -70,6 +72,7 @@ export const TrustPromoBanners = () => (
       <img
         src={garancijaBadge}
         alt="Garancija 100%"
+        loading="lazy"
         className="trust-promo-garancija-img"
       />
     </div>

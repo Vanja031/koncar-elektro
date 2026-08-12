@@ -1,6 +1,6 @@
 import { Link } from '@/lib/router-compat';
 import { ExternalLink } from 'lucide-react';
-import garancijaBadge from '@/assets/garancija-badge.png';
+import garancijaBadge from '@/assets/garancija-badge.webp';
 import { getWarrantyExtensionOffer } from '@/lib/warrantyExtension';
 
 type Props = {

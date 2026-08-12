@@ -10,6 +10,7 @@ type Props = {
   /** Extra class on the gray placeholder box */
   placeholderClassName?: string;
   loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
 };
 
 /** True when WC/catalog actually gave a usable image URL. */
@@ -28,6 +29,7 @@ export function ProductImage({
   imgClassName,
   placeholderClassName,
   loading = 'lazy',
+  fetchpriority,
 }: Props) {
   const initial = hasProductImage(src) ? src!.trim() : '';
   const [failed, setFailed] = useState(false);
@@ -50,6 +52,9 @@ export function ProductImage({
       src={initial}
       alt={alt}
       loading={loading}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore — fetchpriority is valid HTML but not yet in React types
+      fetchpriority={fetchpriority}
       className={cn(className, imgClassName)}
       onError={() => setFailed(true)}
     />

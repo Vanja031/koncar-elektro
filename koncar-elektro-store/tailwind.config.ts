@@ -8,8 +8,8 @@ export default {
     container: { center: true, padding: "1rem", screens: { "2xl": "1452px" } },
     extend: {
       fontFamily: {
-        display: ['"Roboto Condensed"', 'sans-serif'],
-        body: ['Roboto', 'sans-serif'],
+        display: ['var(--font-roboto-condensed)', '"Roboto Condensed"', 'sans-serif'],
+        body: ['var(--font-roboto)', 'Roboto', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

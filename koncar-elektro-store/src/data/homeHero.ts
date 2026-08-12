@@ -1,7 +1,7 @@
-import c11 from '@/assets/c1-1.png';
-import c12 from '@/assets/c1-2.png';
-import c21 from '@/assets/c2-1.png';
-import c22 from '@/assets/c2-2.png';
+import c11 from '@/assets/c1-1.webp';
+import c12 from '@/assets/c1-2.webp';
+import c21 from '@/assets/c2-1.webp';
+import c22 from '@/assets/c2-2.webp';
 
 export type HeroSlide = {
   image: string;

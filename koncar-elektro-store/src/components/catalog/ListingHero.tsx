@@ -1,6 +1,6 @@
 import { Breadcrumbs } from './Breadcrumbs';
 import type { BreadcrumbItem } from '@/data/categoryPages';
-import breadcrumbsHero from '@/assets/breadcrumbs.png';
+import breadcrumbsHero from '@/assets/breadcrumbs.webp';
 
 type Props = {
   breadcrumbs: BreadcrumbItem[];
@@ -15,6 +15,10 @@ export const ListingHero = ({ breadcrumbs, title, description }: Props) => (
     <img
       src={breadcrumbsHero}
       alt=""
+      loading="eager"
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore — fetchpriority is valid HTML but not in React types yet
+      fetchpriority="high"
       className="absolute inset-0 w-full h-full object-cover object-right"
     />
     <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/25" />

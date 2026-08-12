@@ -71,7 +71,7 @@ export const ProductGallery = ({ images, name, discount }: Props) => {
                     onClick={() => setLightboxOpen(true)}
                     aria-label="Uvećaj sliku"
                   >
-                    <ProductImage src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" />
+                    <ProductImage src={img} alt={`${name} — slika ${i + 1}`} className="product-gallery-image" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
                   </button>
                 ) : (
                   <div className="product-gallery-image-wrap w-full">

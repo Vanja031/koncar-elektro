@@ -18,7 +18,12 @@ export async function getStoreCategories(
 
 export async function getStoreCategoryBySlug(slug: string): Promise<WcStoreCategory | null> {
   const categories = await getStoreCategories({ slug, per_page: 1 });
-  return categories[0] ?? null;
+  const direct = categories[0];
+  // Staging Store API sometimes ignores `slug` and returns an arbitrary category.
+  if (direct?.slug === slug) return direct;
+
+  const all = await fetchAllStoreCategories();
+  return all.find((c) => c.slug === slug) ?? null;
 }
 
 export async function getStoreTopLevelCategories(): Promise<WcStoreCategory[]> {

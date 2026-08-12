@@ -381,7 +381,7 @@ const ProductsPage = ({
     );
   }
 
-  if (!useLiveApi) {
+  if (!useLiveApi && !(initialListing && isDefaultListingQuery)) {
     return (
       <ShopLayout>
         <ListingHero breadcrumbs={listingData.breadcrumbs} title={listingData.title} />
@@ -392,11 +392,11 @@ const ProductsPage = ({
     );
   }
 
-  const rawProducts = liveProducts.data?.products ?? [];
+  const rawProducts = liveProducts.data?.products ?? initialListing?.products ?? [];
   const products =
     sort === 'bestsellers' ? markTopBestsellers(rawProducts) : rawProducts;
-  const totalCount = liveProducts.data?.total ?? 0;
-  const totalPages = liveProducts.data?.totalPages ?? 0;
+  const totalCount = liveProducts.data?.total ?? initialListing?.total ?? 0;
+  const totalPages = liveProducts.data?.totalPages ?? initialListing?.totalPages ?? 0;
   const currentPage = page;
   const chips = highlightChips;
 
@@ -414,7 +414,7 @@ const ProductsPage = ({
     if (liveProducts.isLoading && !hasInitialListing) {
       return <CatalogStateMessage variant="loading" />;
     }
-    if (liveProducts.isError) {
+    if (liveProducts.isError && !hasInitialListing) {
       return (
         <CatalogStateMessage
           variant="error"

@@ -27,13 +27,24 @@ Privremene dev putanje (`/kategorija/…`, `/proizvod/…`) ostaju kao **client-
 | O nama | `/o-nama/` | `AboutPage` | |
 | Kontakt | `/kontakt/` | `ContactPage` | |
 | FAQ | `/pitanja` | `FaqPage` | Nema zasebne stranice na starom sajtu — nova ruta |
+| Podaci o firmi | `/podaci-o-firmi/` | `CompanyInfoPage` | |
+| Kolačići | `/kolacici-cookies/` | `CookiesPage` | |
+| Naručivanje | `/narucivanje/` | `OrderingPage` | |
+| Uslovi korišćenja | `/uslovi-koriscenja/` | `TermsOfSalePage` | Kanonski stari URL |
+| Uslovi kupovine | `/uslovi-kupovine/` | `TermsOfSalePage` | Alias (banka/checkout) |
+| Politika privatnosti | `/politika-privatnosti/` | `PrivacyPolicyPage` | |
 | Korpa | `/korpa/` | `CartPage` | WooCommerce cart (WP page) |
 | Checkout | `/placanje-odjava/` | `CheckoutPage` | WP: „Plaćanje / Odjava”; `/placanje/` → 301 |
 | Potvrda | `/placanje-odjava/order-received/` | `OrderConfirmationPage` | WooCommerce thank-you (noindex) |
 | Brend | `/brend/[slug]/` | *(nedelja 3+)* | Stub / filter listing |
 | Tag | `/product-tag/[slug]/` | *(nedelja 3+)* | |
-| Proizvođač | `/proizvodjac/[slug]/` | *(kasnije)* | Postoji na starom sajtu |
-| Blog | `/[postname]/` | *(kasnije)* | |
+| Proizvođač | `/proizvodjac/[slug]/` | `ManufacturerPage` | Brand listing; seed `pa_brend` / `BRAND_ATTRIBUTE_SLUG`; nepoznat slug → humanize fallback |
+| Proizvođač (pag.) | `/proizvodjac/[slug]/page/[n]/` | `ManufacturerPage` | WooCommerce-style paginacija (GSC top traffic) |
+| Snaga / uvoznik / zemlja | `/snaga|uvoznik|zemlja-porekla/[slug]/` | redirect → `/pretraga?attr=&term=` | Attribute archives → filtered search |
+| Lista želja | `/lista-zelja/` | `WishlistPage` | localStorage (`koncar-wishlist-v1`) |
+| Uporedi | `/uporedite/` | `ComparePage` | localStorage; max 4; `/yith-compare` → 301 |
+| Novosti | `/novosti/` | `NovostiPage` | WP `wp/v2/posts`; empty state OK; single post kasnije |
+| Blog single | `/[postname]/` | *(van opsega)* | Catch-all single post nije u N7 |
 
 ---
 
@@ -91,5 +102,6 @@ Stari sajt koristi trailing slash (`/kontakt/`). React Router trenutno radi bez 
 ## Sledeći koraci (nedelja 3+)
 
 1. WP REST API — pravi slug-ovi i hijerarhija kategorija iz baze  
-2. Rute `/brend/`, `/product-tag/`, `/proizvodjac/`  
+2. Rute `/brend/`, `/product-tag/` (proizvođač + attribute archive redirects urađeni u N7)  
 3. Dinamički `generateMetadata` / JSON-LD po šablonu iz `meta-parity-plan.md`
+4. Opciono: single blog post `/[postname]/` ako se blog aktivira

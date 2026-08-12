@@ -25,7 +25,7 @@ export const CookieConsentBanner = () => {
         <p className="cookie-consent-text">
           Koristimo kolačiće kako bismo maksimalno unapredili vaše iskustvo i pružili
           personalizovane ponude.{' '}
-          <Link to="/politika-privatnosti" className="cookie-consent-link">
+          <Link to="/kolacici-cookies" className="cookie-consent-link">
             Saznajte više
           </Link>
         </p>
