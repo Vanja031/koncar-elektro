@@ -166,7 +166,7 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
       product.description.replace(/<[^>]+>/g, ' ').trim().slice(0, 200),
     price: Math.round(price),
     ...(onSale ? { oldPrice: Math.round(regular) } : {}),
-    rating: Math.round(Number(product.average_rating) || 0) || 4,
+    rating: Math.round(Number(product.average_rating) || 0),
     reviews: product.review_count ?? 0,
     image: product.images?.[0]?.src ?? '',
     sku: product.sku || String(product.id),

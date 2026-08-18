@@ -1,4 +1,4 @@
-import { companyInfo } from '@/data/staticPages';
+import { companyInfo, socialProfiles } from '@/data/staticPages';
 import type { BreadcrumbItem } from '@/data/categoryPages';
 import type { ProductDetail } from '@/data/productDetail';
 import { absoluteUrl, CANONICAL_SITE_URL, SITE_NAME } from '@/lib/seo/site';
@@ -33,6 +33,9 @@ export function buildOrganizationJsonLd(): JsonLd {
       areaServed: 'RS',
       availableLanguage: ['sr'],
     })),
+    sameAs: socialProfiles
+      .filter((profile) => profile.schema !== false)
+      .map((profile) => profile.href),
   };
 }
 

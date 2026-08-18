@@ -30,5 +30,3 @@ export const SocialIcon = ({ name, className = 'w-4 h-4', alt }: Props) => (
   />
 );
 
-/** Instagram, Facebook, TikTok, YouTube — header & footer nav */
-export const mainSocialLinks: SocialIconName[] = ['instagram', 'facebook', 'tiktok', 'youtube'];

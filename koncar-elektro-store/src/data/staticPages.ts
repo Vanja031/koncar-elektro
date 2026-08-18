@@ -34,6 +34,14 @@ export const companyInfo = {
   mapQuery: 'Stanoja Glavaša 4, Leskovac, Srbija',
 };
 
+/** Header/footer + JSON-LD sameAs. TikTok profil još nije dostavljen — dugme vodi na tiktok.com. */
+export const socialProfiles = [
+  { name: 'instagram' as const, href: 'https://www.instagram.com/koncar_elektro/', label: 'Instagram' },
+  { name: 'facebook' as const, href: 'https://www.facebook.com/koncar.shop.rs/', label: 'Facebook' },
+  { name: 'tiktok' as const, href: 'https://www.tiktok.com/', label: 'TikTok', schema: false },
+  { name: 'youtube' as const, href: 'https://www.youtube.com/@koncarelektroALATI', label: 'YouTube' },
+];
+
 /** Local `0xx` → E.164 without `+` (e.g. `381616544490`). */
 const toE164Digits = (phone: string) => {
   const digits = phone.replace(/\s/g, '');

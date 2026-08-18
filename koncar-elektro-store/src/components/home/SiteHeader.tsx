@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Phone, Search, User, ShoppingCart, Menu, ChevronDown,
 } from 'lucide-react';
@@ -11,6 +13,7 @@ import { MobileSearch } from '@/components/layout/MobileSearch';
 import { DesktopProductSearch } from '@/components/search/DesktopProductSearch';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import type { MegaMenuMode } from '@/data/navigation';
 import { getTopCategoryUrl, ROUTES } from '@/lib/catalogUrls';
 import { contactChannels } from '@/data/staticPages';
@@ -37,6 +40,7 @@ const navItems: NavItem[] = [
 
 export const SiteHeader = () => {
   const { itemCount: cartCount } = useCart();
+  const { customer, isLoggedIn, logout } = useAuth();
   const [megaOpen, setMegaOpen] = useState(false);
   const [megaMode, setMegaMode] = useState<MegaMenuMode>('alati');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -185,14 +189,31 @@ export const SiteHeader = () => {
             </button>
             <div className="hidden sm:flex items-center gap-2.5">
               <User className="w-6 h-6 text-primary shrink-0" />
-              <div className="flex flex-col leading-tight text-xs">
-                <Link to={ROUTES.login} className="text-foreground hover:text-primary transition-colors font-medium">
-                  Prijava
-                </Link>
-                <Link to={ROUTES.register} className="text-foreground hover:text-primary transition-colors font-medium">
-                  Registracija
-                </Link>
-              </div>
+              {isLoggedIn ? (
+                <div className="flex flex-col leading-tight text-xs">
+                  <span className="text-foreground font-medium truncate max-w-[8rem]">
+                    {customer?.firstName || customer?.email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void logout();
+                    }}
+                    className="text-left text-foreground hover:text-primary transition-colors font-medium"
+                  >
+                    Odjava
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col leading-tight text-xs">
+                  <Link to={ROUTES.login} className="text-foreground hover:text-primary transition-colors font-medium">
+                    Prijava
+                  </Link>
+                  <Link to={ROUTES.register} className="text-foreground hover:text-primary transition-colors font-medium">
+                    Registracija
+                  </Link>
+                </div>
+              )}
             </div>
             <Link
               to={ROUTES.cart}

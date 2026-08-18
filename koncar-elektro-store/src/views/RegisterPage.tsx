@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
-import { Link } from '@/lib/router-compat';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useNavigate } from '@/lib/router-compat';
 import { ArrowRight, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { AuthShell } from '@/components/auth/AuthShell';
 import { AuthField } from '@/components/auth/AuthField';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ROUTES } from '@/lib/catalogUrls';
+import { AuthClientError, useAuth } from '@/context/AuthContext';
 
 const registerBenefits = [
   {
@@ -21,17 +22,25 @@ const registerBenefits = [
 ];
 
 const RegisterPage = () => {
+  const { register, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [newsletter, setNewsletter] = useState(true);
+  const [busy, setBusy] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (isLoggedIn) navigate(ROUTES.home, { replace: true });
+  }, [isLoggedIn, navigate]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const firstName = String(form.get('firstName') ?? '').trim();
     const lastName = String(form.get('lastName') ?? '').trim();
     const email = String(form.get('email') ?? '').trim();
-    const password = String(form.get('password') ?? '').trim();
-    const confirmPassword = String(form.get('confirmPassword') ?? '').trim();
+    const phone = String(form.get('phone') ?? '').trim();
+    const password = String(form.get('password') ?? '');
+    const confirmPassword = String(form.get('confirmPassword') ?? '');
 
     if (!firstName || !lastName || !email || !password) {
       toast.error('Popunite sva obavezna polja.');
@@ -53,9 +62,17 @@ const RegisterPage = () => {
       return;
     }
 
-    toast.success('Nalog je kreiran (demo)', {
-      description: 'Registracija će biti povezana sa WordPress sistemom u narednoj fazi.',
-    });
+    setBusy(true);
+    try {
+      await register({ firstName, lastName, email, password, phone });
+      toast.success(newsletter ? 'Nalog je kreiran. Dobrodošli!' : 'Nalog je kreiran.');
+      navigate(ROUTES.home);
+    } catch (error) {
+      const message = error instanceof AuthClientError ? error.message : 'Registracija nije uspela.';
+      toast.error(message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -140,11 +157,11 @@ const RegisterPage = () => {
             />
             <span>
               Prihvatam{' '}
-              <Link to={ROUTES.contact} className="auth-inline-link">
+              <Link to="/uslovi-kupovine" className="auth-inline-link">
                 uslove kupovine
               </Link>{' '}
               i{' '}
-              <Link to={ROUTES.contact} className="auth-inline-link">
+              <Link to="/politika-privatnosti" className="auth-inline-link">
                 politiku privatnosti
               </Link>
             </span>
@@ -160,9 +177,9 @@ const RegisterPage = () => {
           </label>
         </div>
 
-        <button type="submit" className="auth-submit">
+        <button type="submit" className="auth-submit" disabled={busy}>
           <UserPlus className="w-4 h-4" />
-          Kreiraj nalog
+          {busy ? 'Kreiranje...' : 'Kreiraj nalog'}
         </button>
       </form>
     </AuthShell>

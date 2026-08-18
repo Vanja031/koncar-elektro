@@ -1,4 +1,5 @@
 import { Phone, Check } from 'lucide-react';
+import { Link } from '@/lib/router-compat';
 import { contactChannels } from '@/data/staticPages';
 import agentAvatar from '@/assets/agent-avatar.webp';
 import promoVan from '@/assets/van.webp';
@@ -45,7 +46,7 @@ export const TrustPromoBanners = () => (
             </li>
           ))}
         </ul>
-        <a href="#" className="btn-navy w-fit text-xs">Saznajte više</a>
+        <Link to="/nacini-isporuke" className="btn-navy w-fit text-xs">Saznajte više</Link>
       </div>
       <img
         src={promoVan}
@@ -67,7 +68,7 @@ export const TrustPromoBanners = () => (
             </li>
           ))}
         </ul>
-        <a href="#" className="btn-yellow w-fit text-xs">Saznajte više</a>
+        <Link to="/reklamacije" className="btn-yellow w-fit text-xs">Saznajte više</Link>
       </div>
       <img
         src={garancijaBadge}

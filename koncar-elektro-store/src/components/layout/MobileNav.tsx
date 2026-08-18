@@ -19,6 +19,7 @@ import {
 } from '@/lib/catalogUrls';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { contactChannels } from '@/data/staticPages';
+import { useAuth } from '@/context/AuthContext';
 
 type Props = {
   open: boolean;
@@ -27,6 +28,7 @@ type Props = {
 
 export const MobileNav = ({ open, onOpenChange }: Props) => {
   const { alatiMenuCategories, otherProgramCategories, isLoading, isError } = useNavigationMenu();
+  const { customer, isLoggedIn, logout } = useAuth();
   const [openSection, setOpenSection] = useState<string | null>('alati');
 
   const close = () => onOpenChange(false);
@@ -56,14 +58,28 @@ export const MobileNav = ({ open, onOpenChange }: Props) => {
         <nav className="flex-1 overflow-y-auto koncar-scrollbar py-2">
           <ul className="px-2 space-y-0.5">
             <li>
-              <Link
-                to={ROUTES.login}
-                onClick={close}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-              >
-                <UserPlus className="w-4 h-4 text-primary shrink-0" />
-                Prijava / Registracija
-              </Link>
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void logout();
+                    close();
+                  }}
+                  className="flex w-full items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                >
+                  <UserPlus className="w-4 h-4 text-primary shrink-0" />
+                  Odjava{customer?.firstName ? ` (${customer.firstName})` : ''}
+                </button>
+              ) : (
+                <Link
+                  to={ROUTES.login}
+                  onClick={close}
+                  className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                >
+                  <UserPlus className="w-4 h-4 text-primary shrink-0" />
+                  Prijava / Registracija
+                </Link>
+              )}
             </li>
             <li>
               <Link

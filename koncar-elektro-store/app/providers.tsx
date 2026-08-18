@@ -5,6 +5,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Suspense, useState, type ReactNode } from 'react';
 import { CartProvider } from '@/context/CartContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { CompareProvider } from '@/context/CompareContext';
 import { ConsentProvider } from '@/context/ConsentContext';
 import { WishlistProvider } from '@/context/WishlistContext';
@@ -27,6 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <Toaster />
           <Sonner />
           <CartProvider>
+            <AuthProvider>
             <WishlistProvider>
               <CompareProvider>
                 <ScrollToTop />
@@ -37,6 +39,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 <CookieConsentBanner />
               </CompareProvider>
             </WishlistProvider>
+            </AuthProvider>
           </CartProvider>
         </TooltipProvider>
       </ConsentProvider>

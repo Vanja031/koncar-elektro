@@ -54,18 +54,22 @@ export const ProductBuyBox = ({ product, onAdd }: Props) => {
         type="button"
         onClick={scrollToReviews}
         className="flex items-center gap-2 mt-3 group"
-        aria-label={`${product.rating} od 5 zvezdica, ${product.reviews} recenzija`}
+        aria-label={
+          product.reviews > 0
+            ? `${product.rating} od 5 zvezdica, ${product.reviews} recenzija`
+            : 'Još nema recenzija. Ostavite prvu ocenu.'
+        }
       >
         <div className="flex items-center gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
-              className={`w-4 h-4 ${i < product.rating ? 'fill-accent text-accent' : 'fill-muted text-muted'}`}
+              className={`w-4 h-4 ${product.reviews > 0 && i < product.rating ? 'fill-accent text-accent' : 'fill-muted text-muted'}`}
             />
           ))}
         </div>
         <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-          {product.reviews} recenzija
+          {product.reviews > 0 ? `${product.reviews} recenzija` : 'Nema recenzija'}
         </span>
       </button>
 

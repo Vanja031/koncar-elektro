@@ -8,6 +8,7 @@ import {
 import type { ProductDetail } from '@/data/productDetail';
 import type { CatalogProduct } from '@/data/catalogListing';
 import { listingSortToStoreQuery } from '@/lib/listingSort';
+import { getProductReviews } from '@/lib/api/wc-rest/reviews';
 
 export type ProductPageData = {
   product: ProductDetail | null;
@@ -23,6 +24,11 @@ export async function fetchProductPageData(slug: string): Promise<ProductPageDat
     if (!raw) return { product: null, related: [] };
 
     const product = mapStoreProductToDetail(raw);
+    try {
+      product.reviewsList = await getProductReviews(product.id);
+    } catch {
+      product.reviewsList = [];
+    }
     const categorySlug = product.categorySlug;
 
     let related: CatalogProduct[] = [];

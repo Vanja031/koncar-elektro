@@ -19,6 +19,14 @@ const nextConfig = {
         source: '/wp-json/:path*',
         destination: `${wpRewriteOrigin}/wp-json/:path*`,
       },
+      {
+        source: '/contact.php',
+        destination: `${wpRewriteOrigin}/contact.php`,
+      },
+      {
+        source: '/koncar-auth.php',
+        destination: `${wpRewriteOrigin}/koncar-auth.php`,
+      },
     ];
   },
   images: {

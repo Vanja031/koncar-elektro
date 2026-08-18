@@ -5,6 +5,8 @@ import {
   WcStoreRequestError,
   type PlaceOrderInput,
 } from '@/lib/api/wc-store/checkout-server';
+import { updateWcOrder } from '@/lib/api/wc-rest/orders';
+import { getSessionCustomer } from '@/lib/auth/session';
 import { createOrderId } from '@/lib/order';
 
 export const runtime = 'nodejs';
@@ -125,6 +127,12 @@ export async function POST(request: Request) {
 
   try {
     const result = await placeWcStoreOrder(orderInput);
+    const customer = getSessionCustomer();
+    if (customer?.id) {
+      await updateWcOrder(result.orderId, { customer_id: customer.id }).catch((err) => {
+        console.error('[api/wc/checkout] failed to attach customer', err);
+      });
+    }
     return NextResponse.json({
       mode: 'live',
       orderId: result.orderId,

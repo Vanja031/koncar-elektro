@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import { CreditCard, Coins, FileStack, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { BankSecurityBadges } from '@/components/payment/BankSecurityBadges';
 import {
@@ -66,7 +67,19 @@ export const CheckoutForm = ({
 }: Props) => {
   const navigate = useNavigate();
   const { lines, subtotal, shipping, total, itemCount, clearCart } = useCart();
+  const { customer } = useAuth();
   const [form, setForm] = useState<FormState>(initialForm);
+
+  useEffect(() => {
+    if (!customer) return;
+    setForm((current) => ({
+      ...current,
+      email: current.email || customer.email,
+      firstName: current.firstName || customer.firstName,
+      lastName: current.lastName || customer.lastName,
+      phone: current.phone || customer.phone || '',
+    }));
+  }, [customer]);
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((current) => ({ ...current, [key]: value }));

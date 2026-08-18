@@ -1,51 +1,17 @@
 /**
  * Server-only WooCommerce REST API v3 helper for creating/updating orders.
- *
- * Uses query-string auth (`consumer_key` / `consumer_secret`) — many hosts
- * strip the Authorization header and WooCommerce documents this as the
- * reliable alternative.
  */
-import { serverWcStoreApiBase } from '@/lib/api/server-config';
+import { wcV3Fetch, WcRestError } from '@/lib/api/wc-rest/client';
 import { SHIPPING_CARRIER, SHIPPING_COST } from '@/lib/shipping';
 
-class WcRestError extends Error {
-  status: number;
-  body: unknown;
-
-  constructor(message: string, status: number, body: unknown) {
-    super(message);
-    this.name = 'WcRestError';
-    this.status = status;
-    this.body = body;
-  }
-}
-
 export { WcRestError };
-
-function wcV3Base(): string {
-  return serverWcStoreApiBase.replace(/\/wc\/store\/v1$/, '/wc/v3');
-}
-
-function credentials(): { key: string; secret: string } {
-  const key =
-    process.env.WC_CONSUMER_KEY ||
-    process.env.NEXT_PUBLIC_WC_CONSUMER_KEY ||
-    '';
-  const secret =
-    process.env.WC_CONSUMER_SECRET ||
-    process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET ||
-    '';
-  if (!key || !secret) {
-    throw new Error('Missing WC_CONSUMER_KEY / WC_CONSUMER_SECRET (server-only) env vars.');
-  }
-  return { key, secret };
-}
 
 export type WcOrderUpdatePatch = {
   status?: 'pending' | 'processing' | 'on-hold' | 'completed' | 'cancelled' | 'failed' | 'refunded';
   payment_method?: string;
   payment_method_title?: string;
   transaction_id?: string;
+  customer_id?: number;
   /** When true, WC sets date_paid and marks the order as paid in admin. */
   set_paid?: boolean;
   meta_data?: Array<{ key: string; value: string }>;
@@ -66,49 +32,8 @@ export type CreatePendingOrderInput = {
   paymentMethod: string;
   paymentMethodTitle: string;
   metaData?: Array<{ key: string; value: string }>;
+  customerId?: number;
 };
-
-async function wcV3Fetch<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const { key, secret } = credentials();
-  const base = wcV3Base().replace(/\/$/, '');
-  const url = new URL(`${base}/${path.replace(/^\//, '')}`);
-  // Trailing slash for hosts with trailingSlash / WP permalink quirks.
-  if (!url.pathname.endsWith('/')) {
-    url.pathname = `${url.pathname}/`;
-  }
-  url.searchParams.set('consumer_key', key);
-  url.searchParams.set('consumer_secret', secret);
-
-  const response = await fetch(url.toString(), {
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...init.headers,
-    },
-    cache: 'no-store',
-  });
-
-  const text = await response.text();
-  let body: unknown = null;
-  if (text) {
-    try {
-      body = JSON.parse(text);
-    } catch {
-      body = text;
-    }
-  }
-
-  if (!response.ok) {
-    const message =
-      (body && typeof body === 'object' && 'message' in (body as Record<string, unknown>)
-        ? String((body as Record<string, unknown>).message)
-        : null) || `WC REST API v3 ${response.status}`;
-    throw new WcRestError(message, response.status, body);
-  }
-
-  return body as T;
-}
 
 export type WcOrderBilling = {
   first_name: string;
@@ -170,6 +95,7 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
     body: JSON.stringify({
       status: 'pending',
       set_paid: false,
+      ...(input.customerId ? { customer_id: input.customerId } : {}),
       payment_method: input.paymentMethod,
       payment_method_title: input.paymentMethodTitle,
       customer_note: customerNote,

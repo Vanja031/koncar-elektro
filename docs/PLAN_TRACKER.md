@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 12.08.2026. (Nedelja 8 — Preview smoke + go-live runbook)
+**Poslednje ažuriranje trackera:** 18.08.2026. (Nedelja 8 — nalozi, kontakt, recenzije, društvene mreže)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -34,7 +34,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Stavka | Stanje |
 |--------|--------|
 | **Aktivna nedelja** | Nedelja 8 — go-live priprema |
-| **Sledeći korak** | Ručni QA (8.1) + produkcijski RaiAccept (8.2); DNS tek kad je env zelen |
+| **Sledeći korak** | Ručna provera 8.1 + 8.2 (u toku); DNS tek kad su oba zeleni |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -148,7 +148,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | 3.12 | Očuvanje slug-ova proizvoda — ključno za 1:1 URL parity | `[x]` | 07.07.2026. | `audit:wc-slugs` + `audit:seo-baseline` (565 uzoraka); 540 OK, 4 uklonjena, 1 WC path warn |
 | 3.13 | Očuvanje slug-ova kategorija — ključno za 1:1 URL parity | `[x]` | 07.07.2026. | 186 WC category paths; sve u sample auditu OK |
 
-\* **3.8 otvoreno za kasnije (ne blokira 3.12):** varijabilni proizvodi (izbor varijante), pun tekst recenzija (Store API nema `/reviews`), korpa iz API-ja (nedelja 5), `/brend/` archive stranice.
+\* **3.8 otvoreno za kasnije (ne blokira 3.12):** varijabilni proizvodi (izbor varijante). Recenzije zatvorene 18.08.2026. (WC v3 BFF); korpa/checkout N5; `/proizvodjac/` N7.
 
 **Dodatno urađeno u Nedelji 3 (UX / live podaci, 06.07.2026.):**
 
@@ -162,7 +162,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | Sortiranje na listingu | `[x]` | `listingSort.ts` → Store API `orderby` |
 | Mobilna pretraga | `[x]` | Full-screen modal, Enter → `/pretraga` |
 | Mobilni filteri | `[x]` | Dugme „Filteri“ → panel sa desne, X zatvaranje, badge broja aktivnih |
-| Recenzije / brend stranice / korpa | `[—]` | Ostaju za kasnije po dogovoru (N5) |
+| Recenzije / brend stranice / korpa | `[x]` | 18.08.2026. | Recenzije: WC v3 (prikaz + submit, 1 po e-mailu); `/proizvodjac/` N7; korpa N5 |
 
 ---
 
@@ -322,7 +322,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 | Kraj Nedelje 1 | URL inventar + SEO baseline (interno) | `[x]` | 25.06.2026. | Slanje klijentu odloženo |
 | Kraj Nedelje 2 | Finalni dizajn + URL routing mapa | `[x]` | 07.07.2026. | Nedelja 2 kompletno zatvorena |
 | Kraj Nedelje 6 | Uspešna test transakcija kartičnog plaćanja | `[x]` | 07.08.2026. | Sandbox + Preview OK; GTM (6.9) i 301 (6.11) ostaju otvoreni / ne blokiraju |
-| Kraj Nedelje 7 | Potvrđen 1:1 SEO i URL parity na stagingu | `[ ]` | | |
+| Kraj Nedelje 7 | Potvrđen 1:1 SEO i URL parity na stagingu | `[x]` | 12.08.2026. | Preview: static 23/23 + sample 155/155 |
 | Nedelja 8 | Uplata 50%, lansiranje, predaja koda | `[ ]` | | |
 
 ---
@@ -390,21 +390,34 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 12.08.2026. | — | N7 performanse (7.11–7.12): `next/font`; LCP prioriteti; **26 statičkih slika PNG→WebP (~23 MB uštede)**; `npm run compress:static-assets` | Nedelja 7 zatvorena; sledeće: Vercel Preview smoke → Nedelja 8 go-live |
 | 12.08.2026. | — | Preview smoke: static 23/23 + parity 155/155 OK na `koncar-elektro-git-develop-…vercel.app`; robots/sitemap 200 | N7 staging milestone zatvoren |
 | 12.08.2026. | — | N8 start: `docs/GO_LIVE.md`; 301 trailing-slash fix (`/placanje/` 404 → 301); `permanentRedirect` umesto 307 | Sledeće: ručni QA 8.1 + produkcijski RaiAccept 8.2 |
+| 18.08.2026. | — | Društvene mreže: FB/IG/YT profili; TikTok → tiktok.com dok klijent ne dostavi profil | Header/footer + JSON-LD `sameAs` |
+| 18.08.2026. | — | Prijava + registracija: WC v3 register; login/reset preko `wp-php/koncar-auth.php` (upload u WP root na stagingu); sesija httpOnly cookie | Header Odjava; checkout prefill + `customer_id` na porudžbini |
+| 18.08.2026. | — | Kontakt forma: `wp-php/contact.php` → `wp_mail` na kontakt@koncarelektro.com | Demo toast uklonjen |
+| 18.08.2026. | — | Recenzije proizvoda: WC v3 lista + submit (hold/odobrenje); 1 recenzija po e-mailu; empty state bez lažne 4.0 ocene | PDP recenzije žive |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 8 (Preview smoke zatvoren 12.08.2026.)
+### Sada — Nedelja 8 (nalozi / kontakt / recenzije 18.08.2026.)
 
-**Prioritet — pre DNS-a**
+**Prioritet — ti proveravaš**
 - 8.1 — ručni QA na telefonu/desktopu (checklist u `docs/GO_LIVE.md`)
 - 8.2 — produkcijski RaiAccept credentials + jedna realna test transakcija
+
+**Pre DNS-a (env)**
 - Production env: WP live URL, `WC_CHECKOUT_FORCE_TEST_CUSTOMER=false`, `NEXT_PUBLIC_ANALYTICS_LIVE=true` tek na Production
+- Staging WP root: upload `koncar-elektro-store/wp-php/contact.php` + `koncar-auth.php` (ako još nisu) — login i kontakt forma zavise od toga; registracija i recenzije rade preko WC REST
 
 **Ne sada**
 - 8.3 DNS — tek kad su 8.1 + 8.2 zeleni
 - 8.4 GSC sitemap — tek posle DNS-a
+
+**Završeno — N8 gap fill (18.08.2026.)**
+- Društvene mreže: [Facebook](https://www.facebook.com/koncar.shop.rs/), [Instagram](https://www.instagram.com/koncar_elektro/), [YouTube](https://www.youtube.com/@koncarelektroALATI); TikTok privremeno `tiktok.com`
+- Prijava `/prijava`, registracija `/registracija`, reset lozinke — WP kupci; checkout veže nalog
+- Kontakt forma → `kontakt@koncarelektro.com` (`contact.php` + `/api/contact`)
+- Recenzije na PDP: prikaz, slanje (čeka odobrenje), jedna po e-mailu, empty state bez lažne ocene
 
 **Završeno — Preview smoke (12.08.2026.)**
 - `audit:seo-static-local` 23/23 OK

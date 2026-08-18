@@ -18,6 +18,10 @@ Live shop ostaje izvor istine dok se DNS eksplicitno ne prebaci. Vidi [LIVE_SHOP
 | `sitemap.xml` | 200 (baseline ~5.649 URL-ova) |
 | Canonical | uvek `https://koncarelektro.rs/.../` (ne Preview host) |
 | Sandbox kartica + pouzeće | OK na Preview (07.08.2026.) |
+| Društvene mreže (FB / IG / YT) | povezane; TikTok privremeno tiktok.com |
+| Prijava / registracija | kod spreman; login zahteva `koncar-auth.php` na WP root |
+| Kontakt forma | `contact.php` → kontakt@koncarelektro.com |
+| Recenzije proizvoda | WC v3; 1 recenzija po e-mailu |
 
 ---
 
@@ -49,6 +53,7 @@ Napomena: ako RaiAccept lozinka sadrži `$`, na Vercel-u escape kao `\$`.
 - [ ] Payment metode: RaiAccept + pouzeće (COD) aktivne
 - [ ] WC REST v3 ključ sa Write samo na serveru (nikad `NEXT_PUBLIC_`)
 - [ ] Backup WP baze pre cutover-a
+- [ ] `contact.php` + `koncar-auth.php` u WP root (iz `koncar-elektro-store/wp-php/`) — staging sada, live na cutover
 
 ### Ručni QA na Preview (8.1)
 
@@ -58,6 +63,10 @@ Otvoriti Preview na telefonu + desktop (Chrome, Safari/iOS, Edge):
 - [ ] Lista želja, uporedi, novosti, kontakt, uslovi
 - [ ] Cookie banner (Prihvati / Odbij)
 - [ ] Mobilni meni + pretraga
+- [ ] Prijava / registracija / odjava
+- [ ] Kontakt forma (stvarni mejl)
+- [ ] Recenzija na PDP (jedna po nalogu)
+- [ ] Društvene mreže u headeru/footeru
 
 ### Plaćanje (8.2) — čeka produkcijske kredencijale
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import type { HeroSlide } from '@/data/homeHero';
+import { Link } from '@/lib/router-compat';
 import { contactChannels } from '@/data/staticPages';
 
 const AUTOPLAY_MS = 6000;
@@ -130,12 +131,12 @@ export const HeroCarousel = ({ slides, layout = 'desktop' }: Props) => {
           </a>
         ) : (
           <div className={isMobile ? 'flex justify-center' : undefined}>
-          <a
-            href="#"
+          <Link
+            to="/nacini-isporuke"
             className={`btn-outline-white w-fit ${isMobile ? 'text-[10px] py-1.5 px-3' : 'text-[11px]'}`}
           >
             Saznajte više →
-          </a>
+          </Link>
           </div>
         )}
         </div>

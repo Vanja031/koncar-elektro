@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
-import { Link } from '@/lib/router-compat';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useNavigate, useSearchParams } from '@/lib/router-compat';
 import { ArrowRight, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { AuthShell } from '@/components/auth/AuthShell';
 import { AuthField } from '@/components/auth/AuthField';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ROUTES } from '@/lib/catalogUrls';
+import { AuthClientError, useAuth } from '@/context/AuthContext';
 
 const loginBenefits = [
   {
@@ -21,22 +22,61 @@ const loginBenefits = [
 ];
 
 const LoginPage = () => {
+  const { login, forgotPassword, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [remember, setRemember] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const nextPath = searchParams.get('next') || ROUTES.home;
+
+  useEffect(() => {
+    if (isLoggedIn) navigate(nextPath, { replace: true });
+  }, [isLoggedIn, navigate, nextPath]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const email = String(form.get('email') ?? '').trim();
-    const password = String(form.get('password') ?? '').trim();
+    const password = String(form.get('password') ?? '');
 
     if (!email || !password) {
       toast.error('Unesite e-mail i lozinku.');
       return;
     }
 
-    toast.success('Uspešna prijava (demo)', {
-      description: 'Povezivanje sa WordPress nalogom biće aktivirano u narednoj fazi.',
-    });
+    setBusy(true);
+    try {
+      await login({ email, password, remember });
+      toast.success('Uspešna prijava.');
+      navigate(nextPath);
+    } catch (error) {
+      const message = error instanceof AuthClientError ? error.message : 'Prijava nije uspela.';
+      toast.error(message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleForgot = async () => {
+    const email = forgotEmail.trim();
+    if (!email) {
+      toast.error('Unesite e-mail za reset lozinke.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const message = await forgotPassword(email);
+      toast.success(message);
+      setForgotOpen(false);
+    } catch (error) {
+      const message = error instanceof AuthClientError ? error.message : 'Reset lozinke nije uspeo.';
+      toast.error(message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -79,19 +119,31 @@ const LoginPage = () => {
           <button
             type="button"
             className="auth-link-button"
-            onClick={() =>
-              toast.message('Reset lozinke', {
-                description: 'Funkcija će biti dostupna uz WordPress autentifikaciju.',
-              })
-            }
+            onClick={() => setForgotOpen((open) => !open)}
           >
             Zaboravili ste lozinku?
           </button>
         </div>
 
-        <button type="submit" className="auth-submit">
+        {forgotOpen && (
+          <div className="auth-forgot">
+            <AuthField
+              label="E-mail za reset lozinke"
+              name="forgotEmail"
+              type="email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              placeholder="ime@primer.rs"
+            />
+            <button type="button" className="auth-link-button" onClick={handleForgot} disabled={busy}>
+              Pošalji link za reset
+            </button>
+          </div>
+        )}
+
+        <button type="submit" className="auth-submit" disabled={busy}>
           <LogIn className="w-4 h-4" />
-          Prijavi se
+          {busy ? 'Prijava...' : 'Prijavi se'}
         </button>
 
         <p className="auth-page-switch auth-page-switch--form">

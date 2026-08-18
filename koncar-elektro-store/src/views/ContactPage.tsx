@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { InfoPageShell } from '@/components/static/InfoPageShell';
@@ -11,13 +11,16 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ContactPage = () => {
   const { breadcrumbs, title, subtitle, formIntro } = contactContent;
   const formRef = useRef<HTMLFormElement>(null);
+  const [busy, setBusy] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const name = String(data.get('name') ?? '').trim();
     const email = String(data.get('email') ?? '').trim();
+    const phone = String(data.get('phone') ?? '').trim();
     const message = String(data.get('message') ?? '').trim();
+    const website = String(data.get('website') ?? '').trim();
 
     if (!name || !email || !message) {
       toast.error('Popunite obavezna polja', {
@@ -32,10 +35,27 @@ const ContactPage = () => {
       return;
     }
 
-    formRef.current?.reset();
-    toast.success('Poruka je poslata!', {
-      description: 'Javićemo vam se u najkraćem mogućem roku.',
-    });
+    setBusy(true);
+    try {
+      const response = await fetch('/api/contact/', {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, message, website }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as { message?: string };
+      if (!response.ok) {
+        toast.error(payload.message || 'Slanje poruke nije uspelo.');
+        return;
+      }
+      formRef.current?.reset();
+      toast.success('Poruka je poslata!', {
+        description: 'Javićemo vam se u najkraćem mogućem roku.',
+      });
+    } catch {
+      toast.error('Slanje poruke nije uspelo. Pokušajte telefonom ili emailom.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const contactCards = [
@@ -181,12 +201,17 @@ const ContactPage = () => {
                 className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none resize-y min-h-[7rem] flex-1 focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
               />
             </label>
+            <label className="sr-only" aria-hidden="true">
+              Website
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </label>
             <button
               type="submit"
+              disabled={busy}
               className="btn-yellow w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 text-sm mt-auto"
             >
               <Send className="w-4 h-4" />
-              Pošalji poruku
+              {busy ? 'Slanje...' : 'Pošalji poruku'}
             </button>
           </form>
         </div>

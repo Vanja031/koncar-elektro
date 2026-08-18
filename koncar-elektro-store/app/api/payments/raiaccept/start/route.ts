@@ -9,6 +9,7 @@ import { createOrderEntry, createPaymentSession, RaiAcceptError } from '@/lib/pa
 import type { CreateOrderEntryInput } from '@/lib/payments/raiaccept';
 import { SITE_URL } from '@/lib/seo/site';
 import { createOrderId } from '@/lib/order';
+import { getSessionCustomer } from '@/lib/auth/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -111,8 +112,10 @@ export async function POST(request: Request) {
 
   try {
     // 1) Pending WC order via REST (prices filled by WC from product_id).
+    const customer = getSessionCustomer();
     const wcOrder = await createPendingWcOrder({
       ...input,
+      customerId: customer?.id,
       paymentMethod: 'raiaccept-card',
       paymentMethodTitle: 'Kartica (RaiAccept)',
     });
