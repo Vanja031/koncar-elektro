@@ -34,10 +34,10 @@ const AboutPage = () => {
 
   return (
     <InfoPageShell breadcrumbs={breadcrumbs} title={title} subtitle={subtitle}>
-      <div className="max-w-5xl mx-auto space-y-14 md:space-y-20">
+      <div className="space-y-14 md:space-y-20">
 
         {/* Stat kartice */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {highlights.map((item, i) => {
             const { icon: Icon, bg, iconColor } = highlightConfig[i];
             return (
@@ -60,7 +60,7 @@ const AboutPage = () => {
         </div>
 
         {/* Naša priča */}
-        <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+        <section className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
             <p className="text-accent font-display font-bold text-xs uppercase tracking-widest mb-3">Naša priča</p>
             <h2 className="font-display font-bold text-primary text-2xl md:text-3xl uppercase mb-6 leading-tight">
@@ -82,7 +82,7 @@ const AboutPage = () => {
         </section>
 
         {/* Vrednosti */}
-        <section>
+        <section className="max-w-5xl mx-auto">
           <h2 className="section-heading text-xl md:text-2xl mb-6">Vrednosti koje nas vode</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {values.map(({ label, text }, i) => {
@@ -129,7 +129,7 @@ const AboutPage = () => {
         </section>
 
         {/* Šta možete pronaći */}
-        <section>
+        <section className="max-w-5xl mx-auto">
           <h2 className="section-heading text-xl md:text-2xl mb-6">Šta možete pronaći kod nas</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {programs.map(({ label, href }) => (
@@ -149,7 +149,7 @@ const AboutPage = () => {
         </section>
 
         {/* CTA s agent avatarem */}
-        <div className="rounded-2xl bg-primary overflow-hidden">
+        <div className="max-w-5xl mx-auto rounded-2xl bg-primary overflow-hidden">
           <div className="grid md:grid-cols-[1fr_auto] items-end">
             <div className="px-8 py-10 md:px-12 md:py-12">
               <p className="text-accent font-display font-bold text-xs uppercase tracking-widest mb-3">

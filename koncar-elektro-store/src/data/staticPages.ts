@@ -100,8 +100,10 @@ Pored maloprodaje i veleprodaje, posebnu pažnju posvećujemo servisu. Kao ovla�
   service:
     'Končar Elektro je ovlašćeni servis za brendove Makita, Husqvarna i Garden Master. Vršimo garantni i van garantni servis uz originalnu opremu i rezervne delove. Pored navedenih brendova, servisiramo i sve ostale proizvođače električnog i motornog alata. Izdvajamo se kvalitetom izrade, brzinom obrade i više od 30 godina iskustva u struci.',
   authorizedBrands: [
-    'Makita', 'Bosch', 'Raid', 'Garden Master', 'Hyundai', 'Varstroj',
-    'Wilo', 'Verto', 'Rade Končar', 'Aling Conel', 'Metalka Majur',
+    'Ingco', 'Scheppach', 'Hugong', 'Metabo', 'Einhell', 'Makita',
+    'Hyundai', 'Bosch', 'Raider', 'Wilo', 'Dolomite', 'Honda',
+    'Villager', 'REM Power', 'Cedrus', 'DeWalt', 'Milwaukee', 'HiKOKI',
+    'Ferm', 'Varstroj', 'Dedra', 'AGM', 'ESAB', 'Daewoo', 'Loncin',
   ],
   highlights: [
     { title: '30+ godina', desc: 'Iskustva u prodaji i servisu alata' },
@@ -110,14 +112,14 @@ Pored maloprodaje i veleprodaje, posebnu pažnju posvećujemo servisu. Kao ovla�
     { title: 'Stručna podrška', desc: 'Pomoć pri izboru opreme i rešenja' },
   ],
   programs: [
-    { label: 'Električni i akumulatorski alat', href: getTopCategoryUrl('alati') },
-    { label: 'Ručni alat i pribor', href: getTopCategoryUrl('alati') },
-    { label: 'Pneumatski alat i kompresori', href: getTopCategoryUrl('alati') },
-    { label: 'Aparati za zavarivanje', href: getTopCategoryUrl('alati') },
-    { label: 'Agregati i baštenski program', href: getTopCategoryUrl('alati') },
-    { label: 'HTZ oprema', href: getTopCategoryUrl('alati') },
-    { label: 'Elektromaterijal i rasveta', href: getTopCategoryUrl('elektromaterijal') },
-    { label: 'Poljoprivredne mašine', href: getTopCategoryUrl('alati') },
+    { label: 'Električni i akumulatorski alat', href: `${ROUTES.productCategory}/elektricni-alat` },
+    { label: 'Ručni alat i pribor', href: `${ROUTES.productCategory}/rucni-alat` },
+    { label: 'Pneumatski alat i kompresori', href: `${ROUTES.productCategory}/kompresori` },
+    { label: 'Aparati za zavarivanje', href: `${ROUTES.productCategory}/aparati-za-varenje` },
+    { label: 'Agregati i baštenski program', href: `${ROUTES.productCategory}/agregati` },
+    { label: 'HTZ oprema', href: `${ROUTES.productCategory}/htz-oprema` },
+    { label: 'Elektromaterijal i rasveta', href: `${ROUTES.productCategory}/elektromaterijal` },
+    { label: 'Poljoprivredne mašine', href: `${ROUTES.productCategory}/poljoprivredni-program` },
   ],
 };
 
