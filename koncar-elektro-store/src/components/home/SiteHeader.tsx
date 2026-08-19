@@ -94,31 +94,6 @@ export const SiteHeader = () => {
     return () => document.removeEventListener('mousedown', onClick);
   }, [megaOpen]);
 
-  useEffect(() => {
-    if (!megaOpen) return;
-
-    const onMove = (e: MouseEvent) => {
-      const zone = megaZoneRef.current;
-      if (!zone) return;
-
-      const navRow = zone.querySelector('[data-mega-nav]') as HTMLElement | null;
-      const menuBox = zone.querySelector('[data-mega-menu]') as HTMLElement | null;
-      if (!navRow || !menuBox) return;
-
-      const { clientX: x, clientY: y } = e;
-      const hit = (el: HTMLElement) => {
-        const r = el.getBoundingClientRect();
-        return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-      };
-
-      if (!hit(navRow) && !hit(menuBox)) {
-        closeMega();
-      }
-    };
-
-    document.addEventListener('mousemove', onMove);
-    return () => document.removeEventListener('mousemove', onMove);
-  }, [megaOpen]);
 
   return (
     <>
@@ -271,34 +246,48 @@ export const SiteHeader = () => {
 
                 if (item.href.startsWith('/')) {
                   return (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      onMouseEnter={() => (item.megaMode ? openMega(item.megaMode) : closeMega())}
-                      onFocus={() => (item.megaMode ? openMega(item.megaMode) : closeMega())}
-                      className={className}
-                    >
-                      {item.label}
+                    <div key={item.label} className="flex items-center">
+                      <Link
+                        to={item.href}
+                        onClick={() => !item.megaMode && closeMega()}
+                        className={className}
+                      >
+                        {item.label}
+                      </Link>
                       {item.megaMode && (
-                        <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${isActive ? 'rotate-180' : ''}`} />
+                        <button
+                          type="button"
+                          onClick={() => megaOpen && megaMode === item.megaMode ? closeMega() : openMega(item.megaMode)}
+                          className={`h-11 px-1 flex items-center transition-colors ${isActive ? 'text-primary' : 'text-primary/60 hover:text-primary'}`}
+                          aria-label={`Otvori meni za ${item.label}`}
+                        >
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isActive ? 'rotate-180' : ''}`} />
+                        </button>
                       )}
-                    </Link>
+                    </div>
                   );
                 }
 
                 return (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    onMouseEnter={() => (item.megaMode ? openMega(item.megaMode) : closeMega())}
-                    onFocus={() => (item.megaMode ? openMega(item.megaMode) : closeMega())}
-                    className={className}
-                  >
-                    {item.label}
+                  <div key={item.label} className="flex items-center">
+                    <a
+                      href={item.href}
+                      onClick={() => !item.megaMode && closeMega()}
+                      className={className}
+                    >
+                      {item.label}
+                    </a>
                     {item.megaMode && (
-                      <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${isActive ? 'rotate-180' : ''}`} />
+                      <button
+                        type="button"
+                        onClick={() => megaOpen && megaMode === item.megaMode ? closeMega() : openMega(item.megaMode)}
+                        className={`h-11 px-1 flex items-center transition-colors ${isActive ? 'text-primary' : 'text-primary/60 hover:text-primary'}`}
+                        aria-label={`Otvori meni za ${item.label}`}
+                      >
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isActive ? 'rotate-180' : ''}`} />
+                      </button>
                     )}
-                  </a>
+                  </div>
                 );
               })}
             </div>

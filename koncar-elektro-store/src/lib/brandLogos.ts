@@ -135,16 +135,31 @@ export function getBrandLogoSrc(brand: string | null | undefined): string | null
 }
 
 export const featuredBrandSlugs = [
-  'bosch',
-  'makita',
-  'metabo',
-  'villager',
-  'einhell',
-  'hyundai',
-  'scheppach',
   'ingco',
+  'scheppach',
+  'hugong',
+  'metabo',
+  'einhell',
+  'makita',
+  'hyundai',
+  'bosch',
+  'raider',
+  'wilo',
+  'dolomite',
+  'honda',
+  'villager',
   'rem-power',
   'cedrus',
+  'dewalt',
+  'milwaukee',
+  'hikoki',
+  'ferm',
+  'varstroj',
+  'dedra',
+  'agm',
+  'esab',
+  'daewoo',
+  'loncin',
 ] as const;
 
 export function getBrandLogoBySlug(slug: string): string | null {

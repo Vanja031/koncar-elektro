@@ -9,6 +9,19 @@ export function minorUnitsToMajor(price: WcStorePrice): number {
   return raw / 10 ** price.currency_minor_unit;
 }
 
+export function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&#8216;|&#8217;/g, "'")
+    .replace(/&#8220;|&#8221;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
+}
+
 function normalizeAttrKey(value: string): string {
   return value
     .normalize('NFD')
@@ -158,7 +171,7 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
     slug: product.slug,
     permalink: product.permalink,
     brand: extractBrand(product),
-    name: product.name,
+    name: decodeHtmlEntities(product.name),
     category: product.categories?.[product.categories.length - 1]?.name ?? 'Proizvodi',
     categorySlug: extractCategorySlugFromProduct(product),
     description:

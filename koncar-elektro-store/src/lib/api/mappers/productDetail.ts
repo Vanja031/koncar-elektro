@@ -8,6 +8,7 @@ import {
   getAttributeValue,
   mapStoreProductToCatalog,
   mapStoreAttributesToSpecs,
+  decodeHtmlEntities,
 } from '@/lib/api/mappers/product';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
 
@@ -47,7 +48,7 @@ function buildBreadcrumbs(product: WcStoreProduct): BreadcrumbItem[] {
     }
   }
 
-  items.push({ label: product.name });
+  items.push({ label: decodeHtmlEntities(product.name) });
   return items;
 }
 

@@ -51,16 +51,31 @@ export const popularCategories = [
 ];
 
 export const featuredBrands = [
-  { name: 'Bosch', slug: 'bosch' },
-  { name: 'Makita', slug: 'makita' },
-  { name: 'Metabo', slug: 'metabo' },
-  { name: 'Villager', slug: 'villager' },
-  { name: 'Einhell', slug: 'einhell' },
-  { name: 'Hyundai', slug: 'hyundai' },
-  { name: 'Scheppach', slug: 'scheppach' },
   { name: 'Ingco', slug: 'ingco' },
+  { name: 'Scheppach', slug: 'scheppach' },
+  { name: 'Hugong', slug: 'hugong' },
+  { name: 'Metabo', slug: 'metabo' },
+  { name: 'Einhell', slug: 'einhell' },
+  { name: 'Makita', slug: 'makita' },
+  { name: 'Hyundai', slug: 'hyundai' },
+  { name: 'Bosch', slug: 'bosch' },
+  { name: 'Raider', slug: 'raider' },
+  { name: 'Wilo', slug: 'wilo' },
+  { name: 'Dolomite', slug: 'dolomite' },
+  { name: 'Honda', slug: 'honda' },
+  { name: 'Villager', slug: 'villager' },
   { name: 'REM Power', slug: 'rem-power' },
   { name: 'Cedrus', slug: 'cedrus' },
+  { name: 'DeWalt', slug: 'dewalt' },
+  { name: 'Milwaukee', slug: 'milwaukee' },
+  { name: 'HiKOKI', slug: 'hikoki' },
+  { name: 'Ferm', slug: 'ferm' },
+  { name: 'Varstroj', slug: 'varstroj' },
+  { name: 'Dedra', slug: 'dedra' },
+  { name: 'AGM', slug: 'agm' },
+  { name: 'ESAB', slug: 'esab' },
+  { name: 'Daewoo', slug: 'daewoo' },
+  { name: 'Loncin', slug: 'loncin' },
 ] as const;
 
 export const faqItems = [
