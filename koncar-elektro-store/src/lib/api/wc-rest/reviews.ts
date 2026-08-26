@@ -1,5 +1,6 @@
 import type { ProductReview } from '@/data/productDetail';
 import { wcV3Fetch } from '@/lib/api/wc-rest/client';
+import { REVALIDATE_PRODUCT } from '@/lib/isr/revalidate';
 
 export type WcProductReview = {
   id: number;
@@ -43,17 +44,21 @@ export function mapWcReview(review: WcProductReview): ProductReview {
 }
 
 export async function getProductReviews(productId: number): Promise<ProductReview[]> {
-  const reviews = await listProductReviews(productId, 'approved');
+  // Must match product page ISR (`export const revalidate`) — never use no-store here.
+  const reviews = await listProductReviews(productId, 'approved', {
+    next: { revalidate: REVALIDATE_PRODUCT },
+  });
   return reviews.map(mapWcReview);
 }
 
 async function listProductReviews(
   productId: number,
   status: 'approved' | 'hold' | 'all',
+  init: RequestInit = {},
 ): Promise<WcProductReview[]> {
   const reviews = await wcV3Fetch<WcProductReview[]>(
     `/products/reviews?product=${productId}&status=${status}&per_page=100`,
-    { method: 'GET' },
+    { method: 'GET', ...init },
   );
   return Array.isArray(reviews) ? reviews : [];
 }

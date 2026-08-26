@@ -65,6 +65,12 @@ function wrapFetchError(error: unknown): WcRestError {
 }
 
 async function fetchWp(url: string, init: RequestInit): Promise<Response> {
+  // Default to no-store for mutations / API routes. Callers on ISR pages must
+  // pass `next: { revalidate }` (or an explicit cache) — otherwise Next.js throws
+  // "Page changed from static to dynamic at runtime" on product PDPs.
+  const next = (init as RequestInit & { next?: unknown }).next;
+  const hasExplicitCachePolicy = init.cache !== undefined || next !== undefined;
+
   const request: RequestInit = {
     ...init,
     headers: {
@@ -72,7 +78,7 @@ async function fetchWp(url: string, init: RequestInit): Promise<Response> {
       ...(init.method && init.method !== 'GET' ? { 'Content-Type': 'application/json' } : {}),
       ...init.headers,
     },
-    cache: 'no-store',
+    ...(hasExplicitCachePolicy ? {} : { cache: 'no-store' as RequestCache }),
   };
   try {
     return await fetch(url, request);
