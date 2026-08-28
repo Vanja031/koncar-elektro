@@ -1,6 +1,7 @@
 import type { ProductReview } from '@/data/productDetail';
 import { wcV3Fetch } from '@/lib/api/wc-rest/client';
 import { REVALIDATE_PRODUCT } from '@/lib/isr/revalidate';
+import { stripHtmlToText } from '@/lib/htmlEntities';
 
 export type WcProductReview = {
   id: number;
@@ -22,10 +23,6 @@ export type CreateProductReviewInput = {
   rating: number;
 };
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
 function formatSrDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
@@ -38,7 +35,7 @@ export function mapWcReview(review: WcProductReview): ProductReview {
     author: review.reviewer || 'Kupac',
     rating: Number(review.rating) || 0,
     date: formatSrDate(review.date_created),
-    text: stripHtml(review.review),
+    text: stripHtmlToText(review.review),
     verified: Boolean(review.verified),
   };
 }

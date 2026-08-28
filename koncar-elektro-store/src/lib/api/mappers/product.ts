@@ -1,25 +1,15 @@
 import type { KoncarCatalogProduct } from '@/data/koncarProducts';
 import { BRAND_ATTRIBUTE_SLUG } from '@/lib/listingFilters';
 import type { WcStoreAttribute, WcStorePrice, WcStoreProduct } from '@/lib/api/types/wc-store';
+import { decodeHtmlEntities, stripHtmlToText } from '@/lib/htmlEntities';
+
+export { decodeHtmlEntities } from '@/lib/htmlEntities';
 
 /** Store API prices are in minor units (e.g. 34000 + minor_unit 2 → 340.00 RSD). */
 export function minorUnitsToMajor(price: WcStorePrice): number {
   const raw = Number(price.price);
   if (!Number.isFinite(raw)) return 0;
   return raw / 10 ** price.currency_minor_unit;
-}
-
-export function decodeHtmlEntities(str: string): string {
-  return str
-    .replace(/&#8211;/g, '–')
-    .replace(/&#8212;/g, '—')
-    .replace(/&#8216;|&#8217;/g, "'")
-    .replace(/&#8220;|&#8221;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
 }
 
 function normalizeAttrKey(value: string): string {
@@ -41,7 +31,7 @@ export function getAttributeValue(product: WcStoreProduct, ...names: string[]): 
     const byTaxonomy = wanted.includes(normalizeAttrKey(attr.taxonomy ?? ''));
     if (!byName && !byTaxonomy) continue;
     const term = attr.terms?.[0]?.name;
-    if (term) return term;
+    if (term) return decodeHtmlEntities(term);
   }
   return undefined;
 }
@@ -149,7 +139,9 @@ export function extractSpecsFromAttributes(product: WcStoreProduct): string[] {
       const tax = normalizeAttrKey(a.taxonomy ?? '');
       return !skip.has(key) && !skip.has(tax);
     })
-    .flatMap((a) => a.terms.map((t) => `${a.name}: ${t.name}`))
+    .flatMap((a) =>
+      a.terms.map((t) => `${decodeHtmlEntities(a.name)}: ${decodeHtmlEntities(t.name)}`),
+    )
     .slice(0, 6);
 }
 
@@ -172,11 +164,13 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
     permalink: product.permalink,
     brand: extractBrand(product),
     name: decodeHtmlEntities(product.name),
-    category: product.categories?.[product.categories.length - 1]?.name ?? 'Proizvodi',
+    category: decodeHtmlEntities(
+      product.categories?.[product.categories.length - 1]?.name ?? 'Proizvodi',
+    ),
     categorySlug: extractCategorySlugFromProduct(product),
     description:
-      product.short_description?.replace(/<[^>]+>/g, '').trim() ||
-      product.description.replace(/<[^>]+>/g, ' ').trim().slice(0, 200),
+      stripHtmlToText(product.short_description ?? '') ||
+      stripHtmlToText(product.description).slice(0, 200),
     price: Math.round(price),
     ...(onSale ? { oldPrice: Math.round(regular) } : {}),
     rating: Math.round(Number(product.average_rating) || 0),
@@ -185,7 +179,7 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
     sku: product.sku || String(product.id),
     inStock: product.is_in_stock ?? product.stock_availability?.class !== 'out-of-stock',
     specs: extractSpecsFromAttributes(product),
-    subtitle: product.short_description?.replace(/<[^>]+>/g, '').trim().slice(0, 80) || undefined,
+    subtitle: stripHtmlToText(product.short_description ?? '').slice(0, 80) || undefined,
     ...(weightKg && Number.isFinite(weightKg) ? { weightKg } : {}),
   };
 }
@@ -193,5 +187,8 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
 export function mapStoreAttributesToSpecs(attrs: WcStoreAttribute[]): { label: string; value: string }[] {
   return attrs
     .filter((a) => a.terms.length > 0)
-    .map((a) => ({ label: a.name, value: a.terms.map((t) => t.name).join(', ') }));
+    .map((a) => ({
+      label: decodeHtmlEntities(a.name),
+      value: a.terms.map((t) => decodeHtmlEntities(t.name)).join(', '),
+    }));
 }

@@ -1,6 +1,7 @@
 import { companyInfo, socialProfiles } from '@/data/staticPages';
 import type { BreadcrumbItem } from '@/data/categoryPages';
 import type { ProductDetail } from '@/data/productDetail';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 import { absoluteUrl, CANONICAL_SITE_URL, SITE_NAME } from '@/lib/seo/site';
 
 /** JSON-LD for a schema.org node. Kept loose (Record) — schema.org has no official TS types. */
@@ -64,7 +65,7 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]): JsonLd {
     itemListElement: items.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: item.label,
+      name: decodeHtmlEntities(item.label),
       ...(item.href ? { item: absoluteUrl(item.href) } : {}),
     })),
   };

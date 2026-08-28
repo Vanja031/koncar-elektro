@@ -4,7 +4,13 @@ import type { WcStoreProduct, WcStoreProductsQuery } from '@/lib/api/types/wc-st
 import type { PaginatedResult } from '@/lib/api/client';
 import { getAttributeValue } from '@/lib/api/mappers/product';
 import { BRAND_ATTRIBUTE_SLUG } from '@/lib/listingFilters';
-import { scoreProductRelevance, tokenizeQuery } from '@/lib/search/relevance';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
+import {
+  countMatchingTokens,
+  productMatchesAllTokens,
+  scoreProductRelevance,
+  tokenizeQuery,
+} from '@/lib/search/relevance';
 
 const productsSearchParams = (query: WcStoreProductsQuery = {}) => ({
   page: query.page,
@@ -62,9 +68,13 @@ async function fetchAllMatchesForToken(
   return all;
 }
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function toRelevanceSource(product: WcStoreProduct) {
   return {
-    name: product.name,
+    name: decodeHtmlEntities(product.name),
     sku: product.sku,
     brand: getAttributeValue(
       product,
@@ -76,25 +86,29 @@ function toRelevanceSource(product: WcStoreProduct) {
       'pa_brend',
       'pa_proizvodjac',
     ),
-    categories: product.categories?.map((c) => c.name),
+    categories: product.categories?.map((c) => decodeHtmlEntities(c.name)),
+    shortDescription: stripHtml(decodeHtmlEntities(product.short_description ?? '')),
+    description: stripHtml(decodeHtmlEntities(product.description ?? '')),
   };
 }
 
 /**
- * WooCommerce Store API's `search` matches multi-word queries as something
- * close to a literal phrase, so "kruna bihui" finds nothing even though
- * "kruna" and "bihui" each match plenty of products individually. This
- * fetches per-word candidate sets and intersects them (AND across words,
- * any order, matched independently on title/content/SKU/etc.), then ranks
- * the result by a relevance heuristic before paginating locally.
+ * WooCommerce Store API's `search` treats multi-word queries as a literal
+ * phrase ("cirkular ingco" → 1 hit) and caps each single-word fetch by
+ * popularity — intersecting those pages drops valid matches (e.g. INGCO
+ * circular saws that aren't in the top 300 "ingco" hits).
  *
- * Single-word (or empty) queries pass straight through to the normal
- * paginated endpoint — no behavior change there.
+ * Strategy: union candidates from the full phrase + each token, then require
+ * every token to match locally in name/SKU/brand/category/description before
+ * ranking and paginating in-memory.
+ *
+ * Single-word queries pass straight through to the normal paginated endpoint.
  */
 export async function searchStoreProductsMultiWord(
   query: WcStoreProductsQuery = {},
 ): Promise<PaginatedResult<WcStoreProduct>> {
-  const tokens = tokenizeQuery(query.search ?? '');
+  const rawSearch = query.search?.trim() ?? '';
+  const tokens = tokenizeQuery(rawSearch);
   const page = query.page ?? 1;
   const perPage = query.per_page ?? 20;
 
@@ -103,49 +117,43 @@ export async function searchStoreProductsMultiWord(
   }
 
   const baseQuery: WcStoreProductsQuery = { ...query, search: undefined, page: undefined, per_page: undefined };
+  const searchTerms = [...new Set([rawSearch, ...tokens])];
   const tokenResultSets = await Promise.all(
-    tokens.map((token) => fetchAllMatchesForToken(token, baseQuery)),
+    searchTerms.map((term) => fetchAllMatchesForToken(term, baseQuery)),
   );
 
-  const [primarySet, ...restSets] = tokenResultSets;
-  const byId = new Map(primarySet.map((p) => [p.id, p]));
-  for (const set of restSets) {
-    const ids = new Set(set.map((p) => p.id));
-    for (const id of [...byId.keys()]) {
-      if (!ids.has(id)) byId.delete(id);
+  const [primarySet] = tokenResultSets;
+  const byId = new Map<number, WcStoreProduct>();
+  for (const set of tokenResultSets) {
+    for (const product of set) {
+      if (!byId.has(product.id)) byId.set(product.id, product);
     }
   }
 
-  let matched = [...byId.values()];
+  let matched = [...byId.values()].filter((product) =>
+    productMatchesAllTokens(toRelevanceSource(product), tokens),
+  );
 
-  // Strict AND across every word found nothing — relax to "matched the most
-  // words" so a slightly-off multi-word query still surfaces something useful.
   if (matched.length === 0) {
-    const counts = new Map<number, { product: WcStoreProduct; count: number }>();
-    for (const set of tokenResultSets) {
-      for (const p of set) {
-        const entry = counts.get(p.id);
-        if (entry) entry.count += 1;
-        else counts.set(p.id, { product: p, count: 1 });
-      }
-    }
-    const maxCount = Math.max(0, ...[...counts.values()].map((v) => v.count));
+    const scored = [...byId.values()]
+      .map((product) => ({
+        product,
+        matchCount: countMatchingTokens(toRelevanceSource(product), tokens),
+      }))
+      .filter((entry) => entry.matchCount > 0);
+    const maxCount = Math.max(0, ...scored.map((entry) => entry.matchCount));
     if (maxCount > 0) {
-      matched = [...counts.values()].filter((v) => v.count === maxCount).map((v) => v.product);
+      matched = scored.filter((entry) => entry.matchCount === maxCount).map((entry) => entry.product);
     }
   }
 
   const explicitSort = query.orderby && query.orderby !== 'popularity';
   if (explicitSort) {
-    // Preserve WC's own ordering (already correct for price/date/title) by
-    // filtering the first token's sorted list down to the matched id set.
     const matchedIds = new Set(matched.map((p) => p.id));
     const ordered = primarySet.filter((p) => matchedIds.has(p.id));
     const orderedIds = new Set(ordered.map((p) => p.id));
     matched = [...ordered, ...matched.filter((p) => !orderedIds.has(p.id))];
   } else {
-    // Tiebreak equal relevance scores using each product's rank in the
-    // (popularity-sorted, by default) first-token result set.
     const popularityRank = new Map(primarySet.map((p, idx) => [p.id, idx]));
     matched = matched
       .map((product) => ({

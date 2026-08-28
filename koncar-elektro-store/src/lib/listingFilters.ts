@@ -1,6 +1,7 @@
 import { wcAttributes } from '@/data/wcAttributes';
 import type { WcStoreAttributeCount } from '@/lib/api/wc-store/products';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 
 /** Prefer staging `pa_brend`; fall back to live `pa_proizvodjac`. */
 export const BRAND_ATTRIBUTE_SLUG = wcAttributes.some((a) => a.slug === 'pa_brend')
@@ -98,7 +99,7 @@ function getTermIdIndex(): Map<number, TermIndexEntry> {
       map.set(term.id, {
         attributeSlug: attr.slug,
         termSlug: term.slug,
-        label: term.name,
+        label: decodeHtmlEntities(term.name),
       });
     }
   }
@@ -149,7 +150,9 @@ function sortAttributeOptions(options: AttributeFilterOption[]): AttributeFilter
 
 export function getAttributeFilterOptions(attributeSlug: string): AttributeFilterOption[] {
   const attr = wcAttributes.find((a) => a.slug === attributeSlug);
-  return sortAttributeOptions(attr?.terms.map((t) => ({ label: t.name, slug: t.slug })) ?? []);
+  return sortAttributeOptions(
+    attr?.terms.map((t) => ({ label: decodeHtmlEntities(t.name), slug: t.slug })) ?? [],
+  );
 }
 
 export function getBrandFilterOptions(): AttributeFilterOption[] {
@@ -175,7 +178,7 @@ export function getAttributeLabel(attributeSlug: string): string {
   if (ATTRIBUTE_LABEL_OVERRIDES[attributeSlug]) {
     return ATTRIBUTE_LABEL_OVERRIDES[attributeSlug];
   }
-  return wcAttributes.find((a) => a.slug === attributeSlug)?.name ?? attributeSlug;
+  return decodeHtmlEntities(wcAttributes.find((a) => a.slug === attributeSlug)?.name ?? attributeSlug);
 }
 
 /** Collect facets from a product sample (fallback). */
@@ -403,9 +406,11 @@ function resolveAttributeGroupLabel(
 ): string {
   const fromGroup = attributeGroups?.find((g) => g.slug === attributeSlug)?.label;
   if (fromGroup) return fromGroup;
-  return ATTRIBUTE_LABEL_OVERRIDES[attributeSlug]
-    ?? wcAttributes.find((a) => a.slug === attributeSlug)?.name
-    ?? attributeSlug;
+  return decodeHtmlEntities(
+    ATTRIBUTE_LABEL_OVERRIDES[attributeSlug]
+      ?? wcAttributes.find((a) => a.slug === attributeSlug)?.name
+      ?? attributeSlug,
+  );
 }
 
 /** Human-readable chips for the active listing filters (for badge UI). */

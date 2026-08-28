@@ -1,11 +1,12 @@
 import { fetchJson } from '@/lib/api/client';
 import { wcStoreApiBase } from '@/lib/api/config';
 import type { WcStoreCategoriesQuery, WcStoreCategory } from '@/lib/api/types/wc-store';
+import { decodeWcCategory } from '@/lib/htmlEntities';
 
 export async function getStoreCategories(
   query: WcStoreCategoriesQuery = {},
 ): Promise<WcStoreCategory[]> {
-  return fetchJson<WcStoreCategory[]>(wcStoreApiBase, '/products/categories', {
+  const categories = await fetchJson<WcStoreCategory[]>(wcStoreApiBase, '/products/categories', {
     searchParams: {
       page: query.page,
       per_page: query.per_page ?? 100,
@@ -14,6 +15,7 @@ export async function getStoreCategories(
       slug: query.slug,
     },
   });
+  return categories.map(decodeWcCategory);
 }
 
 export async function getStoreCategoryBySlug(slug: string): Promise<WcStoreCategory | null> {
@@ -48,5 +50,5 @@ export async function fetchAllStoreCategories(): Promise<WcStoreCategory[]> {
     page += 1;
   }
 
-  return all;
+  return all.map(decodeWcCategory);
 }

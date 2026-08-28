@@ -3,6 +3,7 @@ import type { SubcategoryItem } from '@/data/categoryPages';
 import { alatiSubcategories } from '@/data/categoryPages';
 import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
 import { getProductCategoryUrl, getWcCategoryListingUrl } from '@/lib/catalogUrls';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 import {
   findWcParentByInternalSlug,
   getLiveParentSubcategoryChips,
@@ -22,7 +23,7 @@ export function useCategoryPageLive(slug: string) {
         const wc = findWcParentByInternalSlug(item.slug, allCategories);
         return {
           slug: item.slug,
-          name: wc?.name ?? item.name,
+          name: decodeHtmlEntities(wc?.name ?? item.name),
           image: '',
           productCount: wc?.count ?? 0,
           wcSlug: wc?.slug,
@@ -38,7 +39,7 @@ export function useCategoryPageLive(slug: string) {
       if (fromWc.length) {
         return fromWc.map((sub) => ({
           slug: sub.slug,
-          name: sub.label,
+          name: decodeHtmlEntities(sub.label),
           image: sub.image ?? '',
           productCount: sub.count,
           wcSlug: sub.slug,
@@ -50,7 +51,7 @@ export function useCategoryPageLive(slug: string) {
       if (!menu) return [];
       return menu.subcategories.map((sub) => ({
         slug: sub.slug ?? slugify(sub.label),
-        name: sub.label,
+        name: decodeHtmlEntities(sub.label),
         image: sub.image ?? '',
         productCount: sub.count ?? 0,
         wcSlug: sub.slug,

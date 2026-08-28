@@ -1,5 +1,6 @@
 /** Mock proizvodi preuzeti sa koncarelektro.rs — 127 artikala iz glavnih i podkategorija */
 import type { Product } from '@/data/homepage';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 
 export type KoncarCatalogProduct = Product & {
   categorySlug: string;
@@ -11,7 +12,7 @@ export type KoncarCatalogProduct = Product & {
   weightKg?: number;
 };
 
-export const koncarProducts: KoncarCatalogProduct[] = [
+const rawKoncarProducts: KoncarCatalogProduct[] = [
   { id: 1, brand: "INGCO", name: "Akumulatorska ugaona brusilica CAGLI27153E 115mm 20V SOLO SUPER INGCO", category: "Akumulatorski alat", categorySlug: "ponuda", description: "Akumulatorska ugaona brusilica CAGLI27153E 115mm 20V SOLO SUPER INGCO", price: 5690, oldPrice: 6003, rating: 5, reviews: 10, image: "https://koncarelektro.rs/wp-content/uploads/2026/06/CAGLI27153E-1.jpg", sku: "34102", inStock: true, specs: ["20V", "115 mm"] },
   { id: 2, brand: "INGCO", name: "List testere za drvo TSB2103 40 zuba 210mm SUPER INGCO", category: "Ručni alat", categorySlug: "ponuda", description: "List testere za drvo TSB2103 40 zuba 210mm SUPER INGCO", price: 1150, oldPrice: 1213, rating: 5, reviews: 17, image: "https://koncarelektro.rs/wp-content/uploads/2026/06/TSB2103-1.jpg", sku: "34097", inStock: true, specs: ["210 mm"] },
   { id: 3, brand: "INGCO", name: "Akumulatorska vibraciona šlajferica CPSLI2024 Solo SUPER INGCO", category: "Akumulatorske šlajferice", categorySlug: "ponuda", description: "Akumulatorska vibraciona šlajferica CPSLI2024 Solo SUPER INGCO", price: 3990, oldPrice: 4209, rating: 5, reviews: 24, image: "https://koncarelektro.rs/wp-content/uploads/2026/06/CPSLI2024-1.jpg", sku: "34092", inStock: true, specs: ["Akumulatorske"] },
@@ -140,6 +141,13 @@ export const koncarProducts: KoncarCatalogProduct[] = [
   { id: 126, brand: "Solarna", name: "Solarna LED lampa sa PIR senzorom LRFS3164", category: "LED reflektori", categorySlug: "rasveta/led-reflektori", description: "Solarna LED lampa sa PIR senzorom LRFS3164", price: 1550, rating: 5, reviews: 30, image: "https://koncarelektro.rs/wp-content/uploads/2022/04/LRFS3164.png", sku: "", inStock: true, specs: ["LED"] },
   { id: 127, brand: "INGCO", name: "Digitalni multimer DM310002 1000V SUPER INGCO", category: "Elektromaterijal i oprema", categorySlug: "elektromaterijal-i-oprema/merni-instrumenti", description: "Digitalni multimer DM310002 1000V SUPER INGCO", price: 3400, rating: 5, reviews: 37, image: "https://koncarelektro.rs/wp-content/uploads/2025/09/DM310002-1.jpg", sku: "31054", inStock: true, specs: ["1000V"] },
 ];
+
+export const koncarProducts: KoncarCatalogProduct[] = rawKoncarProducts.map((p) => ({
+  ...p,
+  name: decodeHtmlEntities(p.name),
+  description: decodeHtmlEntities(p.description),
+  category: decodeHtmlEntities(p.category),
+}));
 
 export const getProductsByCategorySlug = (slug: string): KoncarCatalogProduct[] =>
   koncarProducts.filter(

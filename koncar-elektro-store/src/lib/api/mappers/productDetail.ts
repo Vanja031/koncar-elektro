@@ -11,10 +11,7 @@ import {
   decodeHtmlEntities,
 } from '@/lib/api/mappers/product';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
+import { stripHtmlToText } from '@/lib/htmlEntities';
 
 /** Sanitized rich description — keeps headings/paragraphs/lists, strips scripts/styles/attrs we don't need. */
 function sanitizeDescriptionHtml(html: string): string | undefined {
@@ -42,7 +39,7 @@ function buildBreadcrumbs(product: WcStoreProduct): BreadcrumbItem[] {
     const match = cat.link?.match(/\/product-category\/(.+)\/?$/);
     if (match) {
       items.push({
-        label: cat.name,
+        label: decodeHtmlEntities(cat.name),
         href: `${ROUTES.productCategory}/${match[1].replace(/\/$/, '')}`,
       });
     }
@@ -99,7 +96,7 @@ export function mapStoreProductToDetail(product: WcStoreProduct): ProductDetail 
     ...catalog,
     slug: product.slug,
     gallery: gallery.slice(0, 8),
-    longDescription: stripHtml(longHtml) || catalog.description,
+    longDescription: stripHtmlToText(longHtml) || catalog.description,
     longDescriptionHtml: sanitizeDescriptionHtml(product.description || ''),
     features: features.length > 0 ? features : [catalog.description],
     specifications: [...buildSpecifications(catalog), ...attrSpecs],

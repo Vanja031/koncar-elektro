@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { lookupBaseline } from '@/lib/seo/baseline';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 import {
   categoryDescription,
   categoryTitle,
@@ -30,12 +31,13 @@ export function buildPageMetadata({
   robots,
 }: BuildOptions): Metadata {
   const canonical = absoluteUrl(pathname);
-  const desc = description?.trim();
-  const ogT = ogTitle?.trim() || title;
-  const ogD = ogDescription?.trim() || desc;
+  const decodedTitle = decodeHtmlEntities(title);
+  const desc = description ? decodeHtmlEntities(description).trim() : undefined;
+  const ogT = decodeHtmlEntities((ogTitle?.trim() || decodedTitle));
+  const ogD = ogDescription ? decodeHtmlEntities(ogDescription).trim() : desc;
 
   const metadata: Metadata = {
-    title,
+    title: decodedTitle,
     alternates: { canonical },
     openGraph: {
       title: ogT,

@@ -25,7 +25,66 @@ export type RelevanceSource = {
   sku?: string;
   brand?: string;
   categories?: string[];
+  shortDescription?: string;
+  description?: string;
 };
+
+const MIN_PREFIX_LEN = 4;
+
+function haystackWords(haystack: string): string[] {
+  return haystack.split(/[^a-z0-9]+/).filter(Boolean);
+}
+
+/** Flatten searchable product fields into one normalized string. */
+export function buildProductSearchHaystack(source: RelevanceSource): string {
+  return normalizeSearchText(
+    [
+      source.name,
+      source.sku,
+      source.brand,
+      ...(source.categories ?? []),
+      source.shortDescription,
+      source.description,
+    ]
+      .filter(Boolean)
+      .join(' '),
+  );
+}
+
+/**
+ * Whether a token appears in the haystack — substring or shared word prefix
+ * (e.g. "cirkular" matches "cirkularna").
+ */
+export function tokenMatchesHaystack(token: string, haystack: string, words?: string[]): boolean {
+  if (!token) return true;
+  if (haystack.includes(token)) return true;
+
+  if (token.length < MIN_PREFIX_LEN) return false;
+
+  const nameWords = words ?? haystackWords(haystack);
+  return nameWords.some(
+    (word) =>
+      word.startsWith(token) || (word.length >= MIN_PREFIX_LEN && token.startsWith(word)),
+  );
+}
+
+/** All query tokens must match somewhere in the product's searchable fields. */
+export function productMatchesAllTokens(source: RelevanceSource, tokens: string[]): boolean {
+  if (tokens.length === 0) return true;
+
+  const haystack = buildProductSearchHaystack(source);
+  const words = haystackWords(haystack);
+  return tokens.every((token) => tokenMatchesHaystack(token, haystack, words));
+}
+
+/** Count how many tokens match (for relaxed fallback ranking). */
+export function countMatchingTokens(source: RelevanceSource, tokens: string[]): number {
+  if (tokens.length === 0) return 0;
+
+  const haystack = buildProductSearchHaystack(source);
+  const words = haystackWords(haystack);
+  return tokens.filter((token) => tokenMatchesHaystack(token, haystack, words)).length;
+}
 
 /**
  * Heuristic relevance score for a product against a set of query tokens.

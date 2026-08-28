@@ -3,6 +3,7 @@ import imgRasveta from '@/assets/rasveta.webp';
 import imgSolarne from '@/assets/solarne.webp';
 import type { WcStoreCategory } from '@/lib/api/types/wc-store';
 import { getTopCategoryUrl } from '@/lib/catalogUrls';
+import { decodeHtmlEntities, stripHtmlToText } from '@/lib/htmlEntities';
 import { wcToProgramSlug } from '@/lib/wcSlugs';
 
 export type HomepageCategoryBanner = {
@@ -72,16 +73,6 @@ export const fallbackHomepageCategoryBanners: HomepageCategoryBanner[] =
     ...BANNER_FALLBACKS[slug],
   }));
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&quot;/gi, '"')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 function categoryHref(slug: string): string {
   const program = wcToProgramSlug(slug);
   if (program) return getTopCategoryUrl(program);
@@ -108,8 +99,8 @@ export function mapCategoryToHomepageBanner(
   index: number,
 ): HomepageCategoryBanner {
   const fallback = BANNER_FALLBACKS[slug];
-  const descFromWp = category?.description ? stripHtml(category.description) : '';
-  const titleFromWp = category?.name?.trim() ?? '';
+  const descFromWp = category?.description ? stripHtmlToText(category.description) : '';
+  const titleFromWp = decodeHtmlEntities(category?.name?.trim() ?? '');
   const imageFromWp = category?.image?.src?.trim() ?? '';
 
   return {

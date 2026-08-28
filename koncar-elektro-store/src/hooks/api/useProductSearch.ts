@@ -13,7 +13,7 @@ export function useProductSearch(query: string, enabled = true) {
     queryFn: async () => {
       const result = await searchStoreProductsMultiWord({
         search: debounced,
-        per_page: 8,
+        per_page: 10,
         orderby: 'popularity',
       });
       return result.data.map(mapStoreProductToCatalog);

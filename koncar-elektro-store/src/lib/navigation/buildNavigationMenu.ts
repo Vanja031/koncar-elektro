@@ -7,6 +7,7 @@ import {
   OTHER_PROGRAM_SLUGS,
   getWcCategoryListingUrl,
 } from '@/lib/catalogUrls';
+import { decodeHtmlEntities } from '@/lib/htmlEntities';
 import { programToWcSlug, toWcParentSlug, wcParentSlugCandidates } from '@/lib/wcSlugs';
 
 export function resolveWcParentSlug(def: NavigationMenuDef): string {
@@ -44,7 +45,7 @@ function mapWcChild(
 ): MegaMenuSubcategory {
   const parent = allCategories.find((c) => c.id === child.parent);
   return {
-    label: child.name,
+    label: decodeHtmlEntities(child.name),
     slug: child.slug,
     parentWcSlug: parent?.slug,
     count: child.count,
@@ -117,7 +118,7 @@ export function getLiveParentSubcategoryChips(
     .sort((a, b) => a.name.localeCompare(b.name, 'sr'))
     .map((child) => ({
       slug: child.slug,
-      label: child.name,
+      label: decodeHtmlEntities(child.name),
       count: child.count,
       image: child.image?.src || undefined,
       parentWcSlug: parent.slug,

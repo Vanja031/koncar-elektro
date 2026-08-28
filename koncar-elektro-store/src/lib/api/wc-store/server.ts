@@ -1,6 +1,7 @@
 import { fetchJson, fetchJsonPaginated } from '@/lib/api/client';
 import { serverWcStoreApiBase } from '@/lib/api/server-config';
 import type { WcStoreCategory, WcStoreProduct, WcStoreProductsQuery } from '@/lib/api/types/wc-store';
+import { decodeWcCategory } from '@/lib/htmlEntities';
 
 function productsSearchParams(query: WcStoreProductsQuery = {}) {
   return {
@@ -52,5 +53,5 @@ export async function getStoreCategoryBySlugServer(
     '/products/categories',
     { searchParams: { slug, per_page: 1 } },
   );
-  return categories[0] ?? null;
+  return categories[0] ? decodeWcCategory(categories[0]) : null;
 }
