@@ -122,27 +122,42 @@ export function extractProdavnicaPath(product: WcStoreProduct): string {
   return match?.[1]?.replace(/\/$/, '') ?? extractCategorySlugFromProduct(product);
 }
 
+/** Declaration fields (Proizvođač/Brend/Uvoznik/Zemlja porekla) get their own "Deklaracija" tab — never duplicate them elsewhere. */
+const DECLARATION_ATTRIBUTE_KEYS = new Set([
+  'proizvodjac',
+  'uvoznik',
+  'zemlja porekla',
+  'brend',
+  'pa_proizvodjac',
+  'pa_brend',
+  'pa_uvoznik',
+  'pa_zemlja-porekla',
+]);
+
+function isDeclarationAttribute(attr: WcStoreAttribute): boolean {
+  return (
+    DECLARATION_ATTRIBUTE_KEYS.has(normalizeAttrKey(attr.name)) ||
+    DECLARATION_ATTRIBUTE_KEYS.has(normalizeAttrKey(attr.taxonomy ?? ''))
+  );
+}
+
 export function extractSpecsFromAttributes(product: WcStoreProduct): string[] {
-  const skip = new Set([
-    'proizvodjac',
-    'uvoznik',
-    'zemlja porekla',
-    'brend',
-    'pa_proizvodjac',
-    'pa_brend',
-    'pa_uvoznik',
-    'pa_zemlja-porekla',
-  ]);
   return (product.attributes ?? [])
-    .filter((a) => {
-      const key = normalizeAttrKey(a.name);
-      const tax = normalizeAttrKey(a.taxonomy ?? '');
-      return !skip.has(key) && !skip.has(tax);
-    })
+    .filter((a) => !isDeclarationAttribute(a))
     .flatMap((a) =>
       a.terms.map((t) => `${decodeHtmlEntities(a.name)}: ${decodeHtmlEntities(t.name)}`),
     )
     .slice(0, 6);
+}
+
+/** Non-declaration WC attributes (e.g. Snaga, Napon) as spec rows — same source the shop filters use. */
+export function extractTechAttributeSpecs(product: WcStoreProduct): { label: string; value: string }[] {
+  return (product.attributes ?? [])
+    .filter((a) => !isDeclarationAttribute(a) && a.terms.length > 0)
+    .map((a) => ({
+      label: decodeHtmlEntities(a.name),
+      value: a.terms.map((t) => decodeHtmlEntities(t.name)).join(', '),
+    }));
 }
 
 /** Map Store API product → catalog card shape. */

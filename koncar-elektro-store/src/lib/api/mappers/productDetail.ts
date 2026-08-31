@@ -5,11 +5,12 @@ import { ROUTES } from '@/lib/catalogUrls';
 import {
   extractProdavnicaPath,
   extractSpecsFromAttributes,
+  extractTechAttributeSpecs,
   getAttributeValue,
   mapStoreProductToCatalog,
-  mapStoreAttributesToSpecs,
   decodeHtmlEntities,
 } from '@/lib/api/mappers/product';
+import { extractSpecsFromDescriptionHtml } from '@/lib/api/mappers/descriptionSpecs';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
 import { stripHtmlToText } from '@/lib/htmlEntities';
 
@@ -69,22 +70,56 @@ function buildDeclaration(product: WcStoreProduct): ProductDeclarationRow[] {
   return rows;
 }
 
-function buildSpecifications(catalog: ReturnType<typeof mapStoreProductToCatalog>): ProductSpec[] {
-  const base: ProductSpec[] = [
+/** Diacritic/case-insensitive label key so "Brend" and a description bullet "brend: ..." don't both show up. */
+function normalizeSpecLabel(label: string): string {
+  return label
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'dj')
+    .toLowerCase()
+    .trim();
+}
+
+/**
+ * Builds the "Tehničke karakteristike" tab content. Priority order:
+ *  1. Fixed base fields (Brend/Šifra/Kategorija/Težina) — always reliable.
+ *  2. Bullets parsed from the WooCommerce description's "Tehničke karakteristike" list —
+ *     covers the vast majority of products, which only carry specs in the description.
+ *  3. Real WC technical attributes (Snaga, Napon, …) — same source the shop filters use;
+ *     fills gaps for products where those are populated in WooCommerce.
+ * Declaration fields (Proizvođač/Uvoznik/Zemlja porekla) are deliberately excluded — they
+ * live in the separate "Deklaracija" tab.
+ */
+function buildSpecifications(
+  catalog: ReturnType<typeof mapStoreProductToCatalog>,
+  product: WcStoreProduct,
+): ProductSpec[] {
+  const specs: ProductSpec[] = [
     { label: 'Brend', value: catalog.brand },
     { label: 'Šifra', value: catalog.sku },
     { label: 'Kategorija', value: catalog.category },
   ];
   if (catalog.weightKg) {
-    base.push({ label: 'Težina', value: `${catalog.weightKg} kg` });
+    specs.push({ label: 'Težina', value: `${catalog.weightKg} kg` });
   }
-  return base;
+
+  const seenLabels = new Set(specs.map((s) => normalizeSpecLabel(s.label)));
+  const addIfNew = (spec: ProductSpec) => {
+    const key = normalizeSpecLabel(spec.label);
+    if (seenLabels.has(key)) return;
+    seenLabels.add(key);
+    specs.push(spec);
+  };
+
+  extractSpecsFromDescriptionHtml(product.description).forEach(addIfNew);
+  extractTechAttributeSpecs(product).forEach(addIfNew);
+
+  return specs;
 }
 
 /** Full product detail page shape from Store API (read-only, live data). */
 export function mapStoreProductToDetail(product: WcStoreProduct): ProductDetail {
   const catalog = mapStoreProductToCatalog(product);
-  const attrSpecs = mapStoreAttributesToSpecs(product.attributes ?? []);
   const gallery = product.images?.map((img) => img.src).filter(Boolean) ?? [];
   if (gallery.length === 0 && catalog.image) gallery.push(catalog.image);
 
@@ -99,7 +134,7 @@ export function mapStoreProductToDetail(product: WcStoreProduct): ProductDetail 
     longDescription: stripHtmlToText(longHtml) || catalog.description,
     longDescriptionHtml: sanitizeDescriptionHtml(product.description || ''),
     features: features.length > 0 ? features : [catalog.description],
-    specifications: [...buildSpecifications(catalog), ...attrSpecs],
+    specifications: buildSpecifications(catalog, product),
     declaration: buildDeclaration(product),
     reviewsList: [],
     relatedIds: [],

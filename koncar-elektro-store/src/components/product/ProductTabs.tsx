@@ -19,7 +19,7 @@ type Props = {
 
 const tabs: Tab[] = [
   { id: 'description', label: 'Opis', shortLabel: 'Opis' },
-  { id: 'specs', label: 'Tehničke karakteristike', shortLabel: 'Specifikacije' },
+  { id: 'specs', label: 'Tehničke karakteristike', shortLabel: 'Tehničke karakteristike' },
   { id: 'declaration', label: 'Deklaracija', shortLabel: 'Deklaracija' },
   { id: 'reviews', label: 'Recenzije', shortLabel: 'Recenzije' },
 ];
