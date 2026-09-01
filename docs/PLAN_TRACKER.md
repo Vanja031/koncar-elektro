@@ -34,7 +34,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Stavka | Stanje |
 |--------|--------|
 | **Aktivna nedelja** | Nedelja 8 — go-live priprema |
-| **Sledeći korak** | Ručna provera 8.1 + 8.2 (u toku); DNS tek kad su oba zeleni |
+| **Sledeći korak** | 8.1 završeno; čeka se produkcijski RaiAccept username/password od klijenta za 8.2; DNS (8.3) tek kad je 8.2 zeleno |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -284,8 +284,8 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 
 | # | Zadatak | Status | Datum | Napomena |
 |---|---------|--------|-------|----------|
-| 8.1 | Finalno testiranje na svim uređajima i browserima | `[~]` | 12.08.2026. | Preview smoke + runbook `docs/GO_LIVE.md`; ostaje ručni QA telefon/desktop |
-| 8.2 | Test plaćanja sa realnim transakcijama | `[!]` | | Čeka produkcijske RaiAccept credentials; sandbox već OK |
+| 8.1 | Finalno testiranje na svim uređajima i browserima | `[x]` | 01.09.2026. | Ručni QA na Preview (telefon + desktop) završen i potvrđen — checklist `docs/GO_LIVE.md` |
+| 8.2 | Test plaćanja sa realnim transakcijama | `[!]` | | Čeka produkcijske RaiAccept credentials od klijenta; sandbox već OK. Potvrđeno u RaiAccept docs (`setup-account.html`): produkcija se aktivira samo prekidačem Sandbox/Production u Merchant portalu (otključava se kad banka aktivira nalog) + generisanjem novog para API Credentials — kod se ne menja, isti `AUTH_URL`/`API_BASE`, environment određuju samo username/password |
 | 8.3 | Go-live: prebacivanje DNS / deploy | `[ ]` | | Runbook spreman; **ne dirati DNS** dok 8.2 nije zelen |
 | 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | `https://koncarelektro.rs/sitemap.xml` — tek posle DNS-a |
 | 8.5 | Provera 200/301 statusa svih ključnih URL-ova posle lansiranja | `[ ]` | | |
@@ -394,16 +394,21 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 18.08.2026. | — | Prijava + registracija: WC v3 register; login/reset preko `wp-php/koncar-auth.php` (upload u WP root na stagingu); sesija httpOnly cookie | Header Odjava; checkout prefill + `customer_id` na porudžbini |
 | 18.08.2026. | — | Kontakt forma: `wp-php/contact.php` → `wp_mail` na kontakt@koncarelektro.com | Demo toast uklonjen |
 | 18.08.2026. | — | Recenzije proizvoda: WC v3 lista + submit (hold/odobrenje); 1 recenzija po e-mailu; empty state bez lažne 4.0 ocene | PDP recenzije žive |
+| 01.09.2026. | — | Ručni QA (8.1) završen i potvrđen na telefonu/desktopu | 8.1 zatvoren |
+| 01.09.2026. | — | Provereno u RaiAccept docs (`docs.raiaccept.com/setup-account.html`): prelazak na Production je samo prekidač u Merchant portalu (otključava se kad banka aktivira nalog) + generisanje novog para API Credentials; bez izmene koda — potvrđuje pretpostavku iz `raiaccept.ts` i `docs/GO_LIVE.md` | 8.2 nije blokiran kodom; čeka se samo isporuka kredencijala od klijenta |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 8 (nalozi / kontakt / recenzije 18.08.2026.)
+### Sada — Nedelja 8 (RaiAccept prod 01.09.2026.)
 
 **Prioritet — ti proveravaš**
-- 8.1 — ručni QA na telefonu/desktopu (checklist u `docs/GO_LIVE.md`)
-- 8.2 — produkcijski RaiAccept credentials + jedna realna test transakcija
+- 8.2 — produkcijski RaiAccept credentials + jedna realna test transakcija. Klijentu treba samo: (1) tražiti od banke aktivaciju Production okruženja u RaiAccept Merchant portalu, (2) prebaciti prekidač Sandbox→Production, (3) generisati novi par API Credentials, (4) proslediti nama username/password za `RAIACCEPT_USERNAME`/`RAIACCEPT_PASSWORD` na Vercel Production. Kod se ne menja.
+
+**Završeno — 01.09.2026.**
+- 8.1 — ručni QA na telefonu/desktopu potvrđen (checklist `docs/GO_LIVE.md`)
+- Potvrđen RaiAccept prod-switch mehanizam prema zvaničnoj dokumentaciji (`setup-account.html`)
 
 **Pre DNS-a (env)**
 - Production env: WP live URL, `WC_CHECKOUT_FORCE_TEST_CUSTOMER=false`, `NEXT_PUBLIC_ANALYTICS_LIVE=true` tek na Production

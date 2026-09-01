@@ -28,7 +28,7 @@ const isBrandSpecLabel = (label: string) =>
   /proizvodja[cč]|brend/i.test(label.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 
 export const ProductTabs = ({ product }: Props) => {
-  const [activeTab, setActiveTab] = useState<TabId>('specs');
+  const [activeTab, setActiveTab] = useState<TabId>('description');
 
   return (
     <div id="product-tabs" className="product-tabs">
