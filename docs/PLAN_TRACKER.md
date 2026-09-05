@@ -34,7 +34,7 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 | Stavka | Stanje |
 |--------|--------|
 | **Aktivna nedelja** | Nedelja 8 — go-live priprema |
-| **Sledeći korak** | 8.1 završeno; čeka se produkcijski RaiAccept username/password od klijenta za 8.2; DNS (8.3) tek kad je 8.2 zeleno |
+| **Sledeći korak** | 8.1 završeno; katalog (kategorije/atributi/proizvodi) migriran na live WP; Next.js app uspešno hostovan i testiran na `app.koncarelektro.rs` (cPanel, bez Vercela) — sledi Faza B (cutover glavnog domena) kad 8.2 (RaiAccept produkcija) budu zeleni |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -286,7 +286,7 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |---|---------|--------|-------|----------|
 | 8.1 | Finalno testiranje na svim uređajima i browserima | `[x]` | 01.09.2026. | Ručni QA na Preview (telefon + desktop) završen i potvrđen — checklist `docs/GO_LIVE.md` |
 | 8.2 | Test plaćanja sa realnim transakcijama | `[!]` | | Čeka produkcijske RaiAccept credentials od klijenta; sandbox već OK. Potvrđeno u RaiAccept docs (`setup-account.html`): produkcija se aktivira samo prekidačem Sandbox/Production u Merchant portalu (otključava se kad banka aktivira nalog) + generisanjem novog para API Credentials — kod se ne menja, isti `AUTH_URL`/`API_BASE`, environment određuju samo username/password |
-| 8.3 | Go-live: prebacivanje DNS / deploy | `[ ]` | | Runbook spreman; **ne dirati DNS** dok 8.2 nije zelen |
+| 8.3 | Go-live: hosting na klijentovom cPanel-u (bez Vercela) + cutover glavnog domena | `[~]` | 05.09.2026. | Arhitektura promenjena: **cPanel Node.js App** umesto Vercel — sve ostaje na klijentovom hostingu. Katalog (kategorije/atributi/proizvodi) migriran staging→live. Next.js app uspešno deployovan i testiran na `app.koncarelektro.rs` (Faza A, `docs/CPANEL_DEPLOY.md`). Sledi Faza B: cutover `koncarelektro.rs` root domena + `.htaccess` izuzeci za WP; **ne raditi Fazu B** dok 8.2 nije zelen |
 | 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | `https://koncarelektro.rs/sitemap.xml` — tek posle DNS-a |
 | 8.5 | Provera 200/301 statusa svih ključnih URL-ova posle lansiranja | `[ ]` | | |
 | 8.6 | Monitoring index coverage-a (GSC) | `[ ]` | | Prvi dani |
@@ -396,6 +396,9 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 18.08.2026. | — | Recenzije proizvoda: WC v3 lista + submit (hold/odobrenje); 1 recenzija po e-mailu; empty state bez lažne 4.0 ocene | PDP recenzije žive |
 | 01.09.2026. | — | Ručni QA (8.1) završen i potvrđen na telefonu/desktopu | 8.1 zatvoren |
 | 01.09.2026. | — | Provereno u RaiAccept docs (`docs.raiaccept.com/setup-account.html`): prelazak na Production je samo prekidač u Merchant portalu (otključava se kad banka aktivira nalog) + generisanje novog para API Credentials; bez izmene koda — potvrđuje pretpostavku iz `raiaccept.ts` i `docs/GO_LIVE.md` | 8.2 nije blokiran kodom; čeka se samo isporuka kredencijala od klijenta |
+| 05.09.2026. | — | Katalog migriran staging→live: kreirano 6 kategorija + 23 atributa + 2.947 termina (taksonomija), zatim ažurirano 5.313/5.335 proizvoda (22 već identična) (naziv/opis/kategorije/atributi/tagovi) na live WP — slike/cena/zalihe/SKU netaknuti; 30 proizvoda bez para na live (lista klijentu: `scripts/output/proizvodi-za-proveru-klijent.txt`) | Katalog na live-u spreman za novi frontend |
+| 05.09.2026. | — | Odluka: hosting se seli sa Vercel (Superity nalog) na klijentov cPanel — ništa ne ostaje kod nas. Kreiran `server.cjs` (Passenger entrypoint) + `docs/CPANEL_DEPLOY.md` runbook | Menja Fazu 8.3 iz GO_LIVE.md (Vercel DNS cutover) — zamenjeno cPanel Node.js App pristupom |
+| 05.09.2026. | — | Faza A (test na `app.koncarelektro.rs`) uspešno završena: build radio nakon 2 fixa — (1) `npm ci --include=dev` (NODE_ENV=production u nodevenv-u je skipovao devDependencies pa `@/` alias i Tailwind nisu radili), (2) `experimental.cpus=1, workerThreads=false` u `next.config.mjs` (shared hosting limitira child procese → `spawn EAGAIN`). Klijent potvrdio da app radi ispravno | Spremno za Fazu B (cutover glavnog domena) |
 
 ---
 
