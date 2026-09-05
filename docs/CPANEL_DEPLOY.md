@@ -13,38 +13,27 @@ Radimo u 2 faze: **Faza A** — test na subdomenu (ništa ne dodiruje live sajt)
 
 ## Faza A — test na subdomenu
 
-### A1. Provera Node.js verzije u cPanel-u
+### A1. Node.js verzija — ✅ potvrđeno
 
-1. cPanel → traži **"Setup Node.js App"** (obično pod "Software").
-2. Klikni **Create Application** i pogledaj listu **Node.js version** — treba **18.17+** ili **20.x** (Next.js 14 zahteva minimum 18.17).
-3. Javi mi koje verzije su ponuđene ako nema 18.17+ — ima alternativa, ali skoro svaki moderni cPanel ima 18/20/22.
+Ponuđeno: 22.23.2 (recommended), 20.20.2, 18.20.8, 19.9.0, 24.19.0... → koristimo **22.23.2 (recommended)**.
 
-### A2. Kreiranje test subdomena
+### A2. Test subdomen — ✅ potvrđeno: `app.koncarelektro.rs`
 
-1. cPanel → **Subdomains** → kreiraj npr. `app.koncarelektro.rs` (ili `newsite.koncarelektro.rs`).
-2. Document root koji cPanel predloži je OK (npr. `public_html/app`) — Node.js App će ga sam prepisati/kontrolisati kad ga povežemo.
+1. cPanel → **Subdomains** → kreiraj `app.koncarelektro.rs` (ako već ne postoji).
+2. Document root koji cPanel predloži je OK — Node.js App će ga kontrolisati kad ga povežemo u A5.
 
-### A3. Build lokalno (kod nas)
+### A3. (nije potreban lokalni build — build se radi direktno na serveru u A6, preko Terminal-a)
 
-Ja ću pokrenuti (kad budeš spreman):
+### A4. Kloniranje koda preko Terminal-a (imamo pristup — brže od upload-a)
+
+Repo je javan na GitHub-u, pa nema potrebe za kredencijalima. U cPanel **Terminal**:
 
 ```bash
-cd koncar-elektro-store
-npm ci
-npm run build
+cd ~
+git clone https://github.com/Vanja031/koncar-elektro.git
 ```
 
-Ovo pravi `.next/` produkcioni build. Sve `NEXT_PUBLIC_*` env varijable moraju biti
-tačne **PRE** ovog koraka (ubacuju se u build, ne mogu se promeniti posle bez rebuild-a).
-
-### A4. Upload na server
-
-Opcija 1 (preporučeno, ako cPanel ima File Manager sa upload-om zip-a):
-1. Zapakujem projekat u `.zip` (bez `node_modules` — instaliraćemo direktno na serveru da izbegnemo probleme sa arhitekturom/OS razlikama).
-2. Ti (ili ja preko File Managera) upload-uješ zip u folder npr. `~/app.koncarelektro.rs/` (van `public_html`, ili u dodeljeni app root).
-3. Raspakuj zip tamo (File Manager → Extract).
-
-Opcija 2 (ako imaš FTP/SFTP pristup): isto, samo preko FTP klijenta.
+Ovo pravi `~/koncar-elektro/koncar-elektro-store` sa svim kodom (uključujući `server.cjs`).
 
 ### A5. Kreiranje Node App-a u cPanel-u
 
@@ -52,20 +41,36 @@ U **Setup Node.js App → Create Application**:
 
 | Polje | Vrednost |
 |---|---|
-| Node.js version | 18.x ili 20.x (najnovija dostupna) |
+| Node.js version | **22.23.2 (recommended)** |
 | Application mode | Production |
-| Application root | folder gde je raspakovan kod (npr. `app.koncarelektro.rs`) |
+| Application root | `koncar-elektro/koncar-elektro-store` |
 | Application URL | `app.koncarelektro.rs` |
 | Application startup file | `server.cjs` |
 
 Klikni **Create**.
 
-### A6. Instalacija paketa + env varijable
+### A6. Instalacija paketa + build + env varijable
 
-Na stranici te aplikacije u cPanel-u:
+Nakon kreiranja, cPanel prikazuje komandu tipa:
+```
+source /home/USERNAME/nodevenv/koncar-elektro/koncar-elektro-store/22/bin/activate && cd /home/USERNAME/koncar-elektro/koncar-elektro-store
+```
+Kopiraj TU TAČNU komandu (sa svoje cPanel stranice) i pokreni je u **Terminal**-u — ona aktivira ispravnu Node/npm verziju u PATH-u.
 
-1. Klikni **"Run NPM Install"** dugme (instaliraće `node_modules` na serveru — ovo može potrajati par minuta zbog `sharp` paketa).
-2. U sekciji **Environment variables**, dodaj (kopiraj iz `koncar-elektro-store/.env`, samo produkcijske vrednosti):
+Zatim, u istom Terminal-u:
+
+```bash
+npm ci
+npm run build
+```
+
+(`npm run build` mora da se pokrene NAKON što su env varijable iz koraka 2 ispod postavljene — Next.js "peče" `NEXT_PUBLIC_*` vrednosti u build, ne mogu se menjati posle bez rebuild-a.)
+
+Redosled dakle: prvo postavi env varijable u UI-u (sledeći korak), restartuj app da ih App pokupi, ZATIM `npm run build` u Terminal-u.
+
+Na stranici te aplikacije u cPanel-u (**Setup Node.js App**):
+
+1. U sekciji **Environment variables**, dodaj (kopiraj iz `koncar-elektro-store/.env`, samo produkcijske vrednosti):
    - `NODE_ENV=production`
    - `NEXT_PUBLIC_WP_API_URL=https://koncarelektro.rs/wp-json`
    - `NEXT_PUBLIC_WC_STORE_API_URL=https://koncarelektro.rs/wp-json/wc/store/v1`
@@ -79,9 +84,11 @@ Na stranici te aplikacije u cPanel-u:
    - `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-2HJ9BTPBK7`
    - `NEXT_PUBLIC_ANALYTICS_LIVE=false` (na testu; `true` samo na finalnom cutover-u)
 
-   ⚠️ Ako build (A3) rade **pre** ovoga, `NEXT_PUBLIC_*` vrednosti sa builda ostaju "zapečene" u `.next/` — ako ih promeniš tek ovde, moraćeš da rebuild-uješ. Zato ih šaljem tebi da ih potvrdiš PRE build-a.
+   ⚠️ Postavi ove vrednosti PRE `npm run build` — `NEXT_PUBLIC_*` se "peče" u build i ne menja se posle bez rebuild-a.
 
-3. Klikni **Restart** na aplikaciji.
+2. Klikni **Save**, zatim **Restart** na aplikaciji.
+3. Vrati se u Terminal i pokreni `npm ci && npm run build` (iz A6 gore).
+4. Klikni **Restart** još jednom (da app krene sa svežim `.next/` build-om).
 
 ### A7. Test
 
