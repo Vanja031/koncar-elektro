@@ -13,6 +13,14 @@ const wpRewriteOrigin = (
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
+  // Shared hosting (cPanel/CloudLinux LVE) often caps process count per
+  // account. Next's default build tries to spawn parallel worker child
+  // processes for static generation ("Collecting page data"), which fails
+  // with `spawn ... EAGAIN` there. Force single-process build instead.
+  experimental: {
+    cpus: 1,
+    workerThreads: false,
+  },
   async rewrites() {
     return [
       {
