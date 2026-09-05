@@ -238,7 +238,17 @@ export const SiteFooter = () => (
             <FaIcon icon={trustIcons.secure} className="text-accent text-sm" />
             Sigurna kupovina
           </span>
-          <span className="text-white/40">Izrada sajta:</span>
+          <span className="text-white/40">
+            Dizajn i izrada sajta:{' '}
+            <a
+              href="https://www.superity.org"
+              target="_blank"
+              rel="noopener"
+              className="text-white/40 hover:text-white/70 transition-colors"
+            >
+              Superity
+            </a>
+          </span>
         </div>
       </div>
     </div>
