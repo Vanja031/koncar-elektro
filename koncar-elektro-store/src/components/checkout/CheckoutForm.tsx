@@ -66,7 +66,7 @@ export const CheckoutForm = ({
   onAcceptTermsChange,
 }: Props) => {
   const navigate = useNavigate();
-  const { lines, subtotal, shipping, total, itemCount, clearCart } = useCart();
+  const { lines, subtotal, shipping, total, totalWeightKg, itemCount, clearCart } = useCart();
   const { customer } = useAuth();
   const [form, setForm] = useState<FormState>(initialForm);
 
@@ -128,6 +128,8 @@ export const CheckoutForm = ({
           city: form.city.trim(),
           postalCode: form.postalCode.trim(),
           customerNote: form.note.trim(),
+          subtotal,
+          totalWeightKg,
         });
         window.location.assign(paymentRedirectURL);
         return;
@@ -149,6 +151,7 @@ export const CheckoutForm = ({
         paymentMethod: form.paymentMethod,
         subtotal,
         shipping: shipping.cost,
+        totalWeightKg,
         total,
         itemCount,
       });

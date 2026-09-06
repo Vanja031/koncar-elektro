@@ -13,6 +13,8 @@ export type CheckoutSubmitPayload = {
   paymentMethod: PaymentMethod;
   subtotal: number;
   shipping: number;
+  /** Ukupna težina korpe (kg) — koristi se server-side za istu logiku besplatne dostave. */
+  totalWeightKg: number;
   total: number;
   itemCount: number;
 };
@@ -65,6 +67,8 @@ export async function placeOrderViaApi(payload: CheckoutSubmitPayload): Promise<
       postalCode: payload.postalCode,
       customerNote: payload.customerNote,
       paymentMethod: payload.paymentMethod,
+      subtotal: payload.subtotal,
+      totalWeightKg: payload.totalWeightKg,
     }),
   });
 
@@ -113,6 +117,8 @@ export type CardPaymentStartPayload = {
   city: string;
   postalCode: string;
   customerNote: string;
+  subtotal: number;
+  totalWeightKg: number;
 };
 
 /** Kicks off a RaiAccept card payment: creates the WC order, returns the hosted-page redirect URL. */

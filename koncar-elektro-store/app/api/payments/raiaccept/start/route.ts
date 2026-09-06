@@ -24,6 +24,8 @@ type StartBody = {
   city?: string;
   postalCode?: string;
   customerNote?: string;
+  subtotal?: number;
+  totalWeightKg?: number;
 };
 
 type ValidatedStart = {
@@ -36,6 +38,9 @@ type ValidatedStart = {
   city: string;
   postalCode: string;
   customerNote: string;
+  /** Cart snapshot used to apply the same free-shipping rule as the storefront. */
+  subtotal: number;
+  totalWeightKg: number;
 };
 
 function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { ok: false; message: string } {
@@ -59,6 +64,14 @@ function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { o
     return { ok: false, message: 'Popunite sva obavezna polja (kontakt i adresa).' };
   }
 
+  // Conservative fallback: if the cart snapshot is missing/invalid, treat the
+  // order as not qualifying for free shipping (subtotal 0 never meets the
+  // threshold) rather than risk under-charging delivery.
+  const subtotalRaw = Number(body.subtotal);
+  const weightRaw = Number(body.totalWeightKg);
+  const subtotal = Number.isFinite(subtotalRaw) && subtotalRaw >= 0 ? subtotalRaw : 0;
+  const totalWeightKg = Number.isFinite(weightRaw) && weightRaw >= 0 ? weightRaw : 0;
+
   return {
     ok: true,
     data: {
@@ -71,6 +84,8 @@ function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { o
       city,
       postalCode,
       customerNote: String(body.customerNote ?? '').trim(),
+      subtotal,
+      totalWeightKg,
     },
   };
 }
@@ -118,6 +133,8 @@ export async function POST(request: Request) {
       customerId: customer?.id,
       paymentMethod: 'raiaccept-card',
       paymentMethodTitle: 'Kartica (RaiAccept)',
+      subtotal: input.subtotal,
+      totalWeightKg: input.totalWeightKg,
     });
     const wcOrderId = String(wcOrder.id);
     const amount = Number(wcOrder.total);

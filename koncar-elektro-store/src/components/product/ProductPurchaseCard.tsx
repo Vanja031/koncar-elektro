@@ -4,7 +4,8 @@ import { formatPrice } from '@/data/homepage';
 import { contactChannels } from '@/data/staticPages';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { SocialIcon } from '@/components/home/SocialIcon';
-import { SHIPPING_CARRIER, SHIPPING_COST } from '@/lib/shipping';
+import { calculateShipping, FREE_SHIPPING_MIN_SUBTOTAL, SHIPPING_CARRIER } from '@/lib/shipping';
+import { getProductWeightKg } from '@/lib/productWeight';
 import type { ProductDetail } from '@/data/productDetail';
 
 type Props = {
@@ -16,6 +17,8 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
   const [quantity, setQuantity] = useState(1);
   const savings = product.oldPrice ? product.oldPrice - product.price : 0;
   const onSale = Boolean(product.oldPrice && product.oldPrice > product.price);
+  const weightKg = getProductWeightKg(product);
+  const shipping = calculateShipping(product.price * quantity, weightKg * quantity);
 
   return (
     <aside className="product-purchase-card lg:sticky lg:top-28">
@@ -43,10 +46,22 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
           </div>
           <div className="product-purchase-shipping-row">
             <Package className="w-4 h-4 text-primary shrink-0" />
-            <span>
-              Dostava <strong>{SHIPPING_COST.toLocaleString('sr-RS')} din.</strong> — {SHIPPING_CARRIER}
-            </span>
+            {shipping.isFree ? (
+              <span className="text-emerald-600 font-semibold">
+                Besplatna dostava — {SHIPPING_CARRIER}
+              </span>
+            ) : (
+              <span>
+                Dostava <strong>{shipping.cost.toLocaleString('sr-RS')} din.</strong> — {SHIPPING_CARRIER}
+              </span>
+            )}
           </div>
+          {!shipping.isFree && (
+            <p className="product-purchase-shipping-freehint">
+              Besplatna dostava za porudžbine preko {FREE_SHIPPING_MIN_SUBTOTAL.toLocaleString('sr-RS')} din.
+              (do 20kg)
+            </p>
+          )}
           <div className="product-purchase-shipping-row product-purchase-shipping-row--return">
             <RotateCcw className="w-4 h-4 shrink-0" />
             <span><strong>Povraćaj novca 14 dana</strong></span>

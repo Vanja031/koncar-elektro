@@ -27,7 +27,9 @@ export const CartSummary = () => {
         </div>
         <div className="cart-summary-row">
           <dt>Dostava</dt>
-          <dd>{formatPrice(shipping.cost)}</dd>
+          <dd className={shipping.isFree ? 'text-emerald-600 font-semibold' : undefined}>
+            {shipping.isFree ? 'Besplatno' : formatPrice(shipping.cost)}
+          </dd>
         </div>
       </dl>
 

@@ -24,6 +24,8 @@ type CheckoutBody = {
   customerNote?: string;
   /** UI keys: cod | bank (maps to bacs). card is rejected. */
   paymentMethod?: string;
+  subtotal?: number;
+  totalWeightKg?: number;
 };
 
 function mapPaymentMethod(raw: string | undefined): 'cod' | 'bacs' | 'card' | null {
@@ -68,6 +70,14 @@ function validateBody(body: CheckoutBody): { ok: true; data: PlaceOrderInput } |
     };
   }
 
+  // Conservative fallback: if the cart snapshot is missing/invalid, treat the
+  // order as not qualifying for free shipping (subtotal 0 never meets the
+  // threshold) rather than risk under-charging delivery.
+  const subtotalRaw = Number(body.subtotal);
+  const weightRaw = Number(body.totalWeightKg);
+  const subtotal = Number.isFinite(subtotalRaw) && subtotalRaw >= 0 ? subtotalRaw : 0;
+  const totalWeightKg = Number.isFinite(weightRaw) && weightRaw >= 0 ? weightRaw : 0;
+
   return {
     ok: true,
     data: {
@@ -81,6 +91,8 @@ function validateBody(body: CheckoutBody): { ok: true; data: PlaceOrderInput } |
       postalCode,
       customerNote: String(body.customerNote ?? '').trim(),
       paymentMethod: payment,
+      subtotal,
+      totalWeightKg,
     },
   };
 }

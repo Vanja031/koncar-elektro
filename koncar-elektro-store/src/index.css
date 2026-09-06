@@ -1107,6 +1107,9 @@
   .product-purchase-shipping-row--return {
     @apply text-emerald-600;
   }
+  .product-purchase-shipping-freehint {
+    @apply pl-[1.625rem] -mt-1 text-xs text-muted-foreground;
+  }
   .product-purchase-sale-period {
     @apply text-xs text-muted-foreground pt-2 border-t border-[hsl(210_45%_88%)] mt-1;
   }

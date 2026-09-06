@@ -6,7 +6,7 @@
 **Ponuda:** SUP-2025-931  
 **Trajanje:** 2 meseca (8 nedelja)  
 **Datum plana:** 17.06.2026.  
-**Poslednje ažuriranje trackera:** 18.08.2026. (Nedelja 8 — nalozi, kontakt, recenzije, društvene mreže)
+**Poslednje ažuriranje trackera:** 05.09.2026. (Nedelja 8 — GO-LIVE: cPanel cutover završen, `koncarelektro.rs` je Next.js app, WP na `cms.koncarelektro.rs`)
 
 > **STARI SAJT (live, WooCommerce):** [koncarelektro.rs](https://koncarelektro.rs) — ovo je sajt sa kojeg čuvamo SEO, URL-ove i podatke  
 > **NOVI SAJT (u razvoju, nije okačen):** `koncar-elektro/koncar-elektro-store/` — React + Vite, lokalno, nije deployovan
@@ -33,8 +33,8 @@ Za svaku stavku popunjavaj: **Status**, **Datum završetka**, **Napomena**.
 
 | Stavka | Stanje |
 |--------|--------|
-| **Aktivna nedelja** | Nedelja 8 — go-live priprema |
-| **Sledeći korak** | 8.1 završeno; katalog (kategorije/atributi/proizvodi) migriran na live WP; Next.js app uspešno hostovan i testiran na `app.koncarelektro.rs` (cPanel, bez Vercela) — sledi Faza B (cutover glavnog domena) kad 8.2 (RaiAccept produkcija) budu zeleni |
+| **Aktivna nedelja** | Nedelja 8 — GO-LIVE završen, post-launch monitoring u toku |
+| **Sledeći korak** | Sajt je live na `koncarelektro.rs` (Next.js, cPanel). WordPress premešten na `cms.koncarelektro.rs` (isti fajlovi/baza, samo drugi document root). Ostaje: GSC sitemap submit (8.4), post-launch monitoring (8.5–8.8), predaja koda (8.9), obuka tima (8.10) |
 | **Postojeći kod** | Next.js 14 App Router u `koncar-elektro-store/` — migracija sa Vite završena 07.07.2026. |
 | **Ciljna arhitektura** | Next.js 14 (App Router) + WordPress Headless |
 
@@ -286,22 +286,22 @@ Ove stavke su **kontinuirane** kroz ceo projekat — ne ostavljaju se za kraj.
 |---|---------|--------|-------|----------|
 | 8.1 | Finalno testiranje na svim uređajima i browserima | `[x]` | 01.09.2026. | Ručni QA na Preview (telefon + desktop) završen i potvrđen — checklist `docs/GO_LIVE.md` |
 | 8.2 | Test plaćanja sa realnim transakcijama | `[x]` | 05.09.2026. | Produkcijski RaiAccept credentials generisani (novi username/password par, "API credentials" u Merchant portalu, ne stari sandbox par). Realna transakcija (460 RSD) uspešno plaćena karticom na `app.koncarelektro.rs`, potvrđen `paymentRedirectURL`/status flow, zatim refund izdat kroz RaiAccept Merchant Portal (Transactions → Refund — vraća se na istu karticu) i test porudžbina obrisana iz WooCommerce |
-| 8.3 | Go-live: hosting na klijentovom cPanel-u (bez Vercela) + cutover glavnog domena | `[~]` | 05.09.2026. | Arhitektura promenjena: **cPanel Node.js App** umesto Vercel — sve ostaje na klijentovom hostingu. Katalog migriran staging→live. Next.js app deployovan i testiran na `app.koncarelektro.rs` (Faza A). **8.1 + 8.2 sada zeleni** → uslov za Fazu B ispunjen. Sledi Faza B: cutover `koncarelektro.rs` root domena + `.htaccess` izuzeci za WP (`docs/CPANEL_DEPLOY.md`) |
-| 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | `https://koncarelektro.rs/sitemap.xml` — tek posle DNS-a |
-| 8.5 | Provera 200/301 statusa svih ključnih URL-ova posle lansiranja | `[ ]` | | |
-| 8.6 | Monitoring index coverage-a (GSC) | `[ ]` | | Prvi dani |
+| 8.3 | Go-live: hosting na klijentovom cPanel-u (bez Vercela) + cutover glavnog domena | `[x]` | 05.09.2026. | **ZAVRŠENO.** Arhitektura promenjena: **cPanel Node.js App** umesto Vercel — sve ostaje na klijentovom hostingu, ništa na Superity nalogu. Finalna arhitektura (vidi Dnevnik za detalje i probleme rešene usput): `koncarelektro.rs` = Next.js app (Node.js Selector, `koncar-elektro-live/koncar-elektro-store`, `server.cjs`); WordPress premešten na `cms.koncarelektro.rs` (isti fajlovi/baza — samo dodat subdomen sa istim document root-om + promenjen WP Site URL + search-replace starih apsolutnih linkova); `koncarelektro.rs` dobio **nov, prazan document root** da se odvoji od WP `.htaccess`-a (rešava konflikt gde je Passenger presretao i WP putanje) |
+| 8.4 | Slanje nove sitemap u Search Console | `[ ]` | | `https://koncarelektro.rs/sitemap.xml` — potvrđeno da radi (5.649 URL), spremno za submit u GSC |
+| 8.5 | Provera 200/301 statusa svih ključnih URL-ova posle lansiranja | `[~]` | 05.09.2026. | Ručna provera odmah posle cutover-a OK (homepage, proizvodi, kontakt, login); formalni URL-by-URL sweep još nije urađen |
+| 8.6 | Monitoring index coverage-a (GSC) | `[ ]` | | Prvi dani posle sitemap submit-a |
 | 8.7 | Monitoring crawl grešaka | `[ ]` | | Prvi dani |
 | 8.8 | Monitoring zadržavanja rangiranja | `[ ]` | | Prvi dani |
-| 8.9 | Predaja izvornog koda | `[ ]` | | |
-| 8.10 | Obuka tima za WP admin | `[ ]` | | |
-| 8.11 | Početak 30 dana garancije | `[ ]` | | |
+| 8.9 | Predaja izvornog koda | `[ ]` | | Repo već kod klijenta (GitHub `Vanja031/koncar-elektro`, grana `develop-koncar`) i deployovan na njihovom hostingu — formalna predaja/dokumentacija pristupa ostaje |
+| 8.10 | Obuka tima za WP admin | `[ ]` | | Sad radi na `cms.koncarelektro.rs/wp-admin` (napomena za klijenta — promenjen URL) |
+| 8.11 | Početak 30 dana garancije | `[ ]` | | Kreće od datuma formalnog go-live potpisa |
 
 **Milestone (Nedelja 8):** Uplata preostalih 50%, lansiranje i predaja koda.
 
 | Milestone | Status | Datum | Napomena |
 |-----------|--------|-------|----------|
 | Uplata preostalih 50% | `[ ]` | | |
-| Lansiranje (go-live) | `[ ]` | | |
+| Lansiranje (go-live) | `[x]` | 05.09.2026. | `koncarelektro.rs` je live sa novim Next.js frontend-om; QA prošao (nalozi, checkout, RaiAccept, slike, login, kontakt, sitemap/robots) |
 | Predaja koda | `[ ]` | | |
 
 **Deliverable (kraj Meseca 2):**
@@ -399,27 +399,41 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 05.09.2026. | — | Katalog migriran staging→live: kreirano 6 kategorija + 23 atributa + 2.947 termina (taksonomija), zatim ažurirano 5.313/5.335 proizvoda (22 već identična) (naziv/opis/kategorije/atributi/tagovi) na live WP — slike/cena/zalihe/SKU netaknuti; 30 proizvoda bez para na live (lista klijentu: `scripts/output/proizvodi-za-proveru-klijent.txt`) | Katalog na live-u spreman za novi frontend |
 | 05.09.2026. | — | Odluka: hosting se seli sa Vercel (Superity nalog) na klijentov cPanel — ništa ne ostaje kod nas. Kreiran `server.cjs` (Passenger entrypoint) + `docs/CPANEL_DEPLOY.md` runbook | Menja Fazu 8.3 iz GO_LIVE.md (Vercel DNS cutover) — zamenjeno cPanel Node.js App pristupom |
 | 05.09.2026. | — | Faza A (test na `app.koncarelektro.rs`) uspešno završena: build radio nakon 2 fixa — (1) `npm ci --include=dev` (NODE_ENV=production u nodevenv-u je skipovao devDependencies pa `@/` alias i Tailwind nisu radili), (2) `experimental.cpus=1, workerThreads=false` u `next.config.mjs` (shared hosting limitira child procese → `spawn EAGAIN`). Klijent potvrdio da app radi ispravno | Spremno za Fazu B (cutover glavnog domena) |
+| 05.09.2026. | — | RaiAccept produkcijski credentials potvrđeni realnom transakcijom na `app.koncarelektro.rs` (460 RSD, karticom) + refund kroz Merchant Portal + brisanje test porudžbine iz WooCommerce | 8.2 realan test zatvoren |
+| 05.09.2026. | — | Prvi pokušaj Faze B (Node App direktno na `koncarelektro.rs` root, isti document root kao WP) izazvao je 503 na celom domenu — cPanel je generisao neispravan/dupliran vhost unos (`APVH_koncarelektro.koncarelektro.com` u error logu). Rollback: Node App obrisan, `.htaccess` se sam očistio, sajt odmah normalan | Nauk: Node App na root domenu ne sme deliti document root sa WP-om bez rizika |
+| 05.09.2026. | — | Odluka: WordPress premešten na poseban subdomen `cms.koncarelektro.rs`, sa **istim** document root folderom kao stari WP (nema kopiranja fajlova/baze) — samo dodat Subdomain u cPanel-u koji pokazuje na `~/koncarelektro.rs`. Zatim: (1) svež backup baze `misa0609_kshop2`, (2) WP Settings → General → Site URL promenjen na `https://cms.koncarelektro.rs`, (3) plugin "Better Search Replace" — 18.437 zamena u 138 tabela (`https://koncarelektro.rs` → `https://cms.koncarelektro.rs` u sadržaju/meta) | WP sad potpuno izolovan na svom subdomenu; glavni domen slobodan za Node |
+| 05.09.2026. | — | Node App ponovo kreiran na `koncarelektro.rs` (root) — i dalje isti document root kao `cms.koncarelektro.rs` (deljen `.htaccess`) izazvao je dva simptoma: CSS se nije učitavao na novom sajtu (WP rewrite pravila presretala `/_next/static/*`), i `cms.koncarelektro.rs/wp-admin` je prikazivao shop umesto WP-a (Passenger `PassengerBaseURI "/"` u deljenom `.htaccess`-u presretao je i subdomen). Rešenje: kreiran nov, prazan document root folder za `koncarelektro.rs` (cPanel → Domains → izmena Document Root), Node App obrisan i ponovo kreiran vezan za taj prazan folder — potpuno razdvojio WP i Node `.htaccess` prostore | Konačna, stabilna arhitektura — nema više deljenih document root-ova |
+| 05.09.2026. | — | Build na serveru (shared hosting) izazvao niz problema rešenih trajno u kodu: (1) `package.json` — build-time paketi (`typescript`, `tailwindcss`, `postcss`, `autoprefixer`, `@tailwindcss/typography`, `@types/*`) prebačeni iz `devDependencies` u `dependencies` (cPanel Node.js Selector NODE_ENV=production ih je preskakao); (2) `tsconfig.json` — isključeni `vite.config.ts`, `vitest.config.ts`, `*.test.ts(x)`, `src/test/**` iz TypeScript provere (ostaci starog Vite projekta blokirali su `next build` tipsku proveru jer `vite`/`vitest` nisu instalirani na produkciji); (3) `.env.production` fajl kreiran direktno na serveru (Next.js ga automatski čita pri `next build`) — `NEXT_PUBLIC_*` env varijable iz cPanel UI-a se NE prenose automatski u ručnu Terminal sesiju, samo u živi Passenger proces | Build sad pouzdano prolazi na serveru; sve komitovano na `develop-koncar` |
+| 05.09.2026. | — | `wp-php/koncar-auth.php` i `wp-php/contact.php` upload-ovani direktno u `~/koncarelektro.rs/` (WP root, isti za `cms.koncarelektro.rs`) — nedostajali su na produkciji, blokirali login/reset lozinke i kontakt formu | Login i kontakt forma rade |
+| 05.09.2026. | — | Finalni QA na `koncarelektro.rs` (produkcija): homepage, proizvodi + slike, login/registracija, RaiAccept plaćanje, `cms.koncarelektro.rs/wp-admin` (nezavisan i netaknut), sitemap.xml (5.649 URL, potvrđeno u browseru), robots.txt — sve OK | **GO-LIVE POTVRĐEN** — 8.3 zatvoren |
+| 05.09.2026. | — | Napomena (otvoreno): WooCommerce "Order Attribution" (Origin kolona) sada pokazuje "Unknown" za sve nove porudžbine — očekivano ponašanje headless arhitekture (WC-ov tracking script se učitava samo na standardnom WP checkout-u, ne na Next.js frontend-u). GA4 nezavisno prati izvor saobraćaja. Klijent odlučio da za sada ne dira | Moguć budući rad: custom UTM/referrer capture → order meta, ako zatreba |
 
 ---
 
 ## Sledeći koraci (action items)
 
-### Sada — Nedelja 8 (RaiAccept prod 01.09.2026.)
+### Sada — posle GO-LIVE (05.09.2026.)
 
-**Prioritet — ti proveravaš**
-- 8.2 — produkcijski RaiAccept credentials + jedna realna test transakcija. Klijentu treba samo: (1) tražiti od banke aktivaciju Production okruženja u RaiAccept Merchant portalu, (2) prebaciti prekidač Sandbox→Production, (3) generisati novi par API Credentials, (4) proslediti nama username/password za `RAIACCEPT_USERNAME`/`RAIACCEPT_PASSWORD` na Vercel Production. Kod se ne menja.
+**Prioritet**
+- ⚠️ **Potvrditi da su `RAIACCEPT_USERNAME`/`RAIACCEPT_PASSWORD` na produkciji zaista produkcijske vrednosti** — u jednom trenutku su na novoj `koncarelektro.rs` Node App-u slučajno unete vrednosti identične sandbox paru iz lokalnog `.env`. Realna transakcija je ranije uspešno testirana sa pravim produkcijskim parom na `app.koncarelektro.rs` — proveriti u RaiAccept Merchant Portalu (Production view) da se par na živoj aplikaciji poklapa s onim tamo, i po potrebi ažurirati env na `koncarelektro.rs` Node App-u + rebuild `.env.production` na serveru.
+- 8.4 — submit `https://koncarelektro.rs/sitemap.xml` u Google Search Console (sad kad je live)
+- 8.9 — formalna predaja koda/pristupa klijentu (repo je već na GitHub-u i deployovan)
+- 8.10 — kratka obuka/napomena klijentu: WP admin je sada na `https://cms.koncarelektro.rs/wp-admin` (ne više na `koncarelektro.rs/wp-admin`)
+- Klijentu poslati listu 30 proizvoda bez para (Grupa 3+4) na odluku — `scripts/output/proizvodi-za-proveru-klijent.txt`
+
+**Završeno — GO-LIVE (05.09.2026.)**
+- 8.3 — cutover na cPanel završen: `koncarelektro.rs` = Next.js (Node.js Selector), `cms.koncarelektro.rs` = WordPress (isti fajlovi/baza, izolovan document root)
+- Build stabilizovan trajno (package.json deps, tsconfig excludes, `.env.production` na serveru)
+- `koncar-auth.php` + `contact.php` upload-ovani na produkciju — login/kontakt rade
+- Pun QA prošao: nalozi, checkout, RaiAccept, slike, sitemap/robots
 
 **Završeno — 01.09.2026.**
 - 8.1 — ručni QA na telefonu/desktopu potvrđen (checklist `docs/GO_LIVE.md`)
 - Potvrđen RaiAccept prod-switch mehanizam prema zvaničnoj dokumentaciji (`setup-account.html`)
 
-**Pre DNS-a (env)**
-- Production env: WP live URL, `WC_CHECKOUT_FORCE_TEST_CUSTOMER=false`, `NEXT_PUBLIC_ANALYTICS_LIVE=true` tek na Production
-- Staging WP root: upload `koncar-elektro-store/wp-php/contact.php` + `koncar-auth.php` (ako još nisu) — login i kontakt forma zavise od toga; registracija i recenzije rade preko WC REST
-
 **Ne sada**
-- 8.3 DNS — tek kad su 8.1 + 8.2 zeleni
-- 8.4 GSC sitemap — tek posle DNS-a
+- Formalni URL-by-URL 200/301 sweep (8.5) i GSC monitoring (8.6–8.8) — prvih dana posle sitemap submit-a
+- WooCommerce Order Attribution ("Unknown" origin) — klijent odlučio da za sada ne dira
 
 **Završeno — N8 gap fill (18.08.2026.)**
 - Društvene mreže: [Facebook](https://www.facebook.com/koncar.shop.rs/), [Instagram](https://www.instagram.com/koncar_elektro/), [YouTube](https://www.youtube.com/@koncarelektroALATI); TikTok privremeno `tiktok.com`

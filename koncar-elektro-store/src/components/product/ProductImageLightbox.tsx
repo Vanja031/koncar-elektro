@@ -29,11 +29,13 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
   const [index, setIndex] = useState(initialIndex);
   const [scale, setScale] = useState(1);
   const [translate, setTranslate] = useState<Point>({ x: 0, y: 0 });
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [swipeAnimating, setSwipeAnimating] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
 
   const pointers = useRef(new Map<number, Point>());
   const gesture = useRef({
-    mode: 'idle' as 'idle' | 'pan' | 'pinch',
+    mode: 'idle' as 'idle' | 'pan' | 'pinch' | 'swipe',
     startScale: 1,
     startDistance: 0,
     startTranslate: { x: 0, y: 0 } as Point,
@@ -41,8 +43,12 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
     lastTapAt: 0,
     moved: false,
   });
+  const scaleRef = useRef(scale);
+  scaleRef.current = scale;
+  const swipeTimerRef = useRef<number | null>(null);
 
   const isZoomed = scale > 1.02;
+  const canSwipe = images.length > 1 && !isZoomed;
 
   const resetZoom = useCallback(() => {
     setScale(1);
@@ -51,6 +57,8 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
 
   useEffect(() => {
     resetZoom();
+    setSwipeOffset(0);
+    setSwipeAnimating(false);
   }, [index, resetZoom]);
 
   useEffect(() => {
@@ -58,6 +66,7 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
+      if (swipeTimerRef.current != null) window.clearTimeout(swipeTimerRef.current);
     };
   }, []);
 
@@ -87,34 +96,25 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
   const goNext = useCallback(() => setIndex((i) => (i + 1) % images.length), [images.length]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+
     (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     gesture.current.moved = false;
+    setSwipeAnimating(false);
 
     if (pointers.current.size === 2) {
       const [a, b] = [...pointers.current.values()];
       gesture.current.mode = 'pinch';
       gesture.current.startDistance = distance(a, b);
-      gesture.current.startScale = scale;
+      gesture.current.startScale = scaleRef.current;
       gesture.current.startTranslate = translate;
+      setSwipeOffset(0);
       return;
     }
 
-    const now = Date.now();
-    const isDoubleTap = now - gesture.current.lastTapAt < DOUBLE_TAP_WINDOW_MS;
-    gesture.current.lastTapAt = now;
-
-    if (isDoubleTap) {
-      gesture.current.mode = 'idle';
-      if (isZoomed) {
-        resetZoom();
-      } else {
-        setScale(DOUBLE_TAP_SCALE);
-      }
-      return;
-    }
-
-    gesture.current.mode = isZoomed ? 'pan' : 'idle';
+    const zoomed = scaleRef.current > 1.02;
+    gesture.current.mode = zoomed ? 'pan' : 'idle';
     gesture.current.startTranslate = translate;
     gesture.current.startCenter = { x: e.clientX, y: e.clientY };
   };
@@ -122,7 +122,13 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!pointers.current.has(e.pointerId)) return;
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    gesture.current.moved = true;
+
+    const dx = e.clientX - gesture.current.startCenter.x;
+    const dy = e.clientY - gesture.current.startCenter.y;
+
+    if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+      gesture.current.moved = true;
+    }
 
     if (gesture.current.mode === 'pinch' && pointers.current.size === 2) {
       const [a, b] = [...pointers.current.values()];
@@ -135,14 +141,30 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
     }
 
     if (gesture.current.mode === 'pan') {
-      const dx = e.clientX - gesture.current.startCenter.x;
-      const dy = e.clientY - gesture.current.startCenter.y;
       setTranslate(
         clampTranslate(
           { x: gesture.current.startTranslate.x + dx, y: gesture.current.startTranslate.y + dy },
-          scale,
+          scaleRef.current,
         ),
       );
+      return;
+    }
+
+    // Horizontal swipe between images at 1x (lock once axis is clear)
+    if (
+      (gesture.current.mode === 'idle' || gesture.current.mode === 'swipe') &&
+      images.length > 1 &&
+      scaleRef.current <= 1.02
+    ) {
+      if (gesture.current.mode === 'idle') {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        if (Math.abs(dy) > Math.abs(dx)) return; // vertical scroll intent — ignore
+        gesture.current.mode = 'swipe';
+      }
+
+      if (gesture.current.mode === 'swipe') {
+        setSwipeOffset(dx);
+      }
     }
   };
 
@@ -150,30 +172,56 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
     const start = pointers.current.get(e.pointerId);
     pointers.current.delete(e.pointerId);
 
-    const wasSwipe =
-      gesture.current.mode === 'idle' &&
-      !isZoomed &&
-      start &&
-      Math.abs(e.clientX - start.x) > SWIPE_THRESHOLD &&
-      Math.abs(e.clientX - start.x) > Math.abs(e.clientY - start.y);
+    const wasSwipe = gesture.current.mode === 'swipe';
+    const dx = start ? e.clientX - start.x : 0;
 
-    if (wasSwipe && start) {
-      if (e.clientX - start.x < 0) goNext();
-      else goPrev();
+    if (wasSwipe) {
+      if (Math.abs(dx) > SWIPE_THRESHOLD) {
+        setSwipeAnimating(true);
+        setSwipeOffset(dx < 0 ? -window.innerWidth : window.innerWidth);
+        const advance = dx < 0 ? goNext : goPrev;
+        if (swipeTimerRef.current != null) window.clearTimeout(swipeTimerRef.current);
+        swipeTimerRef.current = window.setTimeout(() => {
+          swipeTimerRef.current = null;
+          advance();
+        }, 150);
+      } else {
+        setSwipeAnimating(true);
+        setSwipeOffset(0);
+      }
+    } else if (
+      !gesture.current.moved &&
+      pointers.current.size === 0 &&
+      gesture.current.mode === 'idle' &&
+      start
+    ) {
+      // Double-tap / double-click zoom — only on a still tap, not mid-swipe
+      const now = Date.now();
+      const isDoubleTap = now - gesture.current.lastTapAt < DOUBLE_TAP_WINDOW_MS;
+      gesture.current.lastTapAt = now;
+      if (isDoubleTap) {
+        if (scaleRef.current > 1.02) resetZoom();
+        else setScale(DOUBLE_TAP_SCALE);
+      }
     }
 
     if (pointers.current.size < 2 && gesture.current.mode === 'pinch') {
       gesture.current.mode = pointers.current.size === 1 ? 'pan' : 'idle';
-      if (scale < MIN_SCALE + 0.02) resetZoom();
+      if (scaleRef.current < MIN_SCALE + 0.02) resetZoom();
     }
 
     if (pointers.current.size === 0) {
       gesture.current.mode = 'idle';
-      if (scale < MIN_SCALE + 0.02) resetZoom();
+      if (scaleRef.current < MIN_SCALE + 0.02) resetZoom();
     }
   };
 
   const counter = useMemo(() => `${index + 1} / ${images.length}`, [index, images.length]);
+
+  const imageTransform =
+    swipeOffset !== 0
+      ? `translate(${swipeOffset}px, 0) scale(${scale})`
+      : `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
 
   return (
     <div className="product-lightbox" role="dialog" aria-modal="true" aria-label={`Uvećan prikaz — ${name}`}>
@@ -191,25 +239,21 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        onDoubleClick={(e) => {
-          e.preventDefault();
-          if (isZoomed) resetZoom();
-          else setScale(DOUBLE_TAP_SCALE);
-        }}
       >
         <img
           src={images[index]}
           alt={`${name} — uvećana slika ${index + 1}`}
           className="product-lightbox-image"
           style={{
-            transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
-            transition: gesture.current.mode === 'idle' ? 'transform 150ms ease-out' : 'none',
+            transform: imageTransform,
+            transition: swipeAnimating || gesture.current.mode === 'idle' ? 'transform 150ms ease-out' : 'none',
+            opacity: swipeOffset !== 0 ? Math.max(0.35, 1 - Math.abs(swipeOffset) / 400) : 1,
           }}
           draggable={false}
         />
       </div>
 
-      {images.length > 1 && !isZoomed && (
+      {canSwipe && (
         <>
           <button
             type="button"
@@ -231,7 +275,9 @@ export const ProductImageLightbox = ({ images, name, initialIndex, onClose }: Pr
       )}
 
       {!isZoomed && (
-        <p className="product-lightbox-hint">Prevucite dva prsta ili dupli tap za zumiranje</p>
+        <p className="product-lightbox-hint">
+          {images.length > 1 ? 'Prevucite za sledeću sliku · dupli tap za zum' : 'Dupli tap za zumiranje'}
+        </p>
       )}
     </div>
   );

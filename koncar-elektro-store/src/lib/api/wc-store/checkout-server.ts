@@ -9,6 +9,7 @@ import type {
   WcStoreCart,
   WcStoreCheckoutResult,
 } from '@/lib/api/types/wc-cart';
+import { syncOrderShipping } from '@/lib/api/wc-rest/orders';
 
 export type CheckoutLineInput = {
   productId: number;
@@ -28,6 +29,9 @@ export type PlaceOrderInput = {
   customerNote?: string;
   /** WC payment method id: `cod` | `bacs` */
   paymentMethod: 'cod' | 'bacs';
+  /** Cart snapshot used to apply the same free-shipping rule as the storefront. */
+  subtotal: number;
+  totalWeightKg: number;
 };
 
 export type PlaceOrderResult = {
@@ -230,6 +234,11 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
   if (!result?.order_id) {
     throw new WcStoreRequestError('WooCommerce nije vratio broj porudžbine.', 502, result);
   }
+
+  // Best-effort: align the order's shipping line with our free-shipping rule.
+  // Store API auto-selects whatever rate WP has configured, which may not
+  // match — this never throws and never blocks a successfully placed order.
+  await syncOrderShipping(result.order_id, input.subtotal, input.totalWeightKg);
 
   return {
     orderId: String(result.order_id),

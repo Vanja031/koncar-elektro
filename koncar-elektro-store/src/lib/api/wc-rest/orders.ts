@@ -2,9 +2,17 @@
  * Server-only WooCommerce REST API v3 helper for creating/updating orders.
  */
 import { wcV3Fetch, WcRestError } from '@/lib/api/wc-rest/client';
-import { SHIPPING_CARRIER, SHIPPING_COST } from '@/lib/shipping';
+import { calculateShipping, SHIPPING_CARRIER } from '@/lib/shipping';
 
 export { WcRestError };
+
+export type WcShippingLinePatch = {
+  /** Existing shipping_lines[].id to update in place; omit to add a new line. */
+  id?: number;
+  method_id: string;
+  method_title: string;
+  total: string;
+};
 
 export type WcOrderUpdatePatch = {
   status?: 'pending' | 'processing' | 'on-hold' | 'completed' | 'cancelled' | 'failed' | 'refunded';
@@ -15,6 +23,8 @@ export type WcOrderUpdatePatch = {
   /** When true, WC sets date_paid and marks the order as paid in admin. */
   set_paid?: boolean;
   meta_data?: Array<{ key: string; value: string }>;
+  /** Replaces/updates shipping line(s) — WC recalculates order totals. */
+  shipping_lines?: WcShippingLinePatch[];
   /** Appended as a private WooCommerce order note (customer_note=false). */
   note?: string;
 };
@@ -33,6 +43,9 @@ export type CreatePendingOrderInput = {
   paymentMethodTitle: string;
   metaData?: Array<{ key: string; value: string }>;
   customerId?: number;
+  /** Cart snapshot used to compute the shipping line — see `calculateShipping`. */
+  subtotal: number;
+  totalWeightKg: number;
 };
 
 export type WcOrderBilling = {
@@ -53,6 +66,13 @@ export type WcOrderLineItem = {
 
 export type WcOrderMeta = { id?: number; key: string; value: string };
 
+export type WcOrderShippingLine = {
+  id: number;
+  method_id: string;
+  method_title: string;
+  total: string;
+};
+
 export type WcOrderV3 = {
   id: number;
   number: string;
@@ -64,6 +84,7 @@ export type WcOrderV3 = {
   currency: string;
   billing: WcOrderBilling;
   line_items: WcOrderLineItem[];
+  shipping_lines?: WcOrderShippingLine[];
   meta_data: WcOrderMeta[];
 };
 
@@ -89,6 +110,7 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
   const customerNote = forceTest
     ? 'TEST PORUDŽBINA'
     : (input.customerNote ?? '').trim();
+  const shipping = calculateShipping(input.subtotal, input.totalWeightKg);
 
   return wcV3Fetch<WcOrderV3>('/orders', {
     method: 'POST',
@@ -123,14 +145,55 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
       })),
       shipping_lines: [
         {
-          method_id: 'flat_rate',
-          method_title: `Kurirska služba: ${SHIPPING_CARRIER}`,
-          total: String(SHIPPING_COST),
+          method_id: shipping.isFree ? 'free_shipping' : 'flat_rate',
+          method_title: shipping.isFree ? `Besplatna dostava — ${SHIPPING_CARRIER}` : shipping.label,
+          total: String(shipping.cost),
         },
       ],
       meta_data: input.metaData ?? [],
     }),
   });
+}
+
+/**
+ * Best-effort override of an already-created order's shipping line so it
+ * matches our free-shipping rule (used after Store API checkout, which lets
+ * WooCommerce auto-select its own configured shipping rate). Never throws —
+ * on any failure it just logs and leaves the WC-selected rate as-is, so a
+ * broken lookup can never block order creation.
+ */
+export async function syncOrderShipping(
+  id: string | number,
+  subtotal: number,
+  totalWeightKg: number,
+): Promise<void> {
+  try {
+    const order = await getWcOrder(id);
+    const shipping = calculateShipping(subtotal, totalWeightKg);
+    const existing = order.shipping_lines?.[0];
+    const desiredMethodId = shipping.isFree ? 'free_shipping' : 'flat_rate';
+    const desiredTitle = shipping.isFree ? `Besplatna dostava — ${SHIPPING_CARRIER}` : shipping.label;
+    const desiredTotal = String(shipping.cost);
+
+    const alreadyCorrect =
+      existing &&
+      existing.total === desiredTotal &&
+      existing.method_id === desiredMethodId;
+    if (alreadyCorrect) return;
+
+    await updateWcOrder(id, {
+      shipping_lines: [
+        {
+          ...(existing?.id ? { id: existing.id } : {}),
+          method_id: desiredMethodId,
+          method_title: desiredTitle,
+          total: desiredTotal,
+        },
+      ],
+    });
+  } catch (err) {
+    console.error('[wc-rest/orders] syncOrderShipping failed — keeping WC-selected shipping rate', err);
+  }
 }
 
 /** Updates order fields and/or appends a private order note in one call. */
