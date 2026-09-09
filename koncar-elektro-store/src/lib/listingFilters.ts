@@ -3,10 +3,52 @@ import type { WcStoreAttributeCount } from '@/lib/api/wc-store/products';
 import type { WcStoreProduct } from '@/lib/api/types/wc-store';
 import { decodeHtmlEntities } from '@/lib/htmlEntities';
 
-/** Prefer staging `pa_brend`; fall back to live `pa_proizvodjac`. */
+/**
+ * Staging names the brand taxonomy `pa_brend`; live WooCommerce uses `pa_proizvodjac`.
+ * Sending the wrong one is silently ignored by the Store API and returns the full catalog.
+ */
+export const BRAND_ATTRIBUTE_ALIASES = ['pa_brend', 'pa_proizvodjac'] as const;
+
+/** Brand taxonomy present in the synced `wcAttributes` dump (UI labels / term options). */
 export const BRAND_ATTRIBUTE_SLUG = wcAttributes.some((a) => a.slug === 'pa_brend')
   ? 'pa_brend'
   : 'pa_proizvodjac';
+
+/**
+ * Brand taxonomy the active WP Store API actually understands.
+ * Must follow NEXT_PUBLIC_/VITE_ WP URL (literal keys so Next inlines them client-side).
+ */
+function resolveBrandApiAttributeSlug(): string {
+  const wpApiUrl =
+    process.env.NEXT_PUBLIC_WP_API_URL ||
+    process.env.NEXT_PUBLIC_WC_STORE_API_URL ||
+    process.env.VITE_WP_API_URL ||
+    process.env.VITE_WC_STORE_API_URL ||
+    '';
+  if (/cleannikki|testing\./i.test(wpApiUrl)) return 'pa_brend';
+  if (/koncarelektro\.rs/i.test(wpApiUrl)) return 'pa_proizvodjac';
+  // Match next.config / server-config production fallback when env is unset.
+  return 'pa_proizvodjac';
+}
+
+export const BRAND_API_ATTRIBUTE_SLUG = resolveBrandApiAttributeSlug();
+
+/**
+ * Live `pa_proizvodjac` term slugs that differ from the staging `pa_brend` dump /
+ * homepage featured-brand slugs.
+ */
+const LIVE_BRAND_TERM_SLUG_OVERRIDES: Record<string, string> = {
+  bosch: 'bosch-professional',
+};
+
+function resolveBrandTermSlugForApi(termSlug: string): string {
+  if (BRAND_API_ATTRIBUTE_SLUG !== 'pa_proizvodjac') return termSlug;
+  return LIVE_BRAND_TERM_SLUG_OVERRIDES[termSlug] ?? termSlug;
+}
+
+export function isBrandAttributeSlug(attributeSlug: string): boolean {
+  return (BRAND_ATTRIBUTE_ALIASES as readonly string[]).includes(attributeSlug);
+}
 
 /** Never expose these as shop filters (declaration / empty / noise). */
 export const HIDDEN_FILTER_ATTRIBUTE_SLUGS = new Set([
@@ -122,7 +164,10 @@ export function getFilterableWcAttributes() {
 
 /** Taxonomies to request facet counts for (including brand). */
 export function getFacetTaxonomies(): string[] {
-  return getFilterableWcAttributes().map((a) => a.slug);
+  const slugs = getFilterableWcAttributes().map((a) =>
+    isBrandAttributeSlug(a.slug) ? BRAND_API_ATTRIBUTE_SLUG : a.slug,
+  );
+  return [...new Set(slugs)];
 }
 
 /**
@@ -156,7 +201,14 @@ export function getAttributeFilterOptions(attributeSlug: string): AttributeFilte
 }
 
 export function getBrandFilterOptions(): AttributeFilterOption[] {
-  return getAttributeFilterOptions(BRAND_ATTRIBUTE_SLUG);
+  const primary = getAttributeFilterOptions(BRAND_ATTRIBUTE_SLUG);
+  if (primary.length) return primary;
+  for (const slug of BRAND_ATTRIBUTE_ALIASES) {
+    if (slug === BRAND_ATTRIBUTE_SLUG) continue;
+    const opts = getAttributeFilterOptions(slug);
+    if (opts.length) return opts;
+  }
+  return [];
 }
 
 /**
@@ -336,14 +388,33 @@ export function listingFiltersToSearchParams(
 ): Record<string, string> {
   const params: Record<string, string> = {};
   let attrIndex = 0;
+  let brandSlugs: string[] | undefined;
 
   const attributes = filters.attributes ?? {};
   for (const [attribute, slugs] of Object.entries(attributes)) {
     if (!slugs?.length) continue;
     if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(attribute)) continue;
+
+    // Merge staging/live brand aliases into the taxonomy the active API expects.
+    if (isBrandAttributeSlug(attribute)) {
+      brandSlugs = [...new Set([...(brandSlugs ?? []), ...slugs])].filter(Boolean);
+      continue;
+    }
+
+    const termSlug = slugs.length === 1 ? slugs[0] : slugs.join(',');
+    if (!termSlug) continue;
     params[`attributes[${attrIndex}][attribute]`] = attribute;
+    params[`attributes[${attrIndex}][slug]`] = termSlug;
+    params[`attributes[${attrIndex}][operator]`] = 'in';
+    attrIndex += 1;
+  }
+
+  if (brandSlugs?.length) {
+    const apiSlugs = [...new Set(brandSlugs.map(resolveBrandTermSlugForApi))];
+    params[`attributes[${attrIndex}][attribute]`] = BRAND_API_ATTRIBUTE_SLUG;
     params[`attributes[${attrIndex}][slug]`] =
-      slugs.length === 1 ? slugs[0] : slugs.join(',');
+      apiSlugs.length === 1 ? apiSlugs[0] : apiSlugs.join(',');
+    params[`attributes[${attrIndex}][operator]`] = 'in';
     attrIndex += 1;
   }
 

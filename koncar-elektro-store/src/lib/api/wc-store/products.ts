@@ -218,6 +218,8 @@ export async function getStoreAttributeCounts(query: {
   category?: string;
   search?: string;
   on_sale?: boolean;
+  /** e.g. pinned brand — same shape as product listing attribute params */
+  attributeParams?: Record<string, string>;
   taxonomies: string[];
 }): Promise<WcStoreAttributeCount[]> {
   if (!query.taxonomies.length) return [];
@@ -233,6 +235,7 @@ export async function getStoreAttributeCounts(query: {
         category: query.category,
         search: query.search,
         on_sale: query.on_sale ? true : undefined,
+        ...query.attributeParams,
       };
 
       taxonomies.forEach((taxonomy, index) => {

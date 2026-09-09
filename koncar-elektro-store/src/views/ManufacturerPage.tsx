@@ -13,9 +13,16 @@ import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
 import { useLiveApi } from '@/lib/api/config';
 import { useLiveSearchProducts } from '@/hooks/api/useLiveCatalog';
 import type { ListingSort } from '@/lib/listingSort';
-import { BRAND_ATTRIBUTE_SLUG, type ListingFilters } from '@/lib/listingFilters';
+import {
+  BRAND_ATTRIBUTE_SLUG,
+  countActiveFilters,
+  isBrandAttributeSlug,
+  type ListingFilters,
+} from '@/lib/listingFilters';
 import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
 import { scheduleScrollAfterFilterApply, scheduleScrollToTop } from '@/lib/scrollToTop';
+import { useNavigate } from '@/lib/router-compat';
+import { ROUTES } from '@/lib/catalogUrls';
 
 type Props = {
   brandSlug: string;
@@ -23,20 +30,51 @@ type Props = {
   initialPage?: number;
 };
 
+function filtersKeepBrand(filters: ListingFilters, brandSlug: string): boolean {
+  return Boolean(filters.attributes?.[BRAND_ATTRIBUTE_SLUG]?.includes(brandSlug));
+}
+
+/** Drop the page brand so we can tell if any *extra* filters are active. */
+function withoutPageBrand(filters: ListingFilters, brandSlug: string): ListingFilters {
+  const attributes: Record<string, string[]> = {};
+  for (const [slug, slugs] of Object.entries(filters.attributes ?? {})) {
+    if (!slugs?.length) continue;
+    if (isBrandAttributeSlug(slug)) {
+      const rest = slugs.filter((s) => s !== brandSlug);
+      if (rest.length) attributes[slug] = rest;
+      continue;
+    }
+    attributes[slug] = slugs;
+  }
+  return {
+    ...filters,
+    attributes: Object.keys(attributes).length ? attributes : undefined,
+  };
+}
+
 const ManufacturerPage = ({ brandSlug, brandName, initialPage = 1 }: Props) => {
+  const navigate = useNavigate();
+  const brandScope = useMemo(
+    () => ({ [BRAND_ATTRIBUTE_SLUG]: [brandSlug] }),
+    [brandSlug],
+  );
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState(initialPage);
   const [perPage, setPerPage] = useState<ListingPerPage>(24);
   const [sort, setSort] = useState<ListingSort>('bestsellers');
   const [filters, setFilters] = useState<ListingFilters>({
-    attributes: { [BRAND_ATTRIBUTE_SLUG]: [brandSlug] },
+    attributes: brandScope,
   });
 
   const scrollListingToTop = useCallback(() => {
     scheduleScrollToTop();
   }, []);
 
-  const pinBrand = useCallback(
+  const leaveBrandArchive = useCallback(() => {
+    navigate(ROUTES.shop);
+  }, [navigate]);
+
+  const withPinnedBrand = useCallback(
     (next: ListingFilters): ListingFilters => ({
       ...next,
       attributes: {
@@ -49,29 +87,45 @@ const ManufacturerPage = ({ brandSlug, brandName, initialPage = 1 }: Props) => {
 
   const handleFiltersApply = useCallback(
     (next: ListingFilters) => {
-      setFilters(pinBrand(next));
+      if (!filtersKeepBrand(next, brandSlug)) {
+        leaveBrandArchive();
+        return;
+      }
+      setFilters(withPinnedBrand(next));
       setPage(1);
       scheduleScrollAfterFilterApply();
     },
-    [pinBrand],
+    [brandSlug, leaveBrandArchive, withPinnedBrand],
   );
 
   const handleFiltersClear = useCallback(() => {
-    setFilters({ attributes: { [BRAND_ATTRIBUTE_SLUG]: [brandSlug] } });
+    // Only the page brand → leaving clears the brand filter entirely.
+    if (countActiveFilters(withoutPageBrand(filters, brandSlug)) === 0) {
+      leaveBrandArchive();
+      return;
+    }
+    setFilters({ attributes: brandScope });
     setPage(1);
     scheduleScrollAfterFilterApply();
-  }, [brandSlug]);
+  }, [brandScope, brandSlug, filters, leaveBrandArchive]);
 
   const handleFiltersPatch = useCallback(
     (next: ListingFilters) => {
-      setFilters(pinBrand(next));
+      if (!filtersKeepBrand(next, brandSlug)) {
+        leaveBrandArchive();
+        return;
+      }
+      setFilters(withPinnedBrand(next));
       setPage(1);
     },
-    [pinBrand],
+    [brandSlug, leaveBrandArchive, withPinnedBrand],
   );
 
   const liveSearch = useLiveSearchProducts({ page, perPage, sort, filters });
-  const { groups: attributeGroups } = useListingAttributeGroups({}, filters);
+  const { groups: attributeGroups } = useListingAttributeGroups(
+    { scopeAttributes: brandScope },
+    filters,
+  );
 
   const products = liveSearch.data?.products ?? [];
   const totalCount = liveSearch.data?.total ?? 0;
@@ -106,7 +160,7 @@ const ManufacturerPage = ({ brandSlug, brandName, initialPage = 1 }: Props) => {
       <ListingHero
         breadcrumbs={[
           { label: 'Početna', href: '/' },
-          { label: 'Proizvođači' },
+          { label: 'Proizvodi', href: ROUTES.shop },
           { label: brandName },
         ]}
         title={brandName}

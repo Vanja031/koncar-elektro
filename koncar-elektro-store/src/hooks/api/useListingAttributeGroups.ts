@@ -6,6 +6,7 @@ import {
   buildAttributeFilterGroups,
   collectAttributeFacetsFromCounts,
   getFacetTaxonomies,
+  listingFiltersToSearchParams,
   type AttributeFilterGroup,
   type ListingFilters,
 } from '@/lib/listingFilters';
@@ -14,6 +15,11 @@ export type ListingFacetContext = {
   category?: string;
   search?: string;
   onSale?: boolean;
+  /**
+   * Attribute filters that define the listing scope (e.g. manufacturer brand).
+   * Facet counts are computed within this subset of the catalog.
+   */
+  scopeAttributes?: Record<string, string[]>;
 };
 
 /**
@@ -27,12 +33,22 @@ export function useListingAttributeGroups(
   groups: AttributeFilterGroup[];
   isLoading: boolean;
 } {
+  const scopeAttributes = context.scopeAttributes;
+  const hasScopeAttributes = Object.values(scopeAttributes ?? {}).some((slugs) => slugs?.length);
   const hasContext =
     Boolean(context.category?.trim()) ||
     Boolean(context.search?.trim()) ||
-    Boolean(context.onSale);
+    Boolean(context.onSale) ||
+    hasScopeAttributes;
 
   const taxonomies = useMemo(() => getFacetTaxonomies(), []);
+  const scopeParams = useMemo(
+    () =>
+      hasScopeAttributes
+        ? listingFiltersToSearchParams({ attributes: scopeAttributes })
+        : undefined,
+    [hasScopeAttributes, scopeAttributes],
+  );
 
   const facetsQuery = useQuery({
     queryKey: [
@@ -40,6 +56,7 @@ export function useListingAttributeGroups(
       context.category ?? null,
       context.search?.trim() || null,
       context.onSale ?? false,
+      scopeParams ?? null,
       taxonomies,
     ],
     queryFn: async () => {
@@ -47,6 +64,7 @@ export function useListingAttributeGroups(
         category: context.category?.trim() || undefined,
         search: context.search?.trim() || undefined,
         on_sale: context.onSale ? true : undefined,
+        attributeParams: scopeParams,
         taxonomies,
       });
       return collectAttributeFacetsFromCounts(counts);

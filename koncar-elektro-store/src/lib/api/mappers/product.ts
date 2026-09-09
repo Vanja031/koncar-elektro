@@ -36,6 +36,20 @@ export function getAttributeValue(product: WcStoreProduct, ...names: string[]): 
   return undefined;
 }
 
+/**
+ * Native WC `weight` is populated for <1% of live products. The `pa_tezina` (Težina)
+ * attribute is populated for ~62% of products with terms like "0.5 kg" / "1.2 kg" —
+ * use it as the primary fallback before the name/price heuristic in `productWeight.ts`.
+ */
+function extractWeightKgFromAttributes(product: WcStoreProduct): number | undefined {
+  const raw = getAttributeValue(product, 'Težina', 'Tezina', 'pa_tezina');
+  if (!raw) return undefined;
+  const match = raw.replace(',', '.').match(/[\d.]+/);
+  if (!match) return undefined;
+  const kg = Number.parseFloat(match[0]);
+  return Number.isFinite(kg) && kg > 0 ? kg : undefined;
+}
+
 /** Prefer WC attribute; never fall back to the first word of the title. */
 function extractBrand(product: WcStoreProduct): string {
   const fromAttr = getAttributeValue(
@@ -171,7 +185,11 @@ export function mapStoreProductToCatalog(product: WcStoreProduct): KoncarCatalog
     price: product.prices.regular_price,
   });
   const onSale = product.on_sale && regular > price;
-  const weightKg = product.weight ? Number.parseFloat(product.weight) : undefined;
+  const nativeWeightKg = product.weight ? Number.parseFloat(product.weight) : undefined;
+  const weightKg =
+    nativeWeightKg && Number.isFinite(nativeWeightKg) && nativeWeightKg > 0
+      ? nativeWeightKg
+      : extractWeightKgFromAttributes(product);
 
   return {
     id: product.id,
