@@ -102,7 +102,7 @@ export const categoryPages: Record<string, CategoryPageData> = {
     slug: 'alati',
     title: 'ALATI',
     subtitle:
-      'Profesionalni alati i oprema za svaki zadatak. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+      'Profesionalni alati i oprema za radionicu, gradilište i dom. Provereni brendovi, garancija i brza dostava širom Srbije.',
     description:
       'U ponudi imamo električne i akumulatorske alate, ručni alat, kompresore, agregate i opremu za radionicu, baštu i poljoprivredu. Birajte proverene brendove uz stručnu podršku.',
     heroImage: breadcrumbsHero,
@@ -127,21 +127,21 @@ export const categoryPages: Record<string, CategoryPageData> = {
   elektromaterijal: programPage(
     'elektromaterijal',
     'ELEKTROMATERIJAL',
-    'Kablovi, prekidači, osigurači i oprema za instalacije. Izaberite kategoriju i pronađite što vam treba.',
+    'Elektromaterijal za instalacije: kablovi, prekidači, osigurači i razvodna oprema. Sve za stručni i kućni rad.',
     'Kompletna ponuda elektromaterijala za profesionalne i kućne instalacije — kablovi, osigurači, prekidači, razvodne table i prateća oprema.',
     imgElektromaterijal,
   ),
   rasveta: programPage(
     'rasveta',
     'RASVETA',
-    'Unutrašnja i spoljašnja rasveta za svaki prostor. Izaberite kategoriju i pronađite pravo rešenje.',
+    'LED i klasična rasveta za enterijer, eksterijer i industriju. Sijalice, paneli, reflektori i trake.',
     'LED sijalice, paneli, reflektori, lusteri i industrijska rasveta — sve na jednom mestu uz stručnu podršku.',
     imgRasveta,
   ),
   solarne: programPage(
     'solarne',
     'SOLARNE ELEKTRANE',
-    'Kompletna oprema za solarnu energiju. Izaberite kategoriju i pronađite rešenje za vaše potrebe.',
+    'Oprema za solarne elektrane — paneli, inverteri i kompleti. Ušteda energije za domaćinstva i objekte.',
     'Solarni paneli, inverteri, baterije i kompleti za domaćinstva i privredu — ušteda energije i novca.',
     imgSolarne,
   ),
@@ -165,28 +165,28 @@ const categoryHubSectionTitles: Record<string, string> = {
   solarne: 'Kategorije solarne opreme',
 };
 
-/** Short copy under the hub hero title. */
+/** Short copy under the hub hero title (fallback if WC description missing). */
 const categoryHubHeroDescriptions: Record<string, string> = {
   'elektricni-alat':
-    'Profesionalni električni alati za svaki zadatak. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+    'Električni alati za radionicu i teren — bušilice, brusilice, testere i više. Provereni brendovi, garancija i brza dostava.',
   'aku-alat':
-    'Akumulatorski alati za rad bez kabla. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+    'Akumulatorski alati za rad bez kabla: bušilice, odvijači, testere i setovi. Veliki izbor na stanju uz stručnu podršku.',
   'rucni-alat':
-    'Ručni alati za precizan i pouzdan rad. Izaberite kategoriju i pronađite idealan alat za vaše potrebe.',
+    'Ručni alati i pribor za precizan rad — ključevi, klešta, odvijači i organizacija alata. Kvalitet za majstore i hobi.',
   'aparati-za-varenje':
-    'Aparati i oprema za varenje za profesionalce i majstore. Izaberite kategoriju i pronađite pravo rešenje.',
+    'Aparati za varenje, elektrode i oprema za MIG, TIG i MMA. Rešenja za radionicu, montažu i terenski rad.',
   'htz-oprema':
-    'HTZ oprema za bezbedan rad. Izaberite kategoriju i pronađite zaštitu koja vam treba.',
+    'HTZ oprema i lična zaštita na radu — kacige, rukavice, naočare i radna odeća. Bezbednost prema propisima.',
   kompresori:
-    'Kompresori i pneumatska oprema za radionicu i teren. Izaberite kategoriju prema vašim potrebama.',
+    'Kompresori i pneumatski alati za farbanje, duvanje i radionicu. Uljni i bezuljni modeli različitih snaga.',
   agregati:
-    'Agregati za pouzdano napajanje. Izaberite kategoriju koja odgovara vašim zahtevima.',
+    'Benzinski, dizel i inverterski agregati za pouzdano napajanje kod kuće, na gradilištu i u privredi.',
   'kosacice-i-trimeri':
-    'Kosačice i trimeri za uređeno dvorište i teren. Izaberite kategoriju i pronađite pravi alat.',
+    'Kosačice, trimeri i baštenski alati za uređen travnjak i dvorište. Benzinski, električni i aku modeli.',
   'poljoprivredni-program':
-    'Poljoprivredna oprema za efikasan rad. Izaberite kategoriju i pronađite rešenje za vaše potrebe.',
+    'Poljoprivredni alati i oprema za obradu zemlje, košenje i održavanje. Pouzdana rešenja za farmu i okućnicu.',
   'oprema-za-dvoriste':
-    'Oprema za dvorište i baštu. Izaberite kategoriju i pronađite idealan proizvod.',
+    'Oprema za dvorište i baštu — zalivanje, čišćenje i održavanje zelenih površina. Praktična rešenja na stanju.',
 };
 
 export const getCategoryHubSectionTitle = (slug: string, fallbackLabel?: string) => {

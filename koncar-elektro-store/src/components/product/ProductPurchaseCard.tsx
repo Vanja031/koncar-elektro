@@ -66,9 +66,9 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
             <RotateCcw className="w-4 h-4 shrink-0" />
             <span><strong>Povraćaj novca 14 dana</strong></span>
           </div>
-          {onSale && product.saleStart && product.saleEnd && (
+          {onSale && (
             <p className="product-purchase-sale-period">
-              Akcija važi od <strong>{product.saleStart}</strong> do <strong>{product.saleEnd}</strong>
+              Akcija važi do kraja tekućeg meseca
             </p>
           )}
         </div>

@@ -25,6 +25,8 @@
     "create:missing-taxonomies": "node scripts/create-missing-taxonomies-on-live.mjs",
     "sync:catalog-content": "node scripts/write-catalog-sync-staging-to-live.mjs",
     "seed:homepage-banners": "node scripts/seed-homepage-banner-categories.mjs",
+    "seed:category-descriptions": "node scripts/seed-category-hero-descriptions.mjs",
+    "polish:category-descriptions": "node scripts/polish-category-hero-descriptions.mjs",
     "audit:seo-url-gap": "node scripts/seo-url-gap-inventory.mjs",
     "audit:seo-static-local": "node scripts/audit-seo-static-local.mjs",
     "audit:seo-parity-local": "node scripts/audit-seo-parity-local.mjs",

@@ -233,15 +233,22 @@ export function getAttributeLabel(attributeSlug: string): string {
   return decodeHtmlEntities(wcAttributes.find((a) => a.slug === attributeSlug)?.name ?? attributeSlug);
 }
 
-/** Collect facets from a product sample (fallback). */
-export function collectAttributeFacets(products: WcStoreProduct[]): AttributeFacetMap {
+/**
+ * Facet map from product attribute payloads (Store API).
+ * Prefer this over term-id → dump lookups: live/staging term IDs diverge.
+ * Brand aliases (`pa_brend` / `pa_proizvodjac`) collapse to {@link BRAND_ATTRIBUTE_SLUG}.
+ */
+export function collectAttributeFacets(
+  products: Array<Pick<WcStoreProduct, 'attributes'>>,
+): AttributeFacetMap {
   const map: AttributeFacetMap = {};
 
   for (const product of products) {
     for (const attr of product.attributes ?? []) {
       if (!attr.terms?.length) continue;
-      const taxonomy = normalizeTaxonomy(attr.taxonomy || '');
+      let taxonomy = normalizeTaxonomy(attr.taxonomy || '');
       if (!taxonomy.startsWith('pa_')) continue;
+      if (isBrandAttributeSlug(taxonomy)) taxonomy = BRAND_ATTRIBUTE_SLUG;
       if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(taxonomy)) continue;
       if (!map[taxonomy]) map[taxonomy] = new Set();
       for (const term of attr.terms) {
@@ -254,8 +261,10 @@ export function collectAttributeFacets(products: WcStoreProduct[]): AttributeFac
 }
 
 /**
- * Build facets from Store API collection-data attribute_counts.
- * Term IDs are mapped back to attribute + slug via wcAttributes.
+ * @deprecated Unsafe across WP environments — term IDs in `wcAttributes` dump
+ * do not match live. Use {@link collectAttributeFacets} from product payloads.
+ * Kept for narrow cases where counts are already tagged with `taxonomy` and
+ * term IDs are known to match the dump.
  */
 export function collectAttributeFacetsFromCounts(
   counts: WcStoreAttributeCount[],
@@ -265,11 +274,34 @@ export function collectAttributeFacetsFromCounts(
 
   for (const row of counts) {
     if (!row.count || row.count <= 0) continue;
+
+    // Prefer explicit taxonomy from a per-attribute collection-data fetch.
+    const taxonomy = row.taxonomy ? normalizeTaxonomy(row.taxonomy) : undefined;
+    if (taxonomy) {
+      if (!taxonomy.startsWith('pa_')) continue;
+      const attrSlug = isBrandAttributeSlug(taxonomy) ? BRAND_ATTRIBUTE_SLUG : taxonomy;
+      if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(attrSlug)) continue;
+
+      const scoped = wcAttributes
+        .find((a) => a.slug === attrSlug || (isBrandAttributeSlug(attrSlug) && isBrandAttributeSlug(a.slug)))
+        ?.terms.find((t) => t.id === row.term);
+      const termSlug =
+        scoped?.slug ??
+        index.get(row.term)?.termSlug;
+      if (!termSlug) continue;
+      if (!map[attrSlug]) map[attrSlug] = new Set();
+      map[attrSlug].add(termSlug);
+      continue;
+    }
+
     const info = index.get(row.term);
     if (!info) continue;
     if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(info.attributeSlug)) continue;
-    if (!map[info.attributeSlug]) map[info.attributeSlug] = new Set();
-    map[info.attributeSlug].add(info.termSlug);
+    const attrSlug = isBrandAttributeSlug(info.attributeSlug)
+      ? BRAND_ATTRIBUTE_SLUG
+      : info.attributeSlug;
+    if (!map[attrSlug]) map[attrSlug] = new Set();
+    map[attrSlug].add(info.termSlug);
   }
 
   return map;

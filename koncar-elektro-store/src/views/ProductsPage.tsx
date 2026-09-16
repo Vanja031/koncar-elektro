@@ -24,6 +24,7 @@ import {
   isParentListingRoute,
   resolveMegaMenuSubcategoryUrl,
 } from '@/lib/catalogUrls';
+import { resolveCategoryHeroDescription } from '@/lib/categoryHeroDescription';
 import {
   findMenuIdByParentSlug,
   findWcParentByInternalSlug,
@@ -37,7 +38,12 @@ import {
   type ListingFilters,
 } from '@/lib/listingFilters';
 import { useListingAttributeGroups } from '@/hooks/api/useListingAttributeGroups';
-import { toWcParentSlug, programToWcSlug, resolveListingCategorySlug } from '@/lib/wcSlugs';
+import {
+  toWcParentSlug,
+  programToWcSlug,
+  resolveListingCategorySlug,
+  wcParentSlugCandidates,
+} from '@/lib/wcSlugs';
 import { markTopBestsellers } from '@/lib/catalogCardHelpers';
 import { buildListingHighlightChips } from '@/lib/listingHighlightChips';
 import { useSubcategoryProductImages } from '@/hooks/api/useSubcategoryProductImages';
@@ -317,15 +323,23 @@ const ProductsPage = ({
     const bestSellers = useLiveApi ? (parentBestSellers.data?.products ?? []) : [];
     const firstChipHref = chips[0]?.href;
 
+    const heroDescription = resolveCategoryHeroDescription({
+      categories: allCategories,
+      slugCandidates: [
+        resolvedParentWc,
+        ...wcParentSlugCandidates(parentSlug),
+      ].filter(Boolean) as string[],
+      fallback:
+        parentData.description ||
+        getCategoryHubHeroDescription(parentSlug, parentData.title),
+    });
+
     return (
       <ShopLayout>
         <ListingHero
           breadcrumbs={parentData.breadcrumbs}
           title={parentData.title}
-          description={
-            parentData.description ||
-            getCategoryHubHeroDescription(parentSlug, parentData.title)
-          }
+          description={heroDescription}
         />
         {useLiveApi && navLoading ? (
           <div className="container py-6">
@@ -480,12 +494,20 @@ const ProductsPage = ({
     );
   };
 
+  const leafHeroDescription = resolveCategoryHeroDescription({
+    categories: allCategories,
+    slugCandidates: [wcCategorySlug, listingSlug].filter(Boolean) as string[],
+    fallback:
+      listingData.description ||
+      `Ponuda proizvoda iz kategorije ${listingData.title.toLowerCase()}.`,
+  });
+
   return (
     <ShopLayout>
       <ListingHero
         breadcrumbs={listingData.breadcrumbs}
         title={listingData.title}
-        description={listingData.description}
+        description={leafHeroDescription}
       />
 
       {chips.length > 0 && (

@@ -6,6 +6,11 @@ import { getAttributeValue } from '@/lib/api/mappers/product';
 import { BRAND_ATTRIBUTE_SLUG } from '@/lib/listingFilters';
 import { decodeHtmlEntities } from '@/lib/htmlEntities';
 import {
+  productSlugLookupVariants,
+  productSlugsEqual,
+  slugSearchFallbackQuery,
+} from '@/lib/api/wc-store/productSlug';
+import {
   countMatchingTokens,
   productMatchesAllTokens,
   scoreProductRelevance,
@@ -173,8 +178,19 @@ export async function searchStoreProductsMultiWord(
 }
 
 export async function getStoreProductBySlug(slug: string): Promise<WcStoreProduct | null> {
-  const products = await getStoreProducts({ slug, per_page: 1 });
-  return products[0] ?? null;
+  if (!slug.trim()) return null;
+
+  for (const candidate of productSlugLookupVariants(slug)) {
+    const products = await getStoreProducts({ slug: candidate, per_page: 1 });
+    if (products[0]) return products[0];
+  }
+
+  // Store API `slug=` breaks on literal `%xx` in post_name — recover via search.
+  const search = slugSearchFallbackQuery(slug);
+  if (!search) return null;
+
+  const matches = await getStoreProducts({ search, per_page: 40 });
+  return matches.find((product) => productSlugsEqual(product.slug, slug)) ?? null;
 }
 
 export async function getStoreProductById(id: number): Promise<WcStoreProduct> {
@@ -197,61 +213,88 @@ export async function getFirstProductImageForCategory(
 export type WcStoreAttributeCount = {
   term: number;
   count: number;
+  /** Set when counts were requested for a single taxonomy at a time. */
+  taxonomy?: string;
 };
 
 export type WcStoreCollectionData = {
   attribute_counts?: WcStoreAttributeCount[];
 };
 
-/**
- * WooCommerce / nginx reject collection-data requests with too many
- * `calculate_attribute_counts` params (≈30+ taxonomies → HTTP 400). Batch
- * under that limit and merge — we currently sync ~39 filterable attributes.
- */
-const ATTRIBUTE_COUNT_TAXONOMY_BATCH = 20;
+/** Attribute-only product row — enough to build listing facets. */
+export type WcStoreFacetProduct = Pick<WcStoreProduct, 'attributes'>;
 
 /**
- * Facet counts for product attributes in the current listing context.
- * Uses Store API `/products/collection-data` (covers the full result set, not just a page sample).
+ * Light product pages for facet building (`_fields=attributes` ≈10× smaller payload).
+ * Parallel page fetch keeps large parent categories (1–2k products) responsive.
  */
-export async function getStoreAttributeCounts(query: {
+const FACET_PRODUCTS_PER_PAGE = 100;
+const FACET_PAGE_CONCURRENCY = 6;
+
+async function mapPool<T, R>(
+  items: T[],
+  concurrency: number,
+  mapper: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  if (items.length === 0) return [];
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    async () => {
+      while (true) {
+        const index = nextIndex;
+        nextIndex += 1;
+        if (index >= items.length) return;
+        results[index] = await mapper(items[index], index);
+      }
+    },
+  );
+
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * All product attributes in the current listing context (full result set).
+ * Prefer this over `/products/collection-data` term counts: those return bare
+ * term IDs that cannot be mapped safely when staging/live ID spaces diverge.
+ */
+export async function getStoreProductsForAttributeFacets(query: {
   category?: string;
   search?: string;
   on_sale?: boolean;
   /** e.g. pinned brand — same shape as product listing attribute params */
   attributeParams?: Record<string, string>;
-  taxonomies: string[];
-}): Promise<WcStoreAttributeCount[]> {
-  if (!query.taxonomies.length) return [];
+}): Promise<WcStoreFacetProduct[]> {
+  const searchParams: Record<string, string | number | boolean | undefined> = {
+    category: query.category,
+    search: query.search,
+    on_sale: query.on_sale ? 'true' : undefined,
+    per_page: FACET_PRODUCTS_PER_PAGE,
+    page: 1,
+    _fields: 'attributes',
+    ...query.attributeParams,
+  };
 
-  const batches: string[][] = [];
-  for (let i = 0; i < query.taxonomies.length; i += ATTRIBUTE_COUNT_TAXONOMY_BATCH) {
-    batches.push(query.taxonomies.slice(i, i + ATTRIBUTE_COUNT_TAXONOMY_BATCH));
-  }
+  const first = await fetchJsonPaginated<WcStoreFacetProduct>(wcStoreApiBase, '/products', {
+    searchParams,
+  });
 
-  const batchResults = await Promise.all(
-    batches.map(async (taxonomies) => {
-      const searchParams: Record<string, string | number | boolean | undefined> = {
-        category: query.category,
-        search: query.search,
-        on_sale: query.on_sale ? true : undefined,
-        ...query.attributeParams,
-      };
+  if (first.totalPages <= 1) return first.data;
 
-      taxonomies.forEach((taxonomy, index) => {
-        searchParams[`calculate_attribute_counts[${index}][taxonomy]`] = taxonomy;
-        searchParams[`calculate_attribute_counts[${index}][query_type]`] = 'or';
+  const remainingPages = Array.from({ length: first.totalPages - 1 }, (_, i) => i + 2);
+  const pageBatches = await mapPool(
+    remainingPages,
+    FACET_PAGE_CONCURRENCY,
+    async (page) => {
+      const { data } = await fetchJsonPaginated<WcStoreFacetProduct>(wcStoreApiBase, '/products', {
+        searchParams: { ...searchParams, page },
       });
-
-      const data = await fetchJson<WcStoreCollectionData>(
-        wcStoreApiBase,
-        '/products/collection-data',
-        { searchParams },
-      );
-
-      return data.attribute_counts ?? [];
-    }),
+      return data;
+    },
   );
 
-  return batchResults.flat();
+  return first.data.concat(...pageBatches);
 }

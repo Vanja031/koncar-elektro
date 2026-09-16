@@ -14,6 +14,7 @@ import { getCategoryHubSectionTitle, getCategoryPage } from '@/data/categoryPage
 import type { SubcategoryItem } from '@/data/categoryPages';
 import { useCategoryPageLive } from '@/hooks/api/useCategoryPageLive';
 import { useLiveBestSellers } from '@/hooks/api/useLiveCatalog';
+import { useNavigationMenu } from '@/hooks/api/useNavigationMenu';
 import { useSubcategoryProductImages } from '@/hooks/api/useSubcategoryProductImages';
 import { useLiveApi } from '@/lib/api/config';
 import {
@@ -21,8 +22,9 @@ import {
   getProductListingUrl,
   getTopCategoryUrl,
 } from '@/lib/catalogUrls';
+import { resolveCategoryHeroDescription } from '@/lib/categoryHeroDescription';
 import { resolveSubcategoryImage } from '@/lib/subcategoryImages';
-import { programToWcSlug, toWcParentSlug } from '@/lib/wcSlugs';
+import { programToWcSlug, toWcParentSlug, wcParentSlugCandidates } from '@/lib/wcSlugs';
 
 type Props = {
   /** When rendered from `/product-category/:program`, bypass URL param. */
@@ -34,6 +36,12 @@ const CategoryPage = ({ programSlug }: Props) => {
   const slug = programSlug ?? paramSlug ?? 'alati';
   const staticData = getCategoryPage(slug);
   const { subcategories: liveSubcategories, isLive, isLoading } = useCategoryPageLive(slug);
+  const { allCategories } = useNavigationMenu();
+  const heroDescription = resolveCategoryHeroDescription({
+    categories: allCategories,
+    slugCandidates: [programToWcSlug(slug), ...wcParentSlugCandidates(slug), slug],
+    fallback: staticData?.subtitle,
+  });
 
   const hubImageSlugs = useMemo(() => {
     if (!isLive || liveSubcategories.length === 0) return [];
@@ -95,7 +103,7 @@ const CategoryPage = ({ programSlug }: Props) => {
       <ListingHero
         breadcrumbs={staticData.breadcrumbs}
         title={staticData.title}
-        description={staticData.subtitle}
+        description={heroDescription || staticData.subtitle}
       />
 
       {useLiveApi && isLoading ? (

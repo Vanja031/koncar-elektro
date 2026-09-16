@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getStoreAttributeCounts } from '@/lib/api/wc-store/products';
+import { getStoreProductsForAttributeFacets } from '@/lib/api/wc-store/products';
 import { useLiveApi } from '@/lib/api/config';
 import {
   buildAttributeFilterGroups,
-  collectAttributeFacetsFromCounts,
-  getFacetTaxonomies,
+  collectAttributeFacets,
   listingFiltersToSearchParams,
   type AttributeFilterGroup,
   type ListingFilters,
@@ -23,8 +22,9 @@ export type ListingFacetContext = {
 };
 
 /**
- * Derives which attribute filters are relevant for the current listing via
- * Store API collection-data counts — only attrs/terms that exist on matching products.
+ * Derives which attribute filters are relevant for the current listing.
+ * Builds facets from Store API product attributes (full result set, light
+ * `_fields=attributes` pages) so taxonomy/slug stay correct on live and staging.
  */
 export function useListingAttributeGroups(
   context: ListingFacetContext,
@@ -41,7 +41,6 @@ export function useListingAttributeGroups(
     Boolean(context.onSale) ||
     hasScopeAttributes;
 
-  const taxonomies = useMemo(() => getFacetTaxonomies(), []);
   const scopeParams = useMemo(
     () =>
       hasScopeAttributes
@@ -57,19 +56,17 @@ export function useListingAttributeGroups(
       context.search?.trim() || null,
       context.onSale ?? false,
       scopeParams ?? null,
-      taxonomies,
     ],
     queryFn: async () => {
-      const counts = await getStoreAttributeCounts({
+      const products = await getStoreProductsForAttributeFacets({
         category: context.category?.trim() || undefined,
         search: context.search?.trim() || undefined,
         on_sale: context.onSale ? true : undefined,
         attributeParams: scopeParams,
-        taxonomies,
       });
-      return collectAttributeFacetsFromCounts(counts);
+      return collectAttributeFacets(products);
     },
-    enabled: useLiveApi && hasContext && taxonomies.length > 0,
+    enabled: useLiveApi && hasContext,
     staleTime: 10 * 60 * 1000,
     retry: 1,
   });
