@@ -13,12 +13,23 @@ type Props = {
   onAdded?: () => void;
 };
 
+/** Sale validity copy for the current calendar month (1st → last day). */
+function currentMonthSalePeriodCopy(now = new Date()): string {
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const lastDay = new Date(y, m + 1, 0).getDate();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const mm = pad(m + 1);
+  return `Akcija važi od ${pad(1)}.${mm}.${y}. do ${pad(lastDay)}.${mm}.${y}.`;
+}
+
 export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
   const [quantity, setQuantity] = useState(1);
   const savings = product.oldPrice ? product.oldPrice - product.price : 0;
   const onSale = Boolean(product.oldPrice && product.oldPrice > product.price);
   const weightKg = getProductWeightKg(product);
   const shipping = calculateShipping(product.price * quantity, weightKg * quantity);
+  const salePeriodCopy = onSale ? currentMonthSalePeriodCopy() : null;
 
   return (
     <aside className="product-purchase-card lg:sticky lg:top-28">
@@ -66,10 +77,8 @@ export const ProductPurchaseCard = ({ product, onAdded }: Props) => {
             <RotateCcw className="w-4 h-4 shrink-0" />
             <span><strong>Povraćaj novca 14 dana</strong></span>
           </div>
-          {onSale && (
-            <p className="product-purchase-sale-period">
-              Akcija važi do kraja tekućeg meseca
-            </p>
+          {salePeriodCopy && (
+            <p className="product-purchase-sale-period">{salePeriodCopy}</p>
           )}
         </div>
       )}

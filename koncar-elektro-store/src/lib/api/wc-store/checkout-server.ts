@@ -1,15 +1,16 @@
 /**
- * Server-only WooCommerce Store API checkout.
- * Uses Cart-Token (no browser CORS). Never call from client components.
+ * Server-only WooCommerce checkout for COD / bank transfer.
+ * Creates the order via REST v3 with our shipping quote on the shipping line
+ * so customer emails match the storefront (Store API would email WC's flat rate
+ * before any post-create sync).
  */
-import { serverWcStoreApiBase } from '@/lib/api/server-config';
-import type {
-  WcStoreAddress,
-  WcStoreApiErrorBody,
-  WcStoreCart,
-  WcStoreCheckoutResult,
-} from '@/lib/api/types/wc-cart';
-import { syncOrderShipping } from '@/lib/api/wc-rest/orders';
+import {
+  createPendingWcOrder,
+  syncOrderShipping,
+  updateWcOrder,
+  WcRestError,
+} from '@/lib/api/wc-rest/orders';
+import { calculateShipping } from '@/lib/shipping';
 
 export type CheckoutLineInput = {
   productId: number;
@@ -43,8 +44,10 @@ export type PlaceOrderResult = {
   note: string;
 };
 
-const DEFAULT_COUNTRY = 'RS';
-const DEFAULT_STATE = 'RS23';
+const PAYMENT_TITLES: Record<'cod' | 'bacs', string> = {
+  cod: 'Plaćanje gotovinski prilikom preuzimanja',
+  bacs: 'Uplata na tekući račun',
+};
 
 class WcStoreRequestError extends Error {
   status: number;
@@ -67,103 +70,21 @@ function isForceTestCustomer() {
   return process.env.WC_CHECKOUT_FORCE_TEST_CUSTOMER !== 'false';
 }
 
-function buildUrl(path: string) {
-  const base = serverWcStoreApiBase.replace(/\/$/, '');
-  const normalized = `${base}/${path.replace(/^\//, '')}`;
-  const url = new URL(normalized);
-  if (!url.pathname.endsWith('/')) {
-    url.pathname = `${url.pathname}/`;
-  }
-  return url.toString();
-}
-
-async function wcFetch<T>(
-  path: string,
-  init: RequestInit & { cartToken?: string } = {},
-): Promise<{ data: T; cartToken: string | null }> {
-  const { cartToken, headers, ...rest } = init;
-  const response = await fetch(buildUrl(path), {
-    ...rest,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...(cartToken ? { 'Cart-Token': cartToken } : {}),
-      ...headers,
-    },
-    cache: 'no-store',
-  });
-
-  const nextToken = response.headers.get('Cart-Token') ?? cartToken ?? null;
-  let body: unknown = null;
-  const text = await response.text();
-  if (text) {
-    try {
-      body = JSON.parse(text) as unknown;
-    } catch {
-      body = text;
-    }
-  }
-
-  if (!response.ok) {
-    const err = body as WcStoreApiErrorBody | null;
-    const message =
-      (err && typeof err === 'object' && typeof err.message === 'string' && err.message) ||
-      `WooCommerce Store API ${response.status}`;
-    throw new WcStoreRequestError(message, response.status, body);
-  }
-
-  return { data: body as T, cartToken: nextToken };
-}
-
-function buildAddress(input: PlaceOrderInput, forced: boolean): WcStoreAddress {
-  return {
-    first_name: forced ? 'Test' : input.firstName,
-    last_name: forced ? 'Test' : input.lastName,
-    company: '',
-    address_1: input.address,
-    address_2: '',
-    city: input.city,
-    state: DEFAULT_STATE,
-    postcode: input.postalCode,
-    country: DEFAULT_COUNTRY,
-    email: input.email,
-    phone: input.phone,
-  };
-}
-
 function resolveCustomerNote(input: PlaceOrderInput, forced: boolean): string {
   if (forced) return 'TEST PORUDŽBINA';
   return (input.customerNote ?? '').trim();
 }
 
-async function selectShippingIfNeeded(cartToken: string, cart: WcStoreCart): Promise<string> {
-  if (!cart.needs_shipping) return cartToken;
-
-  const packages = cart.shipping_rates ?? [];
-  for (const pkg of packages) {
-    const rates = pkg.shipping_rates ?? [];
-    if (rates.length === 0) continue;
-    const selected = rates.find((rate) => rate.selected) ?? rates[0];
-    if (!selected?.rate_id) continue;
-    if (selected.selected) continue;
-
-    const { cartToken: next } = await wcFetch<WcStoreCart>('cart/select-shipping-rate', {
-      method: 'POST',
-      cartToken,
-      body: JSON.stringify({
-        package_id: pkg.package_id,
-        rate_id: selected.rate_id,
-      }),
-    });
-    if (next) cartToken = next;
-  }
-
-  return cartToken;
-}
-
 /**
- * Place a WooCommerce order via Store API (server → WP).
- * Throws WcStoreRequestError on API failures.
+ * Place a WooCommerce COD/bank order with correct weight-tier shipping.
+ *
+ * Flow (order matters for emails):
+ * 1) Create as `pending` with our shipping line
+ * 2) Re-assert shipping via REST (WC zone rates can overwrite flat_rate on save)
+ * 3) Move to `processing` / `on-hold` — customer emails fire on this transition
+ *    and therefore see the corrected delivery total
+ *
+ * Throws WcStoreRequestError on API failures (same shape the BFF route expects).
  */
 export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOrderResult> {
   if (!isLiveCheckoutEnabled()) {
@@ -177,77 +98,66 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
   }
 
   const forced = isForceTestCustomer();
-  const address = buildAddress(input, forced);
-  const shippingAddress: WcStoreAddress = { ...address };
-  delete shippingAddress.email;
   const customerNote = resolveCustomerNote(input, forced);
-  const customerName = `${address.first_name} ${address.last_name}`.trim();
+  const firstName = forced ? 'Test' : input.firstName;
+  const lastName = forced ? 'Test' : input.lastName;
+  const customerName = `${firstName} ${lastName}`.trim();
+  const finalStatus = input.paymentMethod === 'cod' ? 'processing' : 'on-hold';
+  const expectedShipping = calculateShipping(input.subtotal, input.totalWeightKg);
 
-  // 1) Fresh cart session
-  let { cartToken } = await wcFetch<WcStoreCart>('cart', { method: 'GET' });
-  if (!cartToken) {
-    throw new WcStoreRequestError('Nedostaje Cart-Token iz WooCommerce-a.', 502, null);
-  }
-
-  // 2) Add local cart lines into WC cart
-  for (const line of input.items) {
-    const added = await wcFetch<WcStoreCart>('cart/add-item', {
-      method: 'POST',
-      cartToken,
-      body: JSON.stringify({
-        id: line.productId,
-        quantity: line.quantity,
-      }),
+  try {
+    // 1) Pending first — avoid customer "processing" email until shipping is locked in.
+    const created = await createPendingWcOrder({
+      items: input.items,
+      email: input.email,
+      phone: input.phone,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      address: input.address,
+      city: input.city,
+      postalCode: input.postalCode,
+      customerNote: input.customerNote,
+      paymentMethod: input.paymentMethod,
+      paymentMethodTitle: PAYMENT_TITLES[input.paymentMethod],
+      subtotal: input.subtotal,
+      totalWeightKg: input.totalWeightKg,
+      status: 'pending',
     });
-    if (added.cartToken) cartToken = added.cartToken;
+
+    // 2) Force our quote onto the order (covers WC recalculating zone flat_rate to 400).
+    await syncOrderShipping(created.id, input.subtotal, input.totalWeightKg);
+
+    // 3) Status change → customer email with the totals after sync.
+    const order = await updateWcOrder(created.id, { status: finalStatus });
+
+    const shipped = Number(order.shipping_total);
+    if (Number.isFinite(shipped) && Math.abs(shipped - expectedShipping.cost) > 0.009) {
+      console.error(
+        '[checkout] shipping_total mismatch after sync',
+        {
+          orderId: order.id,
+          expected: expectedShipping.cost,
+          actual: order.shipping_total,
+          subtotal: input.subtotal,
+          totalWeightKg: input.totalWeightKg,
+        },
+      );
+    }
+
+    return {
+      orderId: String(order.id),
+      orderNumber: order.number || String(order.id),
+      status: order.status || finalStatus,
+      paymentMethod: input.paymentMethod,
+      customerName,
+      note: customerNote,
+    };
+  } catch (err) {
+    if (err instanceof WcRestError) {
+      throw new WcStoreRequestError(err.message || 'Greška pri kreiranju porudžbine.', err.status, err.body);
+    }
+    throw err;
   }
-
-  // 3) Customer addresses (needed before shipping rates resolve)
-  const updated = await wcFetch<WcStoreCart>('cart/update-customer', {
-    method: 'POST',
-    cartToken,
-    body: JSON.stringify({
-      billing_address: address,
-      shipping_address: shippingAddress,
-    }),
-  });
-  if (updated.cartToken) cartToken = updated.cartToken;
-
-  // 4) Refresh cart + select shipping
-  const cartSnap = await wcFetch<WcStoreCart>('cart', { method: 'GET', cartToken });
-  if (cartSnap.cartToken) cartToken = cartSnap.cartToken;
-  cartToken = await selectShippingIfNeeded(cartToken, cartSnap.data);
-
-  // 5) Process checkout → creates a real WC order
-  const checkout = await wcFetch<WcStoreCheckoutResult>('checkout', {
-    method: 'POST',
-    cartToken,
-    body: JSON.stringify({
-      billing_address: address,
-      shipping_address: shippingAddress,
-      customer_note: customerNote,
-      payment_method: input.paymentMethod,
-    }),
-  });
-
-  const result = checkout.data;
-  if (!result?.order_id) {
-    throw new WcStoreRequestError('WooCommerce nije vratio broj porudžbine.', 502, result);
-  }
-
-  // Best-effort: align the order's shipping line with our free-shipping rule.
-  // Store API auto-selects whatever rate WP has configured, which may not
-  // match — this never throws and never blocks a successfully placed order.
-  await syncOrderShipping(result.order_id, input.subtotal, input.totalWeightKg);
-
-  return {
-    orderId: String(result.order_id),
-    orderNumber: result.order_number || String(result.order_id),
-    status: result.status || 'processing',
-    paymentMethod: input.paymentMethod,
-    customerName,
-    note: customerNote,
-  };
 }
 
 export function getCheckoutRuntimeFlags() {

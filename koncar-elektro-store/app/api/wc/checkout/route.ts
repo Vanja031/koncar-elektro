@@ -100,7 +100,7 @@ function validateBody(body: CheckoutBody): { ok: true; data: PlaceOrderInput } |
 /**
  * POST /api/wc/checkout
  *
- * - WC_LIVE_CHECKOUT=true → real Store API order on koncarelektro.rs
+ * - WC_LIVE_CHECKOUT=true → real REST v3 order on WP (shipping line = our weight/free rule)
  * - otherwise → mock success (no write to live WP)
  *
  * When live + WC_CHECKOUT_FORCE_TEST_CUSTOMER≠false → name "Test Test",

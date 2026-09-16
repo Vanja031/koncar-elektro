@@ -6,6 +6,22 @@ import { calculateShipping, SHIPPING_CARRIER } from '@/lib/shipping';
 
 export { WcRestError };
 
+/** Custom method ids — avoid WC zone `flat_rate` instances that recalculate to 400. */
+const SHIPPING_METHOD_FREE = 'koncar_free_shipping';
+const SHIPPING_METHOD_PAID = 'koncar_weight';
+
+function shippingLinePayload(subtotal: number, totalWeightKg: number) {
+  const shipping = calculateShipping(subtotal, totalWeightKg);
+  return {
+    quote: shipping,
+    line: {
+      method_id: shipping.isFree ? SHIPPING_METHOD_FREE : SHIPPING_METHOD_PAID,
+      method_title: shipping.isFree ? `Besplatna dostava — ${SHIPPING_CARRIER}` : shipping.label,
+      total: shipping.cost.toFixed(2),
+    },
+  };
+}
+
 export type WcShippingLinePatch = {
   /** Existing shipping_lines[].id to update in place; omit to add a new line. */
   id?: number;
@@ -46,6 +62,12 @@ export type CreatePendingOrderInput = {
   /** Cart snapshot used to compute the shipping line — see `calculateShipping`. */
   subtotal: number;
   totalWeightKg: number;
+  /**
+   * WC order status at creation. Defaults to `pending` (card hold).
+   * COD should use `processing`, bank transfer `on-hold` so emails fire with
+   * the shipping totals we set on create (not a later sync).
+   */
+  status?: 'pending' | 'processing' | 'on-hold';
 };
 
 export type WcOrderBilling = {
@@ -98,10 +120,12 @@ export function getOrderMeta(order: WcOrderV3, key: string): string | null {
 }
 
 /**
- * Creates a pending WC order via REST API v3 — does NOT require an enabled
- * Store API payment gateway (unlike Store API `/checkout`). Used for the
- * RaiAccept card flow where we only need a pending order + total before
- * redirecting to the bank.
+ * Creates a WC order via REST API v3 with our shipping quote applied as a
+ * shipping line at creation time. Emails that fire on create therefore see the
+ * same delivery total as the storefront (weight tiers / free-shipping rule).
+ *
+ * Does NOT require an enabled Store API payment gateway (unlike Store API
+ * `/checkout`). Used for RaiAccept (pending) and COD/bank (processing/on-hold).
  */
 export async function createPendingWcOrder(input: CreatePendingOrderInput): Promise<WcOrderV3> {
   const forceTest = process.env.WC_CHECKOUT_FORCE_TEST_CUSTOMER !== 'false';
@@ -110,12 +134,13 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
   const customerNote = forceTest
     ? 'TEST PORUDŽBINA'
     : (input.customerNote ?? '').trim();
-  const shipping = calculateShipping(input.subtotal, input.totalWeightKg);
+  const { line } = shippingLinePayload(input.subtotal, input.totalWeightKg);
+  const status = input.status ?? 'pending';
 
   return wcV3Fetch<WcOrderV3>('/orders', {
     method: 'POST',
     body: JSON.stringify({
-      status: 'pending',
+      status,
       set_paid: false,
       ...(input.customerId ? { customer_id: input.customerId } : {}),
       payment_method: input.paymentMethod,
@@ -143,13 +168,7 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
         product_id: item.productId,
         quantity: item.quantity,
       })),
-      shipping_lines: [
-        {
-          method_id: shipping.isFree ? 'free_shipping' : 'flat_rate',
-          method_title: shipping.isFree ? `Besplatna dostava — ${SHIPPING_CARRIER}` : shipping.label,
-          total: String(shipping.cost),
-        },
-      ],
+      shipping_lines: [line],
       meta_data: input.metaData ?? [],
     }),
   });
@@ -157,10 +176,9 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
 
 /**
  * Best-effort override of an already-created order's shipping line so it
- * matches our free-shipping rule (used after Store API checkout, which lets
- * WooCommerce auto-select its own configured shipping rate). Never throws —
- * on any failure it just logs and leaves the WC-selected rate as-is, so a
- * broken lookup can never block order creation.
+ * matches our weight / free-shipping rule. Prefer setting shipping on create
+ * (see `createPendingWcOrder`) — WooCommerce emails fire at creation and will
+ * otherwise show the wrong delivery total if we only sync afterwards.
  */
 export async function syncOrderShipping(
   id: string | number,
@@ -169,25 +187,20 @@ export async function syncOrderShipping(
 ): Promise<void> {
   try {
     const order = await getWcOrder(id);
-    const shipping = calculateShipping(subtotal, totalWeightKg);
+    const { line } = shippingLinePayload(subtotal, totalWeightKg);
     const existing = order.shipping_lines?.[0];
-    const desiredMethodId = shipping.isFree ? 'free_shipping' : 'flat_rate';
-    const desiredTitle = shipping.isFree ? `Besplatna dostava — ${SHIPPING_CARRIER}` : shipping.label;
-    const desiredTotal = String(shipping.cost);
 
     const alreadyCorrect =
       existing &&
-      existing.total === desiredTotal &&
-      existing.method_id === desiredMethodId;
+      Number(existing.total) === Number(line.total) &&
+      existing.method_id === line.method_id;
     if (alreadyCorrect) return;
 
     await updateWcOrder(id, {
       shipping_lines: [
         {
           ...(existing?.id ? { id: existing.id } : {}),
-          method_id: desiredMethodId,
-          method_title: desiredTitle,
-          total: desiredTotal,
+          ...line,
         },
       ],
     });
