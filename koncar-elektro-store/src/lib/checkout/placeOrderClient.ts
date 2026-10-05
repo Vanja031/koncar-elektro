@@ -1,4 +1,5 @@
 import type { PaymentMethod, PlacedOrder } from '@/lib/order';
+import { getAttributionPayload } from '@/lib/attribution/client';
 
 export type CheckoutSubmitPayload = {
   items: Array<{ productId: number; quantity: number }>;
@@ -69,6 +70,7 @@ export async function placeOrderViaApi(payload: CheckoutSubmitPayload): Promise<
       paymentMethod: payload.paymentMethod,
       subtotal: payload.subtotal,
       totalWeightKg: payload.totalWeightKg,
+      attribution: getAttributionPayload(),
     }),
   });
 
@@ -128,7 +130,7 @@ export async function startCardPayment(
   const response = await fetch('/api/payments/raiaccept/start', {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, attribution: getAttributionPayload() }),
   });
 
   const data = (await response.json().catch(() => ({}))) as {

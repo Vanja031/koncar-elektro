@@ -10,6 +10,7 @@ import type { CreateOrderEntryInput } from '@/lib/payments/raiaccept';
 import { SITE_URL } from '@/lib/seo/site';
 import { createOrderId } from '@/lib/order';
 import { getSessionCustomer } from '@/lib/auth/session';
+import { buildAttributionMeta } from '@/lib/attribution/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -26,6 +27,7 @@ type StartBody = {
   customerNote?: string;
   subtotal?: number;
   totalWeightKg?: number;
+  attribution?: unknown;
 };
 
 type ValidatedStart = {
@@ -131,6 +133,7 @@ export async function POST(request: Request) {
     const wcOrder = await createPendingWcOrder({
       ...input,
       customerId: customer?.id,
+      metaData: buildAttributionMeta(body.attribution, request.headers.get('user-agent')),
       paymentMethod: 'raiaccept-card',
       paymentMethodTitle: 'Kartica (RaiAccept)',
       subtotal: input.subtotal,

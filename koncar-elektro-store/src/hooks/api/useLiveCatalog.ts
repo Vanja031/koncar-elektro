@@ -135,24 +135,26 @@ export function useLiveSaleProducts(
   options: {
     page?: number;
     perPage?: number;
+    sort?: ListingSort;
     filters?: ListingFilters;
   } = {},
   initialData?: LiveProductsResult,
 ) {
-  const { page = 1, perPage = 48, filters = {} } = options;
+  const { page = 1, perPage = 48, sort = 'bestsellers', filters = {} } = options;
+  const sortQuery = listingSortToStoreQuery(sort);
   const filterParams = listingFiltersToSearchParams(filters);
   const { min_price, max_price, ...attributeParams } = filterParams;
   const hasFilters = countActiveFilters(filters) > 0;
 
   return useQuery({
-    queryKey: ['live-sale-products', page, perPage, filters],
+    queryKey: ['live-sale-products', page, perPage, sort, filters],
     queryFn: async () => {
       const result = await getStoreProductsPaginated({
         on_sale: true,
         category: resolveFilterCategorySlug(filters),
         per_page: perPage,
         page,
-        orderby: 'popularity',
+        ...sortQuery,
         in_stock: filters.inStockOnly ? true : undefined,
         attributeParams,
         min_price: min_price ? Number(min_price) : undefined,
@@ -166,7 +168,7 @@ export function useLiveSaleProducts(
       };
     },
     enabled: useLiveApi,
-    initialData: hasFilters ? undefined : initialData,
+    initialData: hasFilters || sort !== 'bestsellers' ? undefined : initialData,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

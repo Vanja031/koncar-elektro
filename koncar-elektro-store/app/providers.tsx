@@ -11,6 +11,7 @@ import { ConsentProvider } from '@/context/ConsentContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { Analytics } from '@/components/analytics/Analytics';
+import { AttributionCapture } from '@/components/analytics/AttributionCapture';
 import { CookieConsentBanner } from '@/components/consent/CookieConsentBanner';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: ReactNode }) {
             <WishlistProvider>
               <CompareProvider>
                 <ScrollToTop />
+                <AttributionCapture />
                 <Suspense fallback={null}>
                   <Analytics />
                 </Suspense>

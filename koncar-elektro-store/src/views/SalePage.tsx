@@ -12,6 +12,7 @@ import { ActiveFilterBadges } from '@/components/catalog/ActiveFilterBadges';
 import { ListingToolbar, type ListingPerPage } from '@/components/catalog/ListingToolbar';
 import { CatalogInfoSections } from '@/components/catalog/CatalogInfoSections';
 import { CatalogStateMessage } from '@/components/catalog/CatalogStateMessage';
+import type { ListingSort } from '@/lib/listingSort';
 import { saleListing } from '@/data/catalogListing';
 import { getDiscountPercent } from '@/data/koncarProducts';
 import { useLiveSaleProducts } from '@/hooks/api/useLiveCatalog';
@@ -41,16 +42,17 @@ const SalePage = ({ initialListing }: Props) => {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState<ListingPerPage>(48);
+  const [sort, setSort] = useState<ListingSort>('bestsellers');
   const [filters, setFilters] = useState<ListingFilters>(() => ({
     ...emptyListingFilters(),
     categorySlug: searchParams.get('kategorija') || undefined,
   }));
   const { breadcrumbs, title, whyBuy, faq } = saleListing;
 
-  const isDefaultSaleQuery = page === 1 && perPage === 48 && countActiveFilters(filters) === 0;
+  const isDefaultSaleQuery = page === 1 && perPage === 48 && sort === 'bestsellers' && countActiveFilters(filters) === 0;
 
   const liveSale = useLiveSaleProducts(
-    { page, perPage, filters },
+    { page, perPage, sort, filters },
     isDefaultSaleQuery ? initialListing : undefined,
   );
 
@@ -61,8 +63,11 @@ const SalePage = ({ initialListing }: Props) => {
 
   const products = useMemo(() => {
     const list = useLiveApi ? (liveSale.data?.products ?? []) : saleListing.products;
+    // Default view highlights the biggest discounts first; any explicit sort
+    // chosen by the shopper (price / newest) must be left as returned by the API.
+    if (sort !== 'bestsellers') return list;
     return [...list].sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a));
-  }, [liveSale.data?.products]);
+  }, [liveSale.data?.products, sort]);
 
   const totalCount = liveSale.data?.total ?? products.length;
   const totalPages = liveSale.data?.totalPages ?? 1;
@@ -256,6 +261,12 @@ const SalePage = ({ initialListing }: Props) => {
                 view={view}
                 onViewChange={setView}
                 productCount={useLiveApi ? totalCount : products.length}
+                sort={sort}
+                onSortChange={(value) => {
+                  setSort(value);
+                  setPage(1);
+                  scrollListingToTop();
+                }}
                 perPage={perPage}
                 onPerPageChange={(value) => {
                   setPerPage(value);

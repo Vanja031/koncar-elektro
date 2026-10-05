@@ -33,6 +33,8 @@ export type PlaceOrderInput = {
   /** Cart snapshot used to apply the same free-shipping rule as the storefront. */
   subtotal: number;
   totalWeightKg: number;
+  /** Order attribution meta (source / UTM) — see `buildAttributionMeta`. */
+  metaData?: Array<{ key: string; value: string }>;
 };
 
 export type PlaceOrderResult = {
@@ -121,6 +123,7 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
       paymentMethodTitle: PAYMENT_TITLES[input.paymentMethod],
       subtotal: input.subtotal,
       totalWeightKg: input.totalWeightKg,
+      metaData: input.metaData,
       status: 'pending',
     });
 

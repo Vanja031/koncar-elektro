@@ -8,6 +8,7 @@ import {
 import { updateWcOrder } from '@/lib/api/wc-rest/orders';
 import { getSessionCustomer } from '@/lib/auth/session';
 import { createOrderId } from '@/lib/order';
+import { buildAttributionMeta } from '@/lib/attribution/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -26,6 +27,8 @@ type CheckoutBody = {
   paymentMethod?: string;
   subtotal?: number;
   totalWeightKg?: number;
+  /** Source/UTM snapshot captured in the browser (untrusted, sanitized server-side). */
+  attribution?: unknown;
 };
 
 function mapPaymentMethod(raw: string | undefined): 'cod' | 'bacs' | 'card' | null {
@@ -138,7 +141,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await placeWcStoreOrder(orderInput);
+    const result = await placeWcStoreOrder({
+      ...orderInput,
+      metaData: buildAttributionMeta(body.attribution, request.headers.get('user-agent')),
+    });
     const customer = getSessionCustomer();
     if (customer?.id) {
       await updateWcOrder(result.orderId, { customer_id: customer.id }).catch((err) => {
