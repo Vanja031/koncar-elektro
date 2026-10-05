@@ -1,6 +1,6 @@
 import {
   Zap, BatteryFull, Wrench, Wind, Ruler, HardHat, Cog, Package,
-  Sprout, Plug, Lightbulb, Sun, type LucideIcon,
+  Sprout, Plug, Lightbulb, Sun, Flame, Tractor, type LucideIcon,
 } from 'lucide-react';
 import imgElektricni from '@/assets/elektricni-alat.webp';
 import imgAku from '@/assets/aku-alat.webp';
@@ -9,6 +9,7 @@ import imgKompresor from '@/assets/kompresor.webp';
 import imgElektromaterijal from '@/assets/elektromaterijal.webp';
 import imgRasveta from '@/assets/rasveta.webp';
 import imgSolarne from '@/assets/solarne.webp';
+import imgTraktor from '@/assets/traktor.webp';
 import productGeneric from '@/assets/product-generic.jpg';
 
 export type NavigationMenuDef = {
@@ -69,9 +70,16 @@ export const alatiMenuDefs: NavigationMenuDef[] = [
   },
   {
     id: 'masine-oprema',
-    label: 'Mašine i oprema',
+    label: 'Agregati i oprema',
     icon: Cog,
-    viewAllLabel: 'Pogledajte sve mašine',
+    viewAllLabel: 'Pogledajte sve agregate i opremu',
+    fallbackImage: productGeneric,
+  },
+  {
+    id: 'aparati-za-varenje',
+    label: 'Aparati za varenje',
+    icon: Flame,
+    viewAllLabel: 'Pogledajte sve aparate za varenje',
     fallbackImage: productGeneric,
   },
   {
@@ -87,6 +95,13 @@ export const alatiMenuDefs: NavigationMenuDef[] = [
     icon: Sprout,
     viewAllLabel: 'Pogledajte sve baštenske alate',
     fallbackImage: productGeneric,
+  },
+  {
+    id: 'poljoprivredni-program',
+    label: 'Poljoprivredni program',
+    icon: Tractor,
+    viewAllLabel: 'Pogledajte sav poljoprivredni program',
+    fallbackImage: imgTraktor,
   },
 ];
 

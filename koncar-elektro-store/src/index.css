@@ -428,9 +428,9 @@
   }
   .mega-menu-inner {
     @apply border border-border/70 rounded-xl overflow-hidden bg-white items-stretch;
-    /* Title + 5 card rows + gaps + footer */
-    height: min(32.5rem, calc(100vh - 10rem));
-    max-height: min(32.5rem, calc(100vh - 10rem));
+    /* Sidebar (11 hubova + 3 programa) + title + card rows + footer */
+    height: min(37.5rem, calc(100vh - 10rem));
+    max-height: min(37.5rem, calc(100vh - 10rem));
     box-shadow: var(--shadow-navy-menu);
   }
   .mega-menu-sidebar {

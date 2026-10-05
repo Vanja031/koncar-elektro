@@ -407,6 +407,7 @@ Evidentiraj značajne događaje, odluke i blokade.
 | 05.09.2026. | — | `wp-php/koncar-auth.php` i `wp-php/contact.php` upload-ovani direktno u `~/koncarelektro.rs/` (WP root, isti za `cms.koncarelektro.rs`) — nedostajali su na produkciji, blokirali login/reset lozinke i kontakt formu | Login i kontakt forma rade |
 | 05.09.2026. | — | Finalni QA na `koncarelektro.rs` (produkcija): homepage, proizvodi + slike, login/registracija, RaiAccept plaćanje, `cms.koncarelektro.rs/wp-admin` (nezavisan i netaknut), sitemap.xml (5.649 URL, potvrđeno u browseru), robots.txt — sve OK | **GO-LIVE POTVRĐEN** — 8.3 zatvoren |
 | 05.09.2026. | — | Napomena (otvoreno): WooCommerce "Order Attribution" (Origin kolona) sada pokazuje "Unknown" za sve nove porudžbine — očekivano ponašanje headless arhitekture (WC-ov tracking script se učitava samo na standardnom WP checkout-u, ne na Next.js frontend-u). GA4 nezavisno prati izvor saobraćaja. Klijent odlučio da za sada ne dira | Moguć budući rad: custom UTM/referrer capture → order meta, ako zatreba |
+| 05.10.2026. | — | Order attribution vraćen: frontend pamti UTM / referrer / click-id (fbclid, gclid…) / in-app browser (Instagram, Facebook), šalje uz checkout (COD, virman, kartica), a server upisuje u iste `_wc_order_attribution_*` meta ključeve koje WC koristi (+ `_koncar_first_touch_*`). Kod: `src/lib/attribution/*`, `AttributionCapture` u `providers.tsx` | Za potvrdu na stagingu: test porudžbina sa `?utm_source=instagram` pa provera "Origin" kolone u WP adminu |
 
 ---
 

@@ -102,6 +102,7 @@ export const MEGA_MENU_PARENT_SLUG: Record<string, string> = {
   'merna-oprema': 'merna-oprema',
   'radna-oprema': 'htz-oprema',
   'masine-oprema': 'agregati',
+  'aparati-za-varenje': 'aparati-za-varenje',
   'potrosni-materijal': 'potrosni-materijal',
   'bastenski-alati': 'kosacice-i-trimeri',
   'poljoprivredni-program': 'poljoprivredni-program',

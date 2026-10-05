@@ -130,9 +130,9 @@ export const alatiMenuCategories: MegaMenuCategory[] = [
   },
   {
     id: 'masine-oprema',
-    label: 'Mašine i oprema',
+    label: 'Agregati i oprema',
     icon: Cog,
-    viewAllLabel: 'Pogledajte sve mašine',
+    viewAllLabel: 'Pogledajte sve agregate i opremu',
     subcategories: [
       { label: 'Agregati', count: 34, image: productGeneric },
       { label: 'Kosačice', count: 48, image: productGeneric },
