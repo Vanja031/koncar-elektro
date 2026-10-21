@@ -17,7 +17,7 @@ export const companyInfo = {
     full: 'Stanoja Glavaša br. 4, 16000 Leskovac, Srbija',
   },
   phones: ['061 65 444 90', '060 676 72 50'],
-  email: 'kontakt@koncarelektro.com',
+  email: 'info@koncarelektro.rs',
   bankAccount: '165000700908591735',
   /** Registry data — Raiffeisen E-commerce check lista. */
   registry: {

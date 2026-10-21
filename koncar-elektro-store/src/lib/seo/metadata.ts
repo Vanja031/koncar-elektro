@@ -10,6 +10,15 @@ import {
 } from '@/lib/seo/templates';
 import { absoluteUrl, DEFAULT_OG_IMAGE, normalizePathname } from '@/lib/seo/site';
 
+/** Large image previews in Google Images for pages that are allowed in the index. */
+const INDEXABLE_ROBOTS: Metadata['robots'] = {
+  index: true,
+  follow: true,
+  'max-image-preview': 'large',
+  'max-snippet': -1,
+  'max-video-preview': -1,
+};
+
 type BuildOptions = {
   pathname: string;
   title: string;
@@ -55,7 +64,7 @@ export function buildPageMetadata({
   };
 
   if (desc) metadata.description = desc;
-  if (robots) metadata.robots = robots;
+  metadata.robots = robots ?? INDEXABLE_ROBOTS;
 
   return metadata;
 }

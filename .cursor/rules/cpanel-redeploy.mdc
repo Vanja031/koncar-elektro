@@ -1,0 +1,18 @@
+---
+description: cPanel redeploy commands after a push to develop-koncar
+alwaysApply: true
+---
+
+# Redeploy after push to develop-koncar
+
+When the user asks how to deploy or update the live site after a git push, give these cPanel Terminal commands exactly (then Restart the Node.js app in cPanel):
+
+```bash
+source ~/nodevenv/koncar-elektro-live/koncar-elektro-store/22/bin/activate
+cd ~/koncar-elektro-live/koncar-elektro-store
+git pull origin develop-koncar
+npm ci
+npm run build
+```
+
+Live Next.js app is `koncarelektro.rs`. WordPress stays on `cms.koncarelektro.rs` and does not need this deploy for CMS-only edits.

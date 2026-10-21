@@ -5,7 +5,7 @@
  * Upload u WordPress ROOT (isti folder kao wp-load.php), prvo na staging:
  *   testing.cleannikki.com/contact.php
  *
- * Šalje na: kontakt@koncarelektro.com (wp_mail).
+ * Šalje na: info@koncarelektro.rs (wp_mail).
  */
 define('DONOTCACHEPAGE', true);
 require_once __DIR__ . '/wp-load.php';
@@ -48,7 +48,7 @@ if (strlen($message) > 5000) {
   exit;
 }
 
-$to      = 'kontakt@koncarelektro.com';
+$to      = 'info@koncarelektro.rs';
 $subject = 'Kontakt forma — ' . $name;
 $body    = "Ime: {$name}\nEmail: {$email}\nTelefon: {$phone}\n\nPoruka:\n{$message}\n";
 $headers = array(

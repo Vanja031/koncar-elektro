@@ -35,15 +35,30 @@ export const BRAND_API_ATTRIBUTE_SLUG = resolveBrandApiAttributeSlug();
 
 /**
  * Live `pa_proizvodjac` term slugs that differ from the staging `pa_brend` dump /
- * homepage featured-brand slugs.
+ * homepage featured-brand slugs. UI and URLs keep the dump slug; the Store API
+ * query is rewritten to the live slug.
  */
 const LIVE_BRAND_TERM_SLUG_OVERRIDES: Record<string, string> = {
   bosch: 'bosch-professional',
+  ingco: 'ingco-2',
+  'f-f-group': 'f-f-group-2',
 };
+
+/** Placeholder manufacturer terms — not a shopper-facing brand. */
+const HIDDEN_BRAND_TERM_SLUGS = new Set(['n-a', 'na']);
+
+const LIVE_BRAND_API_SLUG_TO_UI: Record<string, string> = Object.fromEntries(
+  Object.entries(LIVE_BRAND_TERM_SLUG_OVERRIDES).map(([uiSlug, apiSlug]) => [apiSlug, uiSlug]),
+);
 
 function resolveBrandTermSlugForApi(termSlug: string): string {
   if (BRAND_API_ATTRIBUTE_SLUG !== 'pa_proizvodjac') return termSlug;
   return LIVE_BRAND_TERM_SLUG_OVERRIDES[termSlug] ?? termSlug;
+}
+
+/** Map a live term slug back onto the slug used by filters, URLs, and the attribute dump. */
+function toBrandUiSlug(termSlug: string): string {
+  return LIVE_BRAND_API_SLUG_TO_UI[termSlug] ?? termSlug;
 }
 
 export function isBrandAttributeSlug(attributeSlug: string): boolean {
@@ -123,7 +138,8 @@ export type CategoryFilterOption = {
   slug: string;
 };
 
-export type AttributeFacetMap = Record<string, Set<string>>;
+/** Term slug → display label taken from the product attribute payload. */
+export type AttributeFacetMap = Record<string, Map<string, string>>;
 
 type TermIndexEntry = {
   attributeSlug: string;
@@ -238,6 +254,19 @@ export function getAttributeLabel(attributeSlug: string): string {
  * Prefer this over term-id → dump lookups: live/staging term IDs diverge.
  * Brand aliases (`pa_brend` / `pa_proizvodjac`) collapse to {@link BRAND_ATTRIBUTE_SLUG}.
  */
+function addFacetTerm(
+  bucket: Map<string, string>,
+  taxonomy: string,
+  termSlug: string,
+  label?: string,
+) {
+  const slug = isBrandAttributeSlug(taxonomy) ? toBrandUiSlug(termSlug) : termSlug;
+  if (isBrandAttributeSlug(taxonomy) && HIDDEN_BRAND_TERM_SLUGS.has(slug)) return;
+  if (bucket.has(slug)) return;
+  const text = label?.trim() ? decodeHtmlEntities(label) : slug;
+  bucket.set(slug, text);
+}
+
 export function collectAttributeFacets(
   products: Array<Pick<WcStoreProduct, 'attributes'>>,
 ): AttributeFacetMap {
@@ -250,9 +279,10 @@ export function collectAttributeFacets(
       if (!taxonomy.startsWith('pa_')) continue;
       if (isBrandAttributeSlug(taxonomy)) taxonomy = BRAND_ATTRIBUTE_SLUG;
       if (HIDDEN_FILTER_ATTRIBUTE_SLUGS.has(taxonomy)) continue;
-      if (!map[taxonomy]) map[taxonomy] = new Set();
+      if (!map[taxonomy]) map[taxonomy] = new Map();
       for (const term of attr.terms) {
-        if (term.slug) map[taxonomy].add(term.slug);
+        if (!term.slug) continue;
+        addFacetTerm(map[taxonomy], taxonomy, term.slug, term.name);
       }
     }
   }
@@ -289,8 +319,8 @@ export function collectAttributeFacetsFromCounts(
         scoped?.slug ??
         index.get(row.term)?.termSlug;
       if (!termSlug) continue;
-      if (!map[attrSlug]) map[attrSlug] = new Set();
-      map[attrSlug].add(termSlug);
+      if (!map[attrSlug]) map[attrSlug] = new Map();
+      addFacetTerm(map[attrSlug], attrSlug, termSlug, scoped?.name ?? index.get(row.term)?.label);
       continue;
     }
 
@@ -300,8 +330,8 @@ export function collectAttributeFacetsFromCounts(
     const attrSlug = isBrandAttributeSlug(info.attributeSlug)
       ? BRAND_ATTRIBUTE_SLUG
       : info.attributeSlug;
-    if (!map[attrSlug]) map[attrSlug] = new Set();
-    map[attrSlug].add(info.termSlug);
+    if (!map[attrSlug]) map[attrSlug] = new Map();
+    addFacetTerm(map[attrSlug], attrSlug, info.termSlug, info.label);
   }
 
   return map;
@@ -343,18 +373,18 @@ export function buildAttributeFilterGroups(
     let options = getAttributeFilterOptions(slug);
 
     if (seen && seen.size > 0) {
-      const allow = new Set<string>([...seen, ...selectedSlugs]);
+      const seenSlugs = [...seen.keys()];
+      const allow = new Set<string>([...seenSlugs, ...selectedSlugs]);
       const narrowed = options.filter((o) => allow.has(o.slug));
-      if (narrowed.length > 0) {
-        options = narrowed;
-      } else {
-        options = sortAttributeOptions(
-          [...seen].map((termSlug) => {
-            const match = getAttributeFilterOptions(slug).find((o) => o.slug === termSlug);
-            return { label: match?.label ?? termSlug, slug: termSlug };
-          }),
-        );
-      }
+      // Terms that exist on products but are missing from the attribute dump
+      // (or use a live-only slug) must still be offered.
+      const extra = seenSlugs
+        .filter((termSlug) => !options.some((o) => o.slug === termSlug))
+        .map((termSlug) => ({
+          label: seen.get(termSlug) || termSlug,
+          slug: termSlug,
+        }));
+      options = sortAttributeOptions([...narrowed, ...extra]);
     } else if (selectedSlugs.length > 0) {
       options = options.filter((o) => selectedSlugs.includes(o.slug));
     }

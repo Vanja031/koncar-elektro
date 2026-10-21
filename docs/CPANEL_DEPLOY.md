@@ -1,5 +1,20 @@
 # Deploy na klijentov cPanel (bez Vercela)
 
+## Redovni deploy (posle pusha na `develop-koncar`)
+
+cPanel Terminal, zatim Restart Node.js app:
+
+```bash
+source ~/nodevenv/koncar-elektro-live/koncar-elektro-store/22/bin/activate
+cd ~/koncar-elektro-live/koncar-elektro-store
+git pull origin develop-koncar
+npm ci
+npm run build
+```
+
+---
+
+
 **Cilj:** Next.js app iz `koncar-elektro-store/` radi na `koncarelektro.rs`, hostovano na
 klijentovom cPanel nalogu (isti hosting kao WordPress). Ništa ne ostaje na Superity
 Vercel nalogu. WordPress (`/wp-admin`, `/wp-json`, `/wp-content`, `/wp-includes`) i

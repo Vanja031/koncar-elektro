@@ -32,6 +32,7 @@
     "audit:seo-parity-local": "node scripts/audit-seo-parity-local.mjs",
     "compress:static-assets": "node scripts/compress-static-assets.mjs",
     "build:seo-index": "node scripts/build-seo-baseline-index.mjs",
+    "build:product-images": "node scripts/build-product-image-index.mjs",
     "predev": "node scripts/build-seo-baseline-index.mjs",
     "prebuild": "node scripts/build-seo-baseline-index.mjs",
     "postinstall": "next build"
