@@ -4,6 +4,9 @@ export const BRAND_SPLIT_COUPON_CODE = 'koncar10';
 export const STANDARD_COUPON_RATE = 0.05;
 export const INGCO_COUPON_RATE = 0.1;
 
+/** Katalog cene već uključuju PDV. WooCommerce čuva stavku bez tog poreza i sam ga doda. */
+export const INCLUDED_VAT_RATE = 0.2;
+
 export function normalizeCouponCode(code: string): string {
   return code.trim().toLowerCase().slice(0, 40);
 }
@@ -18,11 +21,19 @@ export function roundMoney(amount: number): number {
   return Math.round((amount + Number.EPSILON) * 100) / 100;
 }
 
+/** Iznos bez uračunatog PDV-a, zaokružen kao WooCommerce. */
+export function grossToNet(gross: number, rate = INCLUDED_VAT_RATE): number {
+  const tax = roundMoney((gross * rate) / (1 + rate));
+  return roundMoney(gross - tax);
+}
+
 export type CouponLineInput = {
   productId: number;
   quantity: number;
   unitPrice: number;
   brand: string;
+  /** False samo kad artikal u WooCommerce-u nije oporeziv. */
+  taxable?: boolean;
 };
 
 export type CouponLineQuote = CouponLineInput & {

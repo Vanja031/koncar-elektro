@@ -5,6 +5,7 @@
 import { wcV3Fetch, WcRestError } from '@/lib/api/wc-rest/client';
 import {
   isBrandSplitCoupon,
+  grossToNet,
   quoteCoupon,
   roundMoney,
   type CouponLineInput,
@@ -44,6 +45,7 @@ type WcProductForCoupon = {
   regular_price?: string;
   sale_price?: string;
   on_sale?: boolean;
+  tax_status?: string;
   attributes?: Array<{ name?: string; slug?: string; options?: string[] }>;
 };
 
@@ -192,6 +194,7 @@ function linesFromProducts(
       quantity: item.quantity,
       unitPrice: Math.round(price),
       brand: brandFromProduct(product),
+      taxable: product.tax_status !== 'none',
     };
   });
 }
@@ -281,12 +284,16 @@ export async function priceCheckout(input: {
   const quote = resolved.quote;
   return {
     subtotal: quote.discountedSubtotal,
-    items: quote.lines.map((line) => ({
-      productId: line.productId,
-      quantity: line.quantity,
-      subtotal: line.lineSubtotal.toFixed(2),
-      total: line.lineTotal.toFixed(2),
-    })),
+    items: quote.lines.map((line) => {
+      const taxable = line.taxable !== false;
+      return {
+        productId: line.productId,
+        quantity: line.quantity,
+        // WC treats these fields as amounts without PDV, then adds 20%.
+        subtotal: (taxable ? grossToNet(line.lineSubtotal) : line.lineSubtotal).toFixed(2),
+        total: (taxable ? grossToNet(line.lineTotal) : line.lineTotal).toFixed(2),
+      };
+    }),
     meta: [
       { key: '_koncar_coupon_code', value: quote.code },
       { key: '_koncar_coupon_discount', value: quote.discount.toFixed(2) },
