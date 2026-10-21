@@ -11,6 +11,7 @@ import {
   WcRestError,
 } from '@/lib/api/wc-rest/orders';
 import { calculateShipping } from '@/lib/shipping';
+import { CouponError, priceCheckout, recordCouponRedemption } from '@/lib/api/wc-rest/coupons';
 
 export type CheckoutLineInput = {
   productId: number;
@@ -33,6 +34,8 @@ export type PlaceOrderInput = {
   /** Cart snapshot used to apply the same free-shipping rule as the storefront. */
   subtotal: number;
   totalWeightKg: number;
+  /** Applied discount code. Server reprices the lines; the client subtotal is not trusted. */
+  couponCode?: string;
   /** Order attribution meta (source / UTM) — see `buildAttributionMeta`. */
   metaData?: Array<{ key: string; value: string }>;
 };
@@ -105,12 +108,28 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
   const lastName = forced ? 'Test' : input.lastName;
   const customerName = `${firstName} ${lastName}`.trim();
   const finalStatus = input.paymentMethod === 'cod' ? 'processing' : 'on-hold';
-  const expectedShipping = calculateShipping(input.subtotal, input.totalWeightKg);
+
+  let pricing;
+  try {
+    pricing = await priceCheckout({
+      couponCode: input.couponCode,
+      items: input.items,
+      subtotal: input.subtotal,
+      email: input.email,
+    });
+  } catch (err) {
+    if (err instanceof CouponError) {
+      throw new WcStoreRequestError(err.message, err.status, { code: 'invalid_coupon' });
+    }
+    throw err;
+  }
+
+  const expectedShipping = calculateShipping(pricing.subtotal, input.totalWeightKg);
 
   try {
     // 1) Pending first — avoid customer "processing" email until shipping is locked in.
     const created = await createPendingWcOrder({
-      items: input.items,
+      items: pricing.items,
       email: input.email,
       phone: input.phone,
       firstName: input.firstName,
@@ -121,17 +140,24 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
       customerNote: input.customerNote,
       paymentMethod: input.paymentMethod,
       paymentMethodTitle: PAYMENT_TITLES[input.paymentMethod],
-      subtotal: input.subtotal,
+      subtotal: pricing.subtotal,
       totalWeightKg: input.totalWeightKg,
-      metaData: input.metaData,
+      metaData: [...(input.metaData ?? []), ...pricing.meta],
       status: 'pending',
     });
 
     // 2) Force our quote onto the order (covers WC recalculating zone flat_rate to 400).
-    await syncOrderShipping(created.id, input.subtotal, input.totalWeightKg);
+    await syncOrderShipping(created.id, pricing.subtotal, input.totalWeightKg);
 
     // 3) Status change → customer email with the totals after sync.
-    const order = await updateWcOrder(created.id, { status: finalStatus });
+    const order = await updateWcOrder(created.id, {
+      status: finalStatus,
+      ...(pricing.note ? { note: pricing.note } : {}),
+    });
+
+    if (pricing.redemption) {
+      await recordCouponRedemption(pricing.redemption);
+    }
 
     const shipped = Number(order.shipping_total);
     if (Number.isFinite(shipped) && Math.abs(shipped - expectedShipping.cost) > 0.009) {
@@ -141,7 +167,7 @@ export async function placeWcStoreOrder(input: PlaceOrderInput): Promise<PlaceOr
           orderId: order.id,
           expected: expectedShipping.cost,
           actual: order.shipping_total,
-          subtotal: input.subtotal,
+          subtotal: pricing.subtotal,
           totalWeightKg: input.totalWeightKg,
         },
       );

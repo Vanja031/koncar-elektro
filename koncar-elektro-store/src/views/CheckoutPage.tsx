@@ -11,9 +11,15 @@ import { ROUTES } from '@/lib/catalogUrls';
 import { trackBeginCheckout } from '@/lib/analytics/gtag';
 
 const CheckoutPage = () => {
-  const { lines, total } = useCart();
+  const { lines, total, removeCoupon } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      removeCoupon();
+    };
+  }, [removeCoupon]);
 
   useEffect(() => {
     if (lines.length === 0) return;
@@ -54,7 +60,7 @@ const CheckoutPage = () => {
           <p className="text-sm text-muted-foreground">Unesite podatke i potvrdite porudžbinu</p>
         </div>
 
-        <div className="cart-page-grid">
+        <div className="cart-page-grid checkout-page-grid">
           <CheckoutForm
             isSubmitting={isSubmitting}
             onSubmittingChange={setIsSubmitting}

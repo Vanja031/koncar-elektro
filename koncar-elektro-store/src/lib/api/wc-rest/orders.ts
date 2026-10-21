@@ -46,7 +46,14 @@ export type WcOrderUpdatePatch = {
 };
 
 export type CreatePendingOrderInput = {
-  items: Array<{ productId: number; quantity: number }>;
+  items: Array<{
+    productId: number;
+    quantity: number;
+    /** Line total before the coupon. Omitted when WooCommerce should price the line. */
+    subtotal?: string;
+    /** Line total after the coupon. */
+    total?: string;
+  }>;
   email: string;
   phone: string;
   firstName: string;
@@ -167,6 +174,9 @@ export async function createPendingWcOrder(input: CreatePendingOrderInput): Prom
       line_items: input.items.map((item) => ({
         product_id: item.productId,
         quantity: item.quantity,
+        ...(item.subtotal != null && item.total != null
+          ? { subtotal: item.subtotal, total: item.total }
+          : {}),
       })),
       shipping_lines: [line],
       meta_data: input.metaData ?? [],

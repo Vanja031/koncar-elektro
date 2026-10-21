@@ -2,9 +2,12 @@ import { NextResponse } from 'next/server';
 import { getCheckoutRuntimeFlags } from '@/lib/api/wc-store/checkout-server';
 import {
   createPendingWcOrder,
+  getWcOrder,
+  syncOrderShipping,
   updateWcOrder,
   WcRestError,
 } from '@/lib/api/wc-rest/orders';
+import { CouponError, priceCheckout, recordCouponRedemption } from '@/lib/api/wc-rest/coupons';
 import { createOrderEntry, createPaymentSession, RaiAcceptError } from '@/lib/payments/raiaccept';
 import type { CreateOrderEntryInput } from '@/lib/payments/raiaccept';
 import { SITE_URL } from '@/lib/seo/site';
@@ -27,6 +30,7 @@ type StartBody = {
   customerNote?: string;
   subtotal?: number;
   totalWeightKg?: number;
+  couponCode?: unknown;
   attribution?: unknown;
 };
 
@@ -43,6 +47,7 @@ type ValidatedStart = {
   /** Cart snapshot used to apply the same free-shipping rule as the storefront. */
   subtotal: number;
   totalWeightKg: number;
+  couponCode?: string;
 };
 
 function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { ok: false; message: string } {
@@ -73,6 +78,7 @@ function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { o
   const weightRaw = Number(body.totalWeightKg);
   const subtotal = Number.isFinite(subtotalRaw) && subtotalRaw >= 0 ? subtotalRaw : 0;
   const totalWeightKg = Number.isFinite(weightRaw) && weightRaw >= 0 ? weightRaw : 0;
+  const couponCode = typeof body.couponCode === 'string' ? body.couponCode.trim().toLowerCase().slice(0, 40) : '';
 
   return {
     ok: true,
@@ -88,6 +94,7 @@ function validateBody(body: StartBody): { ok: true; data: ValidatedStart } | { o
       customerNote: String(body.customerNote ?? '').trim(),
       subtotal,
       totalWeightKg,
+      ...(couponCode ? { couponCode } : {}),
     },
   };
 }
@@ -128,17 +135,31 @@ export async function POST(request: Request) {
   }
 
   try {
-    // 1) Pending WC order via REST (prices filled by WC from product_id).
+    // 1) Pending WC order via REST. A coupon reprices lines from live product data.
     const customer = getSessionCustomer();
-    const wcOrder = await createPendingWcOrder({
+    const pricing = await priceCheckout({
+      couponCode: input.couponCode,
+      items: input.items,
+      subtotal: input.subtotal,
+      email: input.email,
+    });
+    let wcOrder = await createPendingWcOrder({
       ...input,
+      items: pricing.items,
       customerId: customer?.id,
-      metaData: buildAttributionMeta(body.attribution, request.headers.get('user-agent')),
+      metaData: [
+        ...buildAttributionMeta(body.attribution, request.headers.get('user-agent')),
+        ...pricing.meta,
+      ],
       paymentMethod: 'raiaccept-card',
       paymentMethodTitle: 'Kartica (RaiAccept)',
-      subtotal: input.subtotal,
+      subtotal: pricing.subtotal,
       totalWeightKg: input.totalWeightKg,
     });
+    if (input.couponCode) {
+      await syncOrderShipping(wcOrder.id, pricing.subtotal, input.totalWeightKg);
+      wcOrder = await getWcOrder(wcOrder.id);
+    }
     const wcOrderId = String(wcOrder.id);
     const amount = Number(wcOrder.total);
     const currency = wcOrder.currency || 'RSD';
@@ -193,8 +214,16 @@ export async function POST(request: Request) {
     // 3) Link RaiAccept order id on the WC order for reconcile
     await updateWcOrder(wcOrderId, {
       meta_data: [{ key: '_raiaccept_order_id', value: orderEntry.orderIdentification }],
-      note: `RaiAccept: sesija plaćanja kreirana (order ${orderEntry.orderIdentification}).`,
+      note: [
+        pricing.note,
+        `RaiAccept: sesija plaćanja kreirana (order ${orderEntry.orderIdentification}).`,
+      ]
+        .filter(Boolean)
+        .join('\n'),
     });
+    if (pricing.redemption) {
+      await recordCouponRedemption(pricing.redemption);
+    }
 
     return NextResponse.json({
       mode: 'live',
@@ -202,6 +231,12 @@ export async function POST(request: Request) {
       paymentRedirectURL: session.paymentRedirectURL,
     });
   } catch (error) {
+    if (error instanceof CouponError) {
+      return NextResponse.json(
+        { code: 'invalid_coupon', message: error.message },
+        { status: error.status },
+      );
+    }
     if (error instanceof WcRestError) {
       return NextResponse.json(
         { code: 'wc_error', message: error.message || 'Greška pri kreiranju porudžbine.', details: error.body },

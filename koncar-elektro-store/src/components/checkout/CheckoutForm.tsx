@@ -66,7 +66,17 @@ export const CheckoutForm = ({
   onAcceptTermsChange,
 }: Props) => {
   const navigate = useNavigate();
-  const { lines, subtotal, shipping, total, totalWeightKg, itemCount, clearCart } = useCart();
+  const {
+    lines,
+    payableSubtotal,
+    shipping,
+    total,
+    totalWeightKg,
+    itemCount,
+    clearCart,
+    couponCode,
+    couponPending,
+  } = useCart();
   const { customer } = useAuth();
   const [form, setForm] = useState<FormState>(initialForm);
 
@@ -98,6 +108,7 @@ export const CheckoutForm = ({
     }
     if (lines.length === 0) return 'Korpa je prazna.';
     if (!acceptTerms) return 'Potvrdite da prihvatate Uslove kupovine.';
+    if (couponPending) return 'Sačekajte da proverimo kod za popust.';
     return null;
   };
 
@@ -128,8 +139,9 @@ export const CheckoutForm = ({
           city: form.city.trim(),
           postalCode: form.postalCode.trim(),
           customerNote: form.note.trim(),
-          subtotal,
+          subtotal: payableSubtotal,
           totalWeightKg,
+          ...(couponCode ? { couponCode } : {}),
         });
         window.location.assign(paymentRedirectURL);
         return;
@@ -149,8 +161,9 @@ export const CheckoutForm = ({
         postalCode: form.postalCode.trim(),
         customerNote: form.note.trim(),
         paymentMethod: form.paymentMethod,
-        subtotal,
+        subtotal: payableSubtotal,
         shipping: shipping.cost,
+        ...(couponCode ? { couponCode } : {}),
         totalWeightKg,
         total,
         itemCount,
@@ -346,7 +359,7 @@ export const CheckoutForm = ({
       <button
         type="submit"
         className="checkout-submit-btn lg:hidden"
-        disabled={isSubmitting}
+        disabled={isSubmitting || couponPending}
       >
         {isSubmitting ? (
           <>

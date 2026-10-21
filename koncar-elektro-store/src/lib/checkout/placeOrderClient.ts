@@ -14,6 +14,7 @@ export type CheckoutSubmitPayload = {
   paymentMethod: PaymentMethod;
   subtotal: number;
   shipping: number;
+  couponCode?: string;
   /** Ukupna težina korpe (kg) — koristi se server-side za istu logiku besplatne dostave. */
   totalWeightKg: number;
   total: number;
@@ -70,6 +71,7 @@ export async function placeOrderViaApi(payload: CheckoutSubmitPayload): Promise<
       paymentMethod: payload.paymentMethod,
       subtotal: payload.subtotal,
       totalWeightKg: payload.totalWeightKg,
+      ...(payload.couponCode ? { couponCode: payload.couponCode } : {}),
       attribution: getAttributionPayload(),
     }),
   });
@@ -121,6 +123,7 @@ export type CardPaymentStartPayload = {
   customerNote: string;
   subtotal: number;
   totalWeightKg: number;
+  couponCode?: string;
 };
 
 /** Kicks off a RaiAccept card payment: creates the WC order, returns the hosted-page redirect URL. */
@@ -130,7 +133,11 @@ export async function startCardPayment(
   const response = await fetch('/api/payments/raiaccept/start', {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...payload, attribution: getAttributionPayload() }),
+    body: JSON.stringify({
+      ...payload,
+      ...(payload.couponCode ? { couponCode: payload.couponCode } : {}),
+      attribution: getAttributionPayload(),
+    }),
   });
 
   const data = (await response.json().catch(() => ({}))) as {

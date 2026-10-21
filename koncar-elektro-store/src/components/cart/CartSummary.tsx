@@ -4,12 +4,14 @@ import { formatPrice } from '@/data/homepage';
 import { useCart } from '@/context/CartContext';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { getProductListingUrl, ROUTES } from '@/lib/catalogUrls';
+import { CartCouponDiscountRow } from '@/components/checkout/CouponCodeField';
 
 const browseUrl = getProductListingUrl('alati', 'elektricni-alat', 'busilice-i-odvijaci');
 
 export const CartSummary = () => {
-  const { subtotal, subtotalRegular, savings, shipping, total, itemCount } = useCart();
+  const { subtotal, subtotalRegular, savings, couponDiscount, shipping, total, itemCount, removeCoupon } = useCart();
   const hasSavings = savings > 0;
+  const totalSaved = savings + couponDiscount;
 
   return (
     <aside className="cart-summary">
@@ -25,6 +27,7 @@ export const CartSummary = () => {
             {formatPrice(subtotal)}
           </dd>
         </div>
+        <CartCouponDiscountRow onRemove={removeCoupon} />
         <div className="cart-summary-row">
           <dt>Dostava</dt>
           <dd className={shipping.isFree ? 'text-emerald-600 font-semibold' : undefined}>
@@ -44,9 +47,9 @@ export const CartSummary = () => {
       </div>
       <p className="text-[10px] text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      {hasSavings && (
+      {totalSaved > 0 && (
         <p className="cart-summary-savings-badge">
-          Uštedeli ste <strong>{formatPrice(savings)}</strong> na ovoj porudžbini
+          Uštedeli ste <strong>{formatPrice(totalSaved)}</strong> na ovoj porudžbini
         </p>
       )}
 

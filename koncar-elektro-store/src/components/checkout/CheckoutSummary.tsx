@@ -5,6 +5,7 @@ import { CHECKOUT_FORM_ID } from '@/components/checkout/CheckoutForm';
 import { ProductImage } from '@/components/product/ProductImage';
 import { PaymentCardIcons } from '@/components/payment/PaymentCardIcons';
 import { BankSecurityBadges } from '@/components/payment/BankSecurityBadges';
+import { CartCouponDiscountRow, CouponCodeField } from '@/components/checkout/CouponCodeField';
 
 type Props = {
   isSubmitting?: boolean;
@@ -17,8 +18,9 @@ export const CheckoutSummary = ({
   acceptTerms,
   onAcceptTermsChange,
 }: Props) => {
-  const { lines, subtotal, subtotalRegular, savings, shipping, total, setQuantity, removeItem } = useCart();
+  const { lines, subtotal, subtotalRegular, savings, couponDiscount, shipping, total, setQuantity, removeItem, couponPending } = useCart();
   const hasSavings = savings > 0;
+  const totalSaved = savings + couponDiscount;
 
   return (
     <aside className="cart-summary">
@@ -70,6 +72,8 @@ export const CheckoutSummary = ({
         ))}
       </ul>
 
+      <CouponCodeField disabled={isSubmitting} />
+
       <dl className="cart-summary-rows">
         <div className="cart-summary-row">
           <dt>Suma</dt>
@@ -80,6 +84,7 @@ export const CheckoutSummary = ({
             {formatPrice(subtotal)}
           </dd>
         </div>
+        <CartCouponDiscountRow />
         <div className="cart-summary-row">
           <dt>Dostava</dt>
           <dd className={shipping.isFree ? 'text-emerald-600 font-semibold' : undefined}>
@@ -99,9 +104,9 @@ export const CheckoutSummary = ({
       </div>
       <p className="text-[10px] text-muted-foreground">Cene su sa uračunatim PDV-om</p>
 
-      {hasSavings && (
+      {totalSaved > 0 && (
         <p className="cart-summary-savings-badge">
-          Uštedeli ste <strong>{formatPrice(savings)}</strong> na ovoj porudžbini
+          Uštedeli ste <strong>{formatPrice(totalSaved)}</strong> na ovoj porudžbini
         </p>
       )}
 
@@ -109,7 +114,7 @@ export const CheckoutSummary = ({
         type="submit"
         form={CHECKOUT_FORM_ID}
         className="checkout-submit-btn mt-5 hidden lg:block"
-        disabled={isSubmitting}
+        disabled={isSubmitting || couponPending}
       >
         {isSubmitting ? (
           <span className="inline-flex items-center justify-center gap-2">

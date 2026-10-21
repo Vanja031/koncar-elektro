@@ -27,6 +27,7 @@ type CheckoutBody = {
   paymentMethod?: string;
   subtotal?: number;
   totalWeightKg?: number;
+  couponCode?: unknown;
   /** Source/UTM snapshot captured in the browser (untrusted, sanitized server-side). */
   attribution?: unknown;
 };
@@ -80,6 +81,7 @@ function validateBody(body: CheckoutBody): { ok: true; data: PlaceOrderInput } |
   const weightRaw = Number(body.totalWeightKg);
   const subtotal = Number.isFinite(subtotalRaw) && subtotalRaw >= 0 ? subtotalRaw : 0;
   const totalWeightKg = Number.isFinite(weightRaw) && weightRaw >= 0 ? weightRaw : 0;
+  const couponCode = typeof body.couponCode === 'string' ? body.couponCode.trim().toLowerCase().slice(0, 40) : '';
 
   return {
     ok: true,
@@ -96,6 +98,7 @@ function validateBody(body: CheckoutBody): { ok: true; data: PlaceOrderInput } |
       paymentMethod: payment,
       subtotal,
       totalWeightKg,
+      ...(couponCode ? { couponCode } : {}),
     },
   };
 }

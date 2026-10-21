@@ -324,6 +324,6 @@ export const saleListing = {
   faq: [
     { question: 'Da li akcijski proizvodi imaju garanciju?', answer: 'Da, svi proizvodi na akciji imaju punu fabričku garanciju.' },
     { question: 'Koliko dugo važi akcijska cena?', answer: 'Akcijske cene važe do isteka zaliha ili do kraja promotivnog perioda.' },
-    { question: 'Mogu li da kombinujem akciju sa drugim popustima?', answer: 'Akcijska cena je konačna i ne kombinuje se sa dodatnim kodovima.' },
+    { question: 'Mogu li da kombinujem akciju sa kodom za popust?', answer: 'Da. Kod se računa na trenutnu, već sniženu cenu.' },
   ],
 };

@@ -14,6 +14,12 @@ import { formatPrice } from '@/data/homepage';
 import { getCatalogProductUrl } from '@/lib/productUrls';
 import { AddToCartModal } from '@/components/cart/AddToCartModal';
 import { trackAddToCart } from '@/lib/analytics/gtag';
+import {
+  normalizeCouponCode,
+  quoteCoupon,
+  type CouponQuote,
+  type CouponQuoteOptions,
+} from '@/lib/coupon';
 
 const STORAGE_KEY = 'koncar-cart-v2';
 
@@ -70,6 +76,14 @@ type CartContextValue = {
   savings: number;
   totalWeightKg: number;
   shipping: ReturnType<typeof calculateShipping>;
+  /** Merchandise sum after the coupon. Equals `subtotal` when no code is applied. */
+  payableSubtotal: number;
+  couponCode: string | null;
+  couponDiscount: number;
+  couponQuote: CouponQuote | null;
+  /** True while the code is waiting on a fresh server check. Checkout stays disabled. */
+  couponPending: boolean;
+  couponError: string | null;
   total: number;
   addedSnapshot: AddedToCartSnapshot | null;
   addItem: (product: CartProduct, quantity?: number) => void;
@@ -77,6 +91,8 @@ type CartContextValue = {
   removeItem: (productId: number) => void;
   clearCart: () => void;
   closeAddedModal: () => void;
+  applyCoupon: (code: string) => void;
+  removeCoupon: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -87,6 +103,15 @@ type StoredCart = {
   items: CartLine[];
   products: Record<number, CartProduct>;
 };
+
+type CouponRates = {
+  code: string;
+  key: string;
+  flatRate: number | null;
+  rateByProductId: Record<number, number>;
+};
+
+const cartKeyOf = (items: CartLine[]) => items.map((line) => `${line.productId}:${line.quantity}`).join(',');
 
 const readStorage = (): StoredCart => {
   const empty: StoredCart = { items: [], products: {} };
@@ -132,11 +157,78 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [initial] = useState(readStorage);
   const [items, setItems] = useState<CartLine[]>(initial.items);
   const [products, setProducts] = useState<Record<number, CartProduct>>(initial.products);
+  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [couponRates, setCouponRates] = useState<CouponRates | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [addedSnapshot, setAddedSnapshot] = useState<AddedToCartSnapshot | null>(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, products }));
   }, [items, products]);
+
+  useEffect(() => {
+    if (!couponCode || items.length === 0) {
+      setCouponRates(null);
+      setCouponLoading(false);
+      return;
+    }
+
+    const key = cartKeyOf(items);
+    const controller = new AbortController();
+    setCouponLoading(true);
+    const timer = window.setTimeout(() => {
+      fetch('/api/wc/coupon/', {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: couponCode,
+          items: items.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+        }),
+        signal: controller.signal,
+      })
+        .then(async (response) => {
+          const data = (await response.json().catch(() => ({}))) as {
+            message?: string;
+            code?: string;
+            kind?: string;
+            flatRate?: number | null;
+            lines?: Array<{ productId?: number; rate?: number }>;
+          };
+          if (!response.ok) {
+            throw new Error(data.message || 'Kod nije važeći.');
+          }
+          if (controller.signal.aborted) return;
+          const rateByProductId: Record<number, number> = {};
+          for (const line of data.lines ?? []) {
+            if (line.productId != null && line.rate != null && Number.isFinite(line.rate)) {
+              rateByProductId[line.productId] = line.rate;
+            }
+          }
+          setCouponRates({
+            code: typeof data.code === 'string' ? data.code : couponCode,
+            key,
+            flatRate: data.flatRate ?? null,
+            rateByProductId,
+          });
+          setCouponError(null);
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return;
+          setCouponRates(null);
+          setCouponCode(null);
+          setCouponError(error instanceof Error ? error.message : 'Kod nije važeći.');
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setCouponLoading(false);
+        });
+    }, 200);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [couponCode, items]);
 
   const closeAddedModal = useCallback(() => setAddedSnapshot(null), []);
 
@@ -201,7 +293,28 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setItems((current) => current.filter((line) => line.productId !== productId));
   }, []);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const clearCart = useCallback(() => {
+    setItems([]);
+    setCouponCode(null);
+    setCouponRates(null);
+    setCouponError(null);
+  }, []);
+
+  const applyCoupon = useCallback((raw: string) => {
+    const code = normalizeCouponCode(raw);
+    if (!code) {
+      setCouponError('Unesite kod za popust.');
+      return;
+    }
+    setCouponError(null);
+    setCouponCode(code);
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    setCouponCode(null);
+    setCouponRates(null);
+    setCouponError(null);
+  }, []);
 
   const value = useMemo(() => {
     const resolve = (productId: number): CartProduct | undefined => {
@@ -244,9 +357,30 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
     const subtotalRegular = subtotal + savings;
     const totalWeightKg = lines.reduce((sum, line) => sum + line.lineWeightKg, 0);
-    const shipping = calculateShipping(subtotal, totalWeightKg);
+    const cartKey = cartKeyOf(items);
+    const ratesMatch = couponRates != null && couponRates.code === couponCode && couponRates.key === cartKey;
+    const couponConfirmed = Boolean(couponCode) && ratesMatch && !couponLoading;
+    const quoteOptions: CouponQuoteOptions | undefined = couponConfirmed
+      ? { flatRate: couponRates.flatRate, rateByProductId: couponRates.rateByProductId }
+      : undefined;
+    const couponQuote = couponConfirmed
+      ? quoteCoupon(
+          couponCode,
+          lines.map((line) => ({
+            productId: line.productId,
+            quantity: line.quantity,
+            unitPrice: line.price,
+            brand: line.brand,
+          })),
+          quoteOptions,
+        )
+      : null;
+    const couponDiscount = couponQuote?.discount ?? 0;
+    const payableSubtotal = couponQuote ? couponQuote.discountedSubtotal : subtotal;
+    const shipping = calculateShipping(payableSubtotal, totalWeightKg);
     const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
-    const total = subtotal + shipping.cost;
+    const total = payableSubtotal + shipping.cost;
+    const couponPending = Boolean(couponCode) && !couponConfirmed;
 
     return {
       items,
@@ -257,6 +391,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       savings,
       totalWeightKg,
       shipping,
+      payableSubtotal,
+      couponCode,
+      couponDiscount,
+      couponQuote,
+      couponPending,
+      couponError,
       total,
       addedSnapshot,
       addItem,
@@ -264,8 +404,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       removeItem,
       clearCart,
       closeAddedModal,
+      applyCoupon,
+      removeCoupon,
     };
-  }, [items, products, addedSnapshot, addItem, setQuantity, removeItem, clearCart, closeAddedModal]);
+  }, [
+    items,
+    products,
+    couponCode,
+    couponRates,
+    couponLoading,
+    couponError,
+    addedSnapshot,
+    addItem,
+    setQuantity,
+    removeItem,
+    clearCart,
+    closeAddedModal,
+    applyCoupon,
+    removeCoupon,
+  ]);
 
   return (
     <CartContext.Provider value={value}>
